@@ -36,10 +36,10 @@ const startStep = (stepNum: number, label: string): number => {
 const completeStep = (startTime: number): void => {
   console.log(`    ${colors.green('✓')} ${colors.dim(formatElapsed(performance.now() - startTime))}`);
 };
-const { config: configFilePath } = yargs(hideBin(process.argv)).argv;
+const { config: configFilePath } = yargs(hideBin(process.argv)).option('config', { type: 'string' }).parseSync();
 
 const generateSpeciesDataFile = (config: GeneratorConfig, speciesData: CuratedSpeciesData, tempFolder: string) => {
-  const minifiedSpeciesData = minifySpeciesData(speciesData, config.taxons);
+  const minifiedSpeciesData = minifySpeciesData(speciesData, config.taxons ?? DEFAULT_TAXONS);
 
   const filename = path.resolve(tempFolder, config.speciesDataFilename);
   if (!fs.existsSync(tempFolder)) {
@@ -53,7 +53,7 @@ const generateSpeciesDataFile = (config: GeneratorConfig, speciesData: CuratedSp
   return filename;
 };
 
-const sortByConfirmationDate = (a, b) => {
+const sortByConfirmationDate = (a: { confirmationDateUnix: number }, b: { confirmationDateUnix: number }) => {
   if (a.confirmationDateUnix < b.confirmationDateUnix) {
     return -1;
   } else if (a.confirmationDateUnix > b.confirmationDateUnix) {
@@ -67,31 +67,33 @@ export const getDataFilesContent = (config: GeneratorConfig, numDataFiles: numbe
   const { newAdditions, taxonChangeDataGroupedByYear } = parseDataFiles(
     numDataFiles,
     curators,
-    taxons,
-    omitTaxonChangeIds,
+    taxons ?? DEFAULT_TAXONS,
+    omitTaxonChangeIds ?? [],
     tempFolder,
   );
 
   const newAdditionsArray: NewAddition[] = [];
   Object.keys(newAdditions).forEach((taxonId) => {
-    newAdditions[taxonId].observations.sort(sortByConfirmationDate);
+    newAdditions[taxonId]!.observations.sort(sortByConfirmationDate);
 
     // ignore any taxons that have confirmed observations prior to `baselineEndDate`
-    if (newAdditions[taxonId].observations[0].confirmationDate < baselineEndDate) {
+    if (newAdditions[taxonId]!.observations[0]!.confirmationDate < (baselineEndDate ?? '')) {
       return;
     }
 
     newAdditionsArray.push({
-      ...newAdditions[taxonId].observations[0],
+      ...newAdditions[taxonId]!.observations[0],
       taxonId,
-      speciesName: newAdditions[taxonId].speciesName,
-      user: newAdditions[taxonId].observations[0].user,
-      taxonomy: newAdditions[taxonId].taxonomy,
+      speciesName: newAdditions[taxonId]!.speciesName,
+      user: newAdditions[taxonId]!.observations[0]!.user,
+      taxonomy: newAdditions[taxonId]!.taxonomy,
     });
   });
 
   // sort remaining data
-  newAdditionsArray.sort(sortByConfirmationDate);
+  newAdditionsArray.sort((a, b) =>
+    a.confirmationDate < b.confirmationDate ? -1 : a.confirmationDate > b.confirmationDate ? 1 : 0,
+  );
 
   return {
     newAdditionsArray,
@@ -148,7 +150,7 @@ export const getDataFilesContent = (config: GeneratorConfig, numDataFiles: numbe
     completeStep(t);
   }
 
-  if (cleanConfig.trackNewAdditions) {
+  {
     let t = startStep(currentStep++, 'Extracting species list');
     const speciesData = extractSpeciesList(cleanConfig, tempFolderFullPath, numPacketFiles);
     completeStep(t);

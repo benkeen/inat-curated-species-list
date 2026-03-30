@@ -1,1 +1,647 @@
-[{"observationId":196334853,"dateObserved":"2020-09-11","observationCreatedAt":"2024-01-10","confirmationDate":"2024-01-11T21:08:17-08:00","confirmationDateUnix":1705036097000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"1127183","speciesName":"Acleris pulverosana","taxonomy":{"superfamily":"Tortricoidea","family":"Tortricidae","subfamily":"Tortricinae","tribe":"Tortricini","genus":"Acleris"}},{"observationId":89018392,"dateObserved":"2018-05-11","observationCreatedAt":"2021-07-28","confirmationDate":"2024-01-28T19:34:02-08:00","confirmationDateUnix":1706499242000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"511692","speciesName":"Eucosma migratana","taxonomy":{"superfamily":"Tortricoidea","family":"Tortricidae","subfamily":"Olethreutinae","tribe":"Eucosmini","genus":"Eucosma"}},{"observationId":141427128,"dateObserved":"2020-07-15","observationCreatedAt":"2022-11-07","confirmationDate":"2024-01-30T22:09:55-05:00","confirmationDateUnix":1706670595000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"488854","speciesName":"Platphalonidia campicolana","taxonomy":{"superfamily":"Tortricoidea","family":"Tortricidae","subfamily":"Tortricinae","tribe":"Cochylini","genus":"Platphalonidia"}},{"observationId":199587935,"dateObserved":"2018-08-02","observationCreatedAt":"2024-02-17","confirmationDate":"2024-02-17T19:04:57+00:00","confirmationDateUnix":1708196697000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"219937","speciesName":"Euxoa cursoria","taxonomy":{"superfamily":"Noctuoidea","family":"Noctuidae","subfamily":"Noctuinae","tribe":"Noctuini","genus":"Euxoa"}},{"observationId":199735079,"dateObserved":"2023-05-26","observationCreatedAt":"2024-02-18","confirmationDate":"2024-02-18T23:43:34+00:00","confirmationDateUnix":1708299814000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"505606","speciesName":"Agnippe leuconota","taxonomy":{"superfamily":"Gelechioidea","family":"Gelechiidae","subfamily":"Gelechiinae","tribe":"Gelechiini","genus":"Agnippe"}},{"observationId":153381880,"dateObserved":"2009-07-17","observationCreatedAt":"2023-04-03","confirmationDate":"2024-02-27T20:47:50-08:00","confirmationDateUnix":1709095670000,"curator":"oneofthedavesiknow","observer":{"username":"libby_rick_avis","name":"Libby &amp; Rick Avis","id":382159},"taxonId":"1304924","speciesName":"Orenaia arcticalis","taxonomy":{"superfamily":"Pyraloidea","family":"Crambidae","subfamily":"Glaphyriinae","genus":"Orenaia"}},{"observationId":143838952,"dateObserved":"2022-07-24","observationCreatedAt":"2022-12-06","confirmationDate":"2024-03-01T20:29:30-08:00","confirmationDateUnix":1709353770000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"1134411","speciesName":"Apotomis trifida","taxonomy":{"superfamily":"Tortricoidea","family":"Tortricidae","subfamily":"Olethreutinae","tribe":"Olethreutini","genus":"Apotomis"}},{"observationId":201042700,"dateObserved":"2023-07-15","observationCreatedAt":"2024-03-02","confirmationDate":"2024-03-02T15:06:14-05:00","confirmationDateUnix":1709409974000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"477661","speciesName":"Cydia tana","taxonomy":{"superfamily":"Tortricoidea","family":"Tortricidae","subfamily":"Olethreutinae","tribe":"Grapholitini","genus":"Cydia"}},{"observationId":97464530,"dateObserved":"2021-10-07","observationCreatedAt":"2021-10-07","confirmationDate":"2024-03-05T01:33:54-05:00","confirmationDateUnix":1709620434000,"curator":"gpohl","observer":{"username":"margaret_eaglecap","name":"Margaret Krichbaum","id":3105728},"taxonId":"344608","speciesName":"Paralobesia cypripediana","taxonomy":{"superfamily":"Tortricoidea","family":"Tortricidae","subfamily":"Olethreutinae","tribe":"Olethreutini","genus":"Paralobesia"}},{"observationId":209293634,"dateObserved":"2024-04-22","observationCreatedAt":"2024-04-25","confirmationDate":"2024-04-25T12:50:02-07:00","confirmationDateUnix":1714074602000,"curator":"oneofthedavesiknow","observer":{"username":"leah","name":"Leah Ramsay","id":5999},"taxonId":"453529","speciesName":"Acrolepiopsis californica","taxonomy":{"superfamily":"Yponomeutoidea","family":"Glyphipterigidae","subfamily":"Acrolepiinae","genus":"Acrolepiopsis"}},{"observationId":222140161,"dateObserved":"2024-06-11","observationCreatedAt":"2024-06-11","confirmationDate":"2024-06-11T23:17:12-04:00","confirmationDateUnix":1718162232000,"curator":"oneofthedavesiknow","observer":{"username":"benkeen","name":"Ben Keen","id":1148374},"taxonId":"502385","speciesName":"Probole amicaria","taxonomy":{"superfamily":"Geometroidea","family":"Geometridae","subfamily":"Ennominae","tribe":"Anagogini","genus":"Probole"}},{"observationId":223443860,"dateObserved":"2024-06-13","observationCreatedAt":"2024-06-17","confirmationDate":"2024-06-17T16:41:33-07:00","confirmationDateUnix":1718667693000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"984647","speciesName":"Plagiomimicus yakama","taxonomy":{"superfamily":"Noctuoidea","family":"Noctuidae","subfamily":"Stiriinae","tribe":"Stiriini","genus":"Plagiomimicus"}},{"observationId":224897203,"dateObserved":"2024-06-24","observationCreatedAt":"2024-06-24","confirmationDate":"2024-06-24T13:12:27-07:00","confirmationDateUnix":1719259947000,"curator":"oneofthedavesiknow","observer":{"username":"benkeen","name":"Ben Keen","id":1148374},"taxonId":"213494","speciesName":"Anacampsis agrimoniella","taxonomy":{"superfamily":"Gelechioidea","family":"Gelechiidae","subfamily":"Anacampsinae","tribe":"Anacampsini","genus":"Anacampsis"}},{"observationId":224785528,"dateObserved":"2024-06-23","observationCreatedAt":"2024-06-23","confirmationDate":"2024-08-22T14:36:11-07:00","confirmationDateUnix":1724362571000,"curator":"oneofthedavesiknow","observer":{"username":"benkeen","name":"Ben Keen","id":1148374},"taxonId":"219580","speciesName":"Ethmia albicostella","taxonomy":{"superfamily":"Gelechioidea","family":"Ethmiidae","subfamily":"Ethmiinae","genus":"Ethmia"}},{"observationId":225750958,"dateObserved":"2024-06-28","observationCreatedAt":"2024-06-28","confirmationDate":"2024-09-11T05:40:48+00:00","confirmationDateUnix":1726033248000,"curator":"oneofthedavesiknow","observer":{"username":"benkeen","name":"Ben Keen","id":1148374},"taxonId":"367260","speciesName":"Homosetia costisignella","taxonomy":{"superfamily":"Tineoidea","family":"Tineidae","subfamily":"Tineidae clade b","genus":"Homosetia"}},{"observationId":199738009,"dateObserved":"2023-05-26","observationCreatedAt":"2024-02-18","confirmationDate":"2024-10-04T16:35:38-07:00","confirmationDateUnix":1728084938000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"347077","speciesName":"Aroga paraplutella","taxonomy":{"superfamily":"Gelechioidea","family":"Gelechiidae","subfamily":"Gelechiinae","tribe":"Gelechiini","genus":"Aroga"}},{"observationId":245661714,"dateObserved":"2024-08-04","observationCreatedAt":"2024-10-04","confirmationDate":"2024-10-05T00:49:09+00:00","confirmationDateUnix":1728089349000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"217675","speciesName":"Crambus awemellus","taxonomy":{"superfamily":"Pyraloidea","family":"Crambidae","subfamily":"Crambinae","tribe":"Crambini","genus":"Crambus"}},{"observationId":246235674,"dateObserved":"2024-07-22","observationCreatedAt":"2024-10-07","confirmationDate":"2024-10-07T15:46:07-07:00","confirmationDateUnix":1728341167000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"224154","speciesName":"Loxostege sticticalis","taxonomy":{"superfamily":"Pyraloidea","family":"Crambidae","subfamily":"Pyraustinae","tribe":"Pyraustini","genus":"Loxostege"}},{"observationId":250464750,"dateObserved":"2024-07-17","observationCreatedAt":"2024-11-04","confirmationDate":"2024-11-04T09:59:54-08:00","confirmationDateUnix":1730743194000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"232087","speciesName":"Sympistis lapponica","taxonomy":{"superfamily":"Noctuoidea","family":"Noctuidae","subfamily":"Oncocnemidinae","genus":"Sympistis"}},{"observationId":251845924,"dateObserved":"2023-06-28","observationCreatedAt":"2024-11-15","confirmationDate":"2024-11-16T17:20:07+13:00","confirmationDateUnix":1731730807000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"205181","speciesName":"Hypena eductalis","taxonomy":{"superfamily":"Noctuoidea","family":"Erebidae","subfamily":"Hypeninae","genus":"Hypena"}},{"observationId":251848235,"dateObserved":"2023-06-28","observationCreatedAt":"2024-11-15","confirmationDate":"2024-11-16T04:58:38+00:00","confirmationDateUnix":1731733118000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"177210","speciesName":"Macrochilo bivittata","taxonomy":{"superfamily":"Noctuoidea","family":"Erebidae","subfamily":"Herminiinae","genus":"Macrochilo"}},{"observationId":252102177,"dateObserved":"2024-06-02","observationCreatedAt":"2024-11-17","confirmationDate":"2024-11-17T20:21:51-08:00","confirmationDateUnix":1731903711000,"curator":"oneofthedavesiknow","observer":{"username":"abbyhyde","name":"Abby Hyde","id":2285053},"taxonId":"469383","speciesName":"Siederia walshella","taxonomy":{"superfamily":"Tineoidea","family":"Psychidae","subfamily":"Taleporiinae","genus":"Siederia"}},{"observationId":253233165,"dateObserved":"2024-07-04","observationCreatedAt":"2024-11-26","confirmationDate":"2024-11-26T21:28:04-08:00","confirmationDateUnix":1732685284000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"704937","speciesName":"Homoeosoma phaeoboreas","taxonomy":{"superfamily":"Pyraloidea","family":"Pyralidae","subfamily":"Phycitinae","tribe":"Phycitini","genus":"Homoeosoma"}},{"observationId":257072475,"dateObserved":"2021-06-23","observationCreatedAt":"2025-01-01","confirmationDate":"2025-01-01T21:53:36-08:00","confirmationDateUnix":1735797216000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"1373722","speciesName":"Oedemasia concinna","taxonomy":{"superfamily":"Noctuoidea","family":"Notodontidae","subfamily":"Heterocampinae","tribe":"Heterocampini","genus":"Oedemasia"}},{"observationId":257310630,"dateObserved":"2017-06-17","observationCreatedAt":"2025-01-03","confirmationDate":"2025-01-03T22:56:53-05:00","confirmationDateUnix":1735963013000,"curator":"oneofthedavesiknow","observer":{"username":"oneofthedavesiknow","name":"Dave","id":1722936},"taxonId":"219793","speciesName":"Eupithecia bowmani","taxonomy":{"superfamily":"Geometroidea","family":"Geometridae","subfamily":"Larentiinae","tribe":"Eupitheciini","genus":"Eupithecia"}},{"observationId":55942743,"dateObserved":"2020-08-04","observationCreatedAt":"2020-08-09","confirmationDateUnix":null,"curator":"crispinguppy","observer":{"username":"jozien","name":"","id":218977},"taxonId":"1456448","speciesName":"Lycaena hypophlaeas","taxonomy":{"superfamily":"Papilionoidea","family":"Lycaenidae","subfamily":"Lycaeninae","tribe":"Lycaenini","genus":"Lycaena","species":"Lycaena hypophlaeas"}}]
+[
+  {
+    "observationId": 196334853,
+    "dateObserved": "2020-09-11",
+    "observationCreatedAt": "2024-01-10",
+    "confirmationDate": "2024-01-11T21:08:17-08:00",
+    "confirmationDateUnix": 1705036097000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "1127183",
+    "speciesName": "Acleris pulverosana",
+    "taxonomy": {
+      "superfamily": "Tortricoidea",
+      "family": "Tortricidae",
+      "subfamily": "Tortricinae",
+      "tribe": "Tortricini",
+      "genus": "Acleris"
+    }
+  },
+  {
+    "observationId": 141427128,
+    "dateObserved": "2020-07-15",
+    "observationCreatedAt": "2022-11-07",
+    "confirmationDate": "2024-01-30T22:09:55-05:00",
+    "confirmationDateUnix": 1706670595000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "488854",
+    "speciesName": "Platphalonidia campicolana",
+    "taxonomy": {
+      "superfamily": "Tortricoidea",
+      "family": "Tortricidae",
+      "subfamily": "Tortricinae",
+      "tribe": "Cochylini",
+      "genus": "Platphalonidia"
+    }
+  },
+  {
+    "observationId": 199587935,
+    "dateObserved": "2018-08-02",
+    "observationCreatedAt": "2024-02-17",
+    "confirmationDate": "2024-02-17T19:04:57+00:00",
+    "confirmationDateUnix": 1708196697000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "219937",
+    "speciesName": "Euxoa cursoria",
+    "taxonomy": {
+      "superfamily": "Noctuoidea",
+      "family": "Noctuidae",
+      "subfamily": "Noctuinae",
+      "tribe": "Noctuini",
+      "genus": "Euxoa"
+    }
+  },
+  {
+    "observationId": 199735079,
+    "dateObserved": "2023-05-26",
+    "observationCreatedAt": "2024-02-18",
+    "confirmationDate": "2024-02-18T23:43:34+00:00",
+    "confirmationDateUnix": 1708299814000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "505606",
+    "speciesName": "Agnippe leuconota",
+    "taxonomy": {
+      "superfamily": "Gelechioidea",
+      "family": "Gelechiidae",
+      "subfamily": "Gelechiinae",
+      "tribe": "Gelechiini",
+      "genus": "Agnippe"
+    }
+  },
+  {
+    "observationId": 153381880,
+    "dateObserved": "2009-07-17",
+    "observationCreatedAt": "2023-04-03",
+    "confirmationDate": "2024-02-27T20:47:50-08:00",
+    "confirmationDateUnix": 1709095670000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "libby_rick_avis", "name": "Libby &amp; Rick Avis", "id": 382159 },
+    "taxonId": "1304924",
+    "speciesName": "Orenaia arcticalis",
+    "taxonomy": { "superfamily": "Pyraloidea", "family": "Crambidae", "subfamily": "Glaphyriinae", "genus": "Orenaia" }
+  },
+  {
+    "observationId": 143838952,
+    "dateObserved": "2022-07-24",
+    "observationCreatedAt": "2022-12-06",
+    "confirmationDate": "2024-03-01T20:29:30-08:00",
+    "confirmationDateUnix": 1709353770000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "1134411",
+    "speciesName": "Apotomis trifida",
+    "taxonomy": {
+      "superfamily": "Tortricoidea",
+      "family": "Tortricidae",
+      "subfamily": "Olethreutinae",
+      "tribe": "Olethreutini",
+      "genus": "Apotomis"
+    }
+  },
+  {
+    "observationId": 201042700,
+    "dateObserved": "2023-07-15",
+    "observationCreatedAt": "2024-03-02",
+    "confirmationDate": "2024-03-02T15:06:14-05:00",
+    "confirmationDateUnix": 1709409974000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "477661",
+    "speciesName": "Cydia tana",
+    "taxonomy": {
+      "superfamily": "Tortricoidea",
+      "family": "Tortricidae",
+      "subfamily": "Olethreutinae",
+      "tribe": "Grapholitini",
+      "genus": "Cydia"
+    }
+  },
+  {
+    "observationId": 97464530,
+    "dateObserved": "2021-10-07",
+    "observationCreatedAt": "2021-10-07",
+    "confirmationDate": "2024-03-05T01:33:54-05:00",
+    "confirmationDateUnix": 1709620434000,
+    "curator": "gpohl",
+    "observer": { "username": "margaret_eaglecap", "name": "Margaret Krichbaum", "id": 3105728 },
+    "taxonId": "344608",
+    "speciesName": "Paralobesia cypripediana",
+    "taxonomy": {
+      "superfamily": "Tortricoidea",
+      "family": "Tortricidae",
+      "subfamily": "Olethreutinae",
+      "tribe": "Olethreutini",
+      "genus": "Paralobesia"
+    }
+  },
+  {
+    "observationId": 141895117,
+    "dateObserved": "2022-08-26",
+    "observationCreatedAt": "2022-11-13",
+    "confirmationDate": "2024-03-12T19:44:46-07:00",
+    "confirmationDateUnix": 1710297886000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "j_arndt", "name": "Janice Arndt", "id": 1678627 },
+    "taxonId": "1525731",
+    "speciesName": "Trichopolia curtica",
+    "taxonomy": {
+      "superfamily": "Noctuoidea",
+      "family": "Noctuidae",
+      "subfamily": "Noctuinae",
+      "tribe": "Eriopygini",
+      "genus": "Trichopolia"
+    }
+  },
+  {
+    "observationId": 209293634,
+    "dateObserved": "2024-04-22",
+    "observationCreatedAt": "2024-04-25",
+    "confirmationDate": "2024-04-25T12:50:02-07:00",
+    "confirmationDateUnix": 1714074602000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "leah", "name": "Leah Ramsay", "id": 5999 },
+    "taxonId": "453529",
+    "speciesName": "Acrolepiopsis californica",
+    "taxonomy": {
+      "superfamily": "Yponomeutoidea",
+      "family": "Glyphipterigidae",
+      "subfamily": "Acrolepiinae",
+      "genus": "Acrolepiopsis"
+    }
+  },
+  {
+    "observationId": 222140161,
+    "dateObserved": "2024-06-11",
+    "observationCreatedAt": "2024-06-11",
+    "confirmationDate": "2024-06-11T23:17:12-04:00",
+    "confirmationDateUnix": 1718162232000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "benkeen", "name": "Ben Keen", "id": 1148374 },
+    "taxonId": "502385",
+    "speciesName": "Probole amicaria",
+    "taxonomy": {
+      "superfamily": "Geometroidea",
+      "family": "Geometridae",
+      "subfamily": "Ennominae",
+      "tribe": "Anagogini",
+      "genus": "Probole"
+    }
+  },
+  {
+    "observationId": 223443860,
+    "dateObserved": "2024-06-13",
+    "observationCreatedAt": "2024-06-17",
+    "confirmationDate": "2024-06-17T16:41:33-07:00",
+    "confirmationDateUnix": 1718667693000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "984647",
+    "speciesName": "Plagiomimicus yakama",
+    "taxonomy": {
+      "superfamily": "Noctuoidea",
+      "family": "Noctuidae",
+      "subfamily": "Stiriinae",
+      "tribe": "Stiriini",
+      "genus": "Plagiomimicus"
+    }
+  },
+  {
+    "observationId": 224897203,
+    "dateObserved": "2024-06-24",
+    "observationCreatedAt": "2024-06-24",
+    "confirmationDate": "2024-06-24T13:12:27-07:00",
+    "confirmationDateUnix": 1719259947000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "benkeen", "name": "Ben Keen", "id": 1148374 },
+    "taxonId": "213494",
+    "speciesName": "Anacampsis agrimoniella",
+    "taxonomy": {
+      "superfamily": "Gelechioidea",
+      "family": "Gelechiidae",
+      "subfamily": "Anacampsinae",
+      "tribe": "Anacampsini",
+      "genus": "Anacampsis"
+    }
+  },
+  {
+    "observationId": 224785528,
+    "dateObserved": "2024-06-23",
+    "observationCreatedAt": "2024-06-23",
+    "confirmationDate": "2024-08-22T14:36:11-07:00",
+    "confirmationDateUnix": 1724362571000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "benkeen", "name": "Ben Keen", "id": 1148374 },
+    "taxonId": "219580",
+    "speciesName": "Ethmia albicostella",
+    "taxonomy": { "superfamily": "Gelechioidea", "family": "Ethmiidae", "subfamily": "Ethmiinae", "genus": "Ethmia" }
+  },
+  {
+    "observationId": 225750958,
+    "dateObserved": "2024-06-28",
+    "observationCreatedAt": "2024-06-28",
+    "confirmationDate": "2024-09-11T05:40:48+00:00",
+    "confirmationDateUnix": 1726033248000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "benkeen", "name": "Ben Keen", "id": 1148374 },
+    "taxonId": "367260",
+    "speciesName": "Homosetia costisignella",
+    "taxonomy": {
+      "superfamily": "Tineoidea",
+      "family": "Tineidae",
+      "subfamily": "Tineidae clade b",
+      "genus": "Homosetia"
+    }
+  },
+  {
+    "observationId": 199738009,
+    "dateObserved": "2023-05-26",
+    "observationCreatedAt": "2024-02-18",
+    "confirmationDate": "2024-10-04T16:35:38-07:00",
+    "confirmationDateUnix": 1728084938000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "347077",
+    "speciesName": "Aroga paraplutella",
+    "taxonomy": {
+      "superfamily": "Gelechioidea",
+      "family": "Gelechiidae",
+      "subfamily": "Gelechiinae",
+      "tribe": "Gelechiini",
+      "genus": "Aroga"
+    }
+  },
+  {
+    "observationId": 245661714,
+    "dateObserved": "2024-08-04",
+    "observationCreatedAt": "2024-10-04",
+    "confirmationDate": "2024-10-05T00:49:09+00:00",
+    "confirmationDateUnix": 1728089349000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "217675",
+    "speciesName": "Crambus awemellus",
+    "taxonomy": {
+      "superfamily": "Pyraloidea",
+      "family": "Crambidae",
+      "subfamily": "Crambinae",
+      "tribe": "Crambini",
+      "genus": "Crambus"
+    }
+  },
+  {
+    "observationId": 250464750,
+    "dateObserved": "2024-07-17",
+    "observationCreatedAt": "2024-11-04",
+    "confirmationDate": "2024-11-04T09:59:54-08:00",
+    "confirmationDateUnix": 1730743194000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "232087",
+    "speciesName": "Sympistis lapponica",
+    "taxonomy": {
+      "superfamily": "Noctuoidea",
+      "family": "Noctuidae",
+      "subfamily": "Oncocnemidinae",
+      "genus": "Sympistis"
+    }
+  },
+  {
+    "observationId": 251845924,
+    "dateObserved": "2023-06-28",
+    "observationCreatedAt": "2024-11-15",
+    "confirmationDate": "2024-11-16T17:20:07+13:00",
+    "confirmationDateUnix": 1731730807000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "205181",
+    "speciesName": "Hypena eductalis",
+    "taxonomy": { "superfamily": "Noctuoidea", "family": "Erebidae", "subfamily": "Hypeninae", "genus": "Hypena" }
+  },
+  {
+    "observationId": 251848235,
+    "dateObserved": "2023-06-28",
+    "observationCreatedAt": "2024-11-15",
+    "confirmationDate": "2024-11-16T04:58:38+00:00",
+    "confirmationDateUnix": 1731733118000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "177210",
+    "speciesName": "Macrochilo bivittata",
+    "taxonomy": { "superfamily": "Noctuoidea", "family": "Erebidae", "subfamily": "Herminiinae", "genus": "Macrochilo" }
+  },
+  {
+    "observationId": 252102177,
+    "dateObserved": "2024-06-02",
+    "observationCreatedAt": "2024-11-17",
+    "confirmationDate": "2024-11-18T04:21:51+00:00",
+    "confirmationDateUnix": 1731903711000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "abbyhyde", "name": "Abby Hyde", "id": 2285053 },
+    "taxonId": "469383",
+    "speciesName": "Siederia walshella",
+    "taxonomy": { "superfamily": "Tineoidea", "family": "Psychidae", "subfamily": "Taleporiinae", "genus": "Siederia" }
+  },
+  {
+    "observationId": 253233165,
+    "dateObserved": "2024-07-04",
+    "observationCreatedAt": "2024-11-26",
+    "confirmationDate": "2024-11-26T21:28:04-08:00",
+    "confirmationDateUnix": 1732685284000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "704937",
+    "speciesName": "Homoeosoma phaeoboreas",
+    "taxonomy": {
+      "superfamily": "Pyraloidea",
+      "family": "Pyralidae",
+      "subfamily": "Phycitinae",
+      "tribe": "Phycitini",
+      "genus": "Homoeosoma"
+    }
+  },
+  {
+    "observationId": 257310630,
+    "dateObserved": "2017-06-17",
+    "observationCreatedAt": "2025-01-03",
+    "confirmationDate": "2025-01-03T22:56:53-05:00",
+    "confirmationDateUnix": 1735963013000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "219793",
+    "speciesName": "Eupithecia bowmani",
+    "taxonomy": {
+      "superfamily": "Geometroidea",
+      "family": "Geometridae",
+      "subfamily": "Larentiinae",
+      "tribe": "Eupitheciini",
+      "genus": "Eupithecia"
+    }
+  },
+  {
+    "observationId": 266151097,
+    "dateObserved": "2023-06-25",
+    "observationCreatedAt": "2025-03-20",
+    "confirmationDate": "2025-03-21T19:37:40+00:00",
+    "confirmationDateUnix": 1742585860000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "989137",
+    "speciesName": "Coleophora idaeella",
+    "taxonomy": {
+      "superfamily": "Gelechioidea",
+      "family": "Coleophoridae",
+      "subfamily": "Coleophorinae",
+      "genus": "Coleophora"
+    }
+  },
+  {
+    "observationId": 260863230,
+    "dateObserved": "2015-06-25",
+    "observationCreatedAt": "2025-02-06",
+    "confirmationDate": "2025-03-24T15:15:22-07:00",
+    "confirmationDateUnix": 1742854522000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "527069",
+    "speciesName": "Ancylis myrtillana",
+    "taxonomy": {
+      "superfamily": "Tortricoidea",
+      "family": "Tortricidae",
+      "subfamily": "Olethreutinae",
+      "tribe": "Enarmoniini",
+      "genus": "Ancylis"
+    }
+  },
+  {
+    "observationId": 175880109,
+    "dateObserved": "2023-07-30",
+    "observationCreatedAt": "2023-07-30",
+    "confirmationDate": "2025-07-04T05:23:46+00:00",
+    "confirmationDateUnix": 1751606626000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "leannec", "name": "Leanne Cleaveley", "id": 5045912 },
+    "taxonId": "1586786",
+    "speciesName": "Sesia pacificum",
+    "taxonomy": {
+      "superfamily": "Sesioidea",
+      "family": "Sesiidae",
+      "subfamily": "Sesiinae",
+      "tribe": "Sesiini",
+      "genus": "Sesia"
+    }
+  },
+  {
+    "observationId": 124051249,
+    "dateObserved": "2022-06-23",
+    "observationCreatedAt": "2022-06-29",
+    "confirmationDate": "2025-07-12T09:01:47-07:00",
+    "confirmationDateUnix": 1752336107000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "bastefanidis", "name": "Bill Apostle Stefanidis", "id": 5521921 },
+    "taxonId": "1507295",
+    "speciesName": "Aspila prunivora",
+    "taxonomy": {
+      "superfamily": "Tortricoidea",
+      "family": "Tortricidae",
+      "subfamily": "Olethreutinae",
+      "tribe": "Grapholitini",
+      "genus": "Aspila"
+    }
+  },
+  {
+    "observationId": 297370348,
+    "dateObserved": "2025-07-12",
+    "observationCreatedAt": "2025-07-12",
+    "confirmationDate": "2025-07-12T13:49:56-07:00",
+    "confirmationDateUnix": 1752353396000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "359506",
+    "speciesName": "Coleophora limosipennella",
+    "taxonomy": {
+      "superfamily": "Gelechioidea",
+      "family": "Coleophoridae",
+      "subfamily": "Coleophorinae",
+      "genus": "Coleophora"
+    }
+  },
+  {
+    "observationId": 300693527,
+    "dateObserved": "2025-07-23",
+    "observationCreatedAt": "2025-07-24",
+    "confirmationDate": "2025-07-24T14:46:51-04:00",
+    "confirmationDateUnix": 1753382811000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "liamragan", "name": "Liam Ragan", "id": 650775 },
+    "taxonId": "1260302",
+    "speciesName": "Aglossa furva",
+    "taxonomy": {
+      "superfamily": "Pyraloidea",
+      "family": "Pyralidae",
+      "subfamily": "Pyralinae",
+      "tribe": "Pyralini",
+      "genus": "Aglossa"
+    }
+  },
+  {
+    "observationId": 306254536,
+    "dateObserved": "2025-08-01",
+    "observationCreatedAt": "2025-08-14",
+    "confirmationDate": "2025-08-15T03:34:53+00:00",
+    "confirmationDateUnix": 1755228893000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "veroniquec", "name": "Veronique C", "id": 2376682 },
+    "taxonId": "177605",
+    "speciesName": "Korscheltellus gracilis",
+    "taxonomy": { "superfamily": "Hepialoidea", "family": "Hepialidae", "genus": "Korscheltellus" }
+  },
+  {
+    "observationId": 279130423,
+    "dateObserved": "2025-05-06",
+    "observationCreatedAt": "2025-05-06",
+    "confirmationDate": "2025-09-01T09:48:47-07:00",
+    "confirmationDateUnix": 1756745327000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "johndreynolds", "name": "John D Reynolds", "id": 459348 },
+    "taxonId": "477987",
+    "speciesName": "Anarta fusculenta",
+    "taxonomy": {
+      "superfamily": "Noctuoidea",
+      "family": "Noctuidae",
+      "subfamily": "Noctuinae",
+      "tribe": "Hadenini",
+      "genus": "Anarta"
+    }
+  },
+  {
+    "observationId": 316599784,
+    "dateObserved": "2025-06-18",
+    "observationCreatedAt": "2025-09-25",
+    "confirmationDate": "2025-09-25T14:21:02-07:00",
+    "confirmationDateUnix": 1758835262000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "1486728",
+    "speciesName": "Caloreas canadensis",
+    "taxonomy": {
+      "superfamily": "Choreutoidea",
+      "family": "Choreutidae",
+      "subfamily": "Choreutinae",
+      "genus": "Caloreas"
+    }
+  },
+  {
+    "observationId": 288640759,
+    "dateObserved": "2025-06-10",
+    "observationCreatedAt": "2025-06-10",
+    "confirmationDate": "2025-09-26T09:29:52-06:00",
+    "confirmationDateUnix": 1758900592000,
+    "curator": "gpohl",
+    "observer": { "username": "benkeen", "name": "Ben Keen", "id": 1148374 },
+    "taxonId": "522708",
+    "speciesName": "Nemapogon picarella",
+    "taxonomy": { "superfamily": "Tineoidea", "family": "Tineidae", "subfamily": "Nemapogoninae", "genus": "Nemapogon" }
+  },
+  {
+    "observationId": 317623461,
+    "dateObserved": "2025-09-28",
+    "observationCreatedAt": "2025-09-29",
+    "confirmationDate": "2025-09-29T14:35:35-07:00",
+    "confirmationDateUnix": 1759181735000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "johndreynolds", "name": "John D Reynolds", "id": 459348 },
+    "taxonId": "962674",
+    "speciesName": "Sympistis sokar",
+    "taxonomy": {
+      "superfamily": "Noctuoidea",
+      "family": "Noctuidae",
+      "subfamily": "Oncocnemidinae",
+      "genus": "Sympistis"
+    }
+  },
+  {
+    "observationId": 42640497,
+    "dateObserved": "2020-04-16",
+    "observationCreatedAt": "2020-04-19",
+    "confirmationDate": "2025-10-02T10:42:58-06:00",
+    "confirmationDateUnix": 1759423378000,
+    "curator": "gpohl",
+    "observer": { "username": "randrudland", "name": "Rand Rudland", "id": 1541811 },
+    "taxonId": "216803",
+    "speciesName": "Choreutis diana",
+    "taxonomy": {
+      "superfamily": "Choreutoidea",
+      "family": "Choreutidae",
+      "subfamily": "Choreutinae",
+      "genus": "Choreutis"
+    }
+  },
+  {
+    "observationId": 55108387,
+    "dateObserved": "2020-07-06",
+    "observationCreatedAt": "2020-08-01",
+    "confirmationDate": "2025-10-19T21:53:37-07:00",
+    "confirmationDateUnix": 1760936017000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "jasonheadley", "name": "Jason Headley", "id": 499708 },
+    "taxonId": "358857",
+    "speciesName": "Phymatopus hectoides",
+    "taxonomy": { "superfamily": "Hepialoidea", "family": "Hepialidae", "genus": "Phymatopus" }
+  },
+  {
+    "observationId": 170137963,
+    "dateObserved": "2023-06-28",
+    "observationCreatedAt": "2023-06-29",
+    "confirmationDate": "2025-10-20T20:11:13+00:00",
+    "confirmationDateUnix": 1760991073000,
+    "curator": "oneofthedavesiknow",
+    "observer": { "username": "outdoorobserver", "name": "Radu Scurtescu", "id": 2823934 },
+    "taxonId": "126088",
+    "speciesName": "Cameraria ohridella",
+    "taxonomy": {
+      "superfamily": "Gracillarioidea",
+      "family": "Gracillariidae",
+      "subfamily": "Lithocolletinae",
+      "genus": "Cameraria"
+    }
+  },
+  {
+    "observationId": 288830751,
+    "dateObserved": "2025-06-11",
+    "observationCreatedAt": "2025-06-11",
+    "confirmationDate": "2025-12-26T10:13:37-08:00",
+    "confirmationDateUnix": 1766772817000,
+    "curator": "crispinguppy",
+    "observer": { "username": "paul_prappas1", "name": "Paul Prappas", "id": 741877 },
+    "taxonId": "1389253",
+    "speciesName": "Celastrina asheri",
+    "taxonomy": {
+      "superfamily": "Papilionoidea",
+      "family": "Lycaenidae",
+      "subfamily": "Polyommatinae",
+      "tribe": "Polyommatini",
+      "genus": "Celastrina"
+    }
+  },
+  {
+    "observationId": 89018392,
+    "dateObserved": "2018-05-11",
+    "observationCreatedAt": "2021-07-28",
+    "confirmationDate": "2026-03-14T23:32:00-06:00",
+    "confirmationDateUnix": 1773552720000,
+    "curator": "gpohl",
+    "observer": { "username": "oneofthedavesiknow", "name": "Dave", "id": 1722936 },
+    "taxonId": "511692",
+    "speciesName": "Eucosma migratana",
+    "taxonomy": {
+      "superfamily": "Tortricoidea",
+      "family": "Tortricidae",
+      "subfamily": "Olethreutinae",
+      "tribe": "Eucosmini",
+      "genus": "Eucosma"
+    }
+  }
+]

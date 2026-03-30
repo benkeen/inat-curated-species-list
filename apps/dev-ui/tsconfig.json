@@ -6,8 +6,10 @@
         "name": "next"
       }
     ],
-    "moduleResolution": "node",
-    "esModuleInterop": true
+    "paths": {
+      "@ecophilia/inat-curated-species-list-ui": ["../../packages/ui/src/index.ts"],
+      "@ecophilia/inat-curated-species-list-common": ["../../packages/common/index.ts"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", "next.config.js", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

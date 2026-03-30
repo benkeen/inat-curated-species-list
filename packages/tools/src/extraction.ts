@@ -1,6 +1,7 @@
 import { GeneratorConfig, GetDataPacketResponse } from '../types/generator.types';
 import { CuratedSpeciesData, Taxon } from '@ecophilia/inat-curated-species-list-common';
 import { getTaxonomy } from './helpers';
+import { DEFAULT_TAXONS } from './constants';
 import path from 'path';
 import fs from 'fs';
 
@@ -11,7 +12,7 @@ export const extractSpeciesList = (config: GeneratorConfig, tempFolder: string, 
     const rawData: GetDataPacketResponse = JSON.parse(
       fs.readFileSync(path.resolve(tempFolder, `packet-${packetNum}.json`), 'utf-8'),
     );
-    appendSpeciesFromPacket(rawData, config.curators, config.taxons, curatedSpeciesData);
+    appendSpeciesFromPacket(rawData, config.curators, config.taxons ?? DEFAULT_TAXONS, curatedSpeciesData);
   }
 
   return curatedSpeciesData;
@@ -49,7 +50,7 @@ export const appendSpeciesFromPacket = (
 
         // note: `count` just tracks how many observations have been reviewed and confirmed by our curators, not by anyone
       } else {
-        curatedSpeciesData[ident.taxon_id].count++;
+        curatedSpeciesData[ident.taxon_id]!.count++;
       }
     });
   });

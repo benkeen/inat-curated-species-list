@@ -34,18 +34,19 @@ export const minifySpeciesData = (data: CuratedSpeciesData, targetTaxons: Taxon[
   };
 
   Object.keys(data).forEach((taxonId) => {
+    const entry = data[taxonId]!;
     // keyed by rank
     const rowData: Partial<Record<Taxon, string>> = {};
 
     // replace all non-species taxon strings (Pterygota, or whatever) with a short code in taxonMap
-    (Object.keys(data[taxonId].data) as Taxon[]).forEach((taxonRank) => {
-      const taxonName = data[taxonId].data[taxonRank];
+    (Object.keys(entry.data) as Taxon[]).forEach((taxonRank) => {
+      const taxonName = entry.data[taxonRank]!;
 
       if (taxonsToMinify[taxonRank]) {
         // if we've already minified this particular taxon name (note: no reason this might be a totally
         // different rank from the original minification - it doesn't matter - point is that the STRING is identical)
         if (minifiedData.taxonMap[taxonName]) {
-          rowData[taxonRank] = minifiedData.taxonMap[taxonName];
+          rowData[taxonRank] = minifiedData.taxonMap[taxonName]!;
         } else {
           const key = getShortestUniqueKey();
           minifiedData.taxonMap[taxonName] = key;
@@ -56,8 +57,8 @@ export const minifySpeciesData = (data: CuratedSpeciesData, targetTaxons: Taxon[
       }
     });
 
-    const row = targetTaxons.map((t) => (rowData[t] ? rowData[t] : '')).join('|');
-    minifiedData.taxonData[taxonId] = `${row}|${data[taxonId].count}`;
+    const row = targetTaxons.map((t) => rowData[t] ?? '').join('|');
+    minifiedData.taxonData[taxonId] = `${row}|${entry.count}`;
   });
 
   return minifiedData;

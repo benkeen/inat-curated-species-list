@@ -60,7 +60,7 @@ export const downloadDataPackets = async (config: GeneratorConfig, tempFolder: s
 
   if (totalResults === 0) {
     logger.log('error', 'No observations found.');
-    return;
+    throw new Error('No observations found.');
   }
 
   if (numRequests === 1) {

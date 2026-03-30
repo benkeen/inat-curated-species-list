@@ -1,6 +1,6 @@
 {
   "name": "inat-curated-list-dev-ui",
-  "description": "A local dev environment for the components in the published @ecophilia/inat-curated-species-list package.",
+  "description": "A local dev environment for the @ecophilia/inat-curated-species-list-ui package.",
   "version": "0.1.0",
   "type": "module",
   "private": true,

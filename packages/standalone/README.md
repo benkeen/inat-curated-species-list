@@ -18,7 +18,7 @@ files on whatever frequency you think it suitable.
 <div id="icsl"></div>
 <script>
   window.initInatCuratedSpeciesList('icsl', {
-    speciesDataUrl: 'path/to.species-data.json',
+    speciesDataUrl: 'path/to/species-data.json',
     curatorUsernames: ['reviewer1', 'reviewer2', 'reviewer3'],
     placeId: 123,
     showLastGeneratedDate: true,

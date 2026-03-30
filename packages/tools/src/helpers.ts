@@ -52,22 +52,19 @@ export const getConfirmationDateAccountingForTaxonChanges = (
   deprecatedTaxonIds: number[];
   originalConfirmationDate: string;
 } => {
-  const curatorConfirmationDate = obs.identifications[curatorIdentificationIndex].created_at;
+  const curatorId = obs.identifications[curatorIdentificationIndex]!;
+  const curatorConfirmationDate = curatorId.created_at;
 
   // if this observation wasn't part of a taxon swap, we're good. Just return the confirmation date
-  if (!obs.identifications[curatorIdentificationIndex].taxon_change) {
+  if (!curatorId.taxon_change) {
     return { deprecatedTaxonIds: [], originalConfirmationDate: curatorConfirmationDate };
   }
 
   // confirm that the reason for the swap is one of the known taxon change types. If not, abort with an error.
-  if (
-    ['TaxonSwap', 'TaxonSplit', 'TaxonMerge'].indexOf(
-      obs.identifications[curatorIdentificationIndex].taxon_change.type,
-    ) === -1
-  ) {
+  if (['TaxonSwap', 'TaxonSplit', 'TaxonMerge'].indexOf(curatorId.taxon_change.type) === -1) {
     console.error('Unknown taxon change type. This is a problem with the script.', {
       observationId: obs.id,
-      identification: obs.identifications[curatorIdentificationIndex],
+      identification: curatorId,
     });
     process.exit(1);
   }
@@ -79,11 +76,11 @@ export const getConfirmationDateAccountingForTaxonChanges = (
   };
 
   const curatorObservations: HistoricalCuratorObsIdentification[] = [];
-  const targetCurator = obs.identifications[curatorIdentificationIndex].user.login;
-  let lastCuratorObservation = obs.identifications[curatorIdentificationIndex];
+  const targetCurator = curatorId.user.login;
+  let lastCuratorObservation = curatorId;
 
   for (let i = curatorIdentificationIndex; i >= 0; i--) {
-    const currIdentification = obs.identifications[i];
+    const currIdentification = obs.identifications[i]!;
 
     if (currIdentification.user.login !== targetCurator) {
       continue;
@@ -131,10 +128,10 @@ export const getConfirmationDateAccountingForTaxonChanges = (
   let originalConfirmationDate = '';
   for (let i = 0; i < curatorObservations.length; i++) {
     if (i !== 0) {
-      deprecatedTaxonIds.push(curatorObservations[i].taxonId);
+      deprecatedTaxonIds.push(curatorObservations[i]!.taxonId);
     }
-    if (!curatorObservations[i].isTaxonChange) {
-      originalConfirmationDate = curatorObservations[i].confirmationDate;
+    if (!curatorObservations[i]!.isTaxonChange) {
+      originalConfirmationDate = curatorObservations[i]!.confirmationDate;
       break;
     }
   }
@@ -160,30 +157,31 @@ const parseDataFile = (
     // *** assumption: the array is ordered oldest to newest
     let curatorTaxonId: number | null = null;
     for (let i = 0; i < obs.identifications.length; i++) {
-      if (!obs.identifications[i].current) {
+      const ident = obs.identifications[i]!;
+
+      if (!ident.current) {
         continue;
       }
 
-      if (!curators.includes(obs.identifications[i].user.login)) {
+      if (!curators.includes(ident.user.login)) {
         continue;
       }
 
-      if (obs.identifications[i].taxon.rank !== 'species' && obs.identifications[i].taxon.rank !== 'subspecies') {
+      if (ident.taxon.rank !== 'species' && ident.taxon.rank !== 'subspecies') {
         continue;
       }
 
-      const isSubspeciesIdent = obs.identifications[i].taxon.rank === 'subspecies';
+      const isSubspeciesIdent = ident.taxon.rank === 'subspecies';
 
       // we're not currently interested in subspecies, but need to factor in confirmed subspecies observations.
       let speciesName: string;
       if (isSubspeciesIdent) {
-        const speciesAncestor =
-          obs.identifications[i].taxon.ancestors[obs.identifications[i].taxon.ancestors.length - 1];
+        const speciesAncestor = ident.taxon.ancestors[ident.taxon.ancestors.length - 1]!;
         curatorTaxonId = speciesAncestor.id;
         speciesName = speciesAncestor.name;
       } else {
-        curatorTaxonId = obs.identifications[i].taxon.id;
-        speciesName = obs.identifications[i].taxon.name;
+        curatorTaxonId = ident.taxon.id;
+        speciesName = ident.taxon.name;
       }
 
       // as noted, group all species + subspecies under the species taxon ID.
@@ -209,7 +207,7 @@ const parseDataFile = (
         observationCreatedAt: obs.created_at_details.date,
         confirmationDate: originalConfirmationDate,
         confirmationDateUnix: new Date(originalConfirmationDate).getTime(),
-        curator: obs.identifications[i].user.login,
+        curator: ident.user.login,
         observer: {
           username: obs.user.login,
           name: obs.user.name,
@@ -219,7 +217,7 @@ const parseDataFile = (
 
       // only bother calculating the taxonomy for this taxon once
       if (!processedData[curatorTaxonId].taxonomy) {
-        processedData[curatorTaxonId].taxonomy = getTaxonomy(obs.identifications[i].taxon.ancestors, taxonsToReturn);
+        processedData[curatorTaxonId].taxonomy = getTaxonomy(ident.taxon.ancestors, taxonsToReturn);
       }
 
       // we ignore any later identifications; we're only interested in the earliest one that met our curator requirement
@@ -245,7 +243,7 @@ export const parseDataFiles = (
   omitTaxonChangeIds: number[],
   tempFolder: string,
 ) => {
-  const newAdditions: Record<number, any> = {};
+  const newAdditions: Record<string, any> = {};
   const taxonsToRemove: number[] = [];
   const taxonChangeData: TaxonChangeData[] = [];
 
@@ -283,7 +281,7 @@ export const getTaxonChangeDataGroupedByYear = (taxonChangeData: TaxonChangeData
     if (!taxonChangesBySpecies[row.previousSpeciesTaxonId]) {
       taxonChangesBySpecies[row.previousSpeciesTaxonId] = [];
     }
-    taxonChangesBySpecies[row.previousSpeciesTaxonId].push(row);
+    taxonChangesBySpecies[row.previousSpeciesTaxonId]!.push(row);
   });
 
   const sortByCreationDate = (a: TaxonChangeData, b: TaxonChangeData) => {
@@ -301,8 +299,8 @@ export const getTaxonChangeDataGroupedByYear = (taxonChangeData: TaxonChangeData
 
   const taxonChangeDataGroupedByYear: Record<number, TaxonChangeData[]> = {};
   Object.keys(taxonChangesBySpecies).forEach((speciesTaxonId) => {
-    taxonChangesBySpecies[speciesTaxonId].sort(sortByCreationDate);
-    const firstLoggedTaxonChangeForSpecies = taxonChangesBySpecies[speciesTaxonId][0];
+    taxonChangesBySpecies[speciesTaxonId]!.sort(sortByCreationDate);
+    const firstLoggedTaxonChangeForSpecies = taxonChangesBySpecies[speciesTaxonId]![0]!;
     const year = new Date(firstLoggedTaxonChangeForSpecies.taxonChangeObsCreatedAt).getFullYear();
 
     if (year < earliestYear) {
@@ -312,7 +310,7 @@ export const getTaxonChangeDataGroupedByYear = (taxonChangeData: TaxonChangeData
     if (!taxonChangeDataGroupedByYear[year]) {
       taxonChangeDataGroupedByYear[year] = [];
     }
-    taxonChangeDataGroupedByYear[year].push(firstLoggedTaxonChangeForSpecies);
+    taxonChangeDataGroupedByYear[year]!.push(firstLoggedTaxonChangeForSpecies);
   });
 
   const sortByCreationDateReversed = (a: TaxonChangeData, b: TaxonChangeData) => {
@@ -329,7 +327,7 @@ export const getTaxonChangeDataGroupedByYear = (taxonChangeData: TaxonChangeData
   for (let i = earliestYear; i <= currentYear; i++) {
     yearDataSortedByReverseAdditionDate[i] = [];
     if (taxonChangeDataGroupedByYear[i]) {
-      yearDataSortedByReverseAdditionDate[i] = taxonChangeDataGroupedByYear[i].sort(sortByCreationDateReversed);
+      yearDataSortedByReverseAdditionDate[i] = taxonChangeDataGroupedByYear[i]!.sort(sortByCreationDateReversed);
     }
   }
 
