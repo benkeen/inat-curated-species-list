@@ -1,7 +1,8 @@
 {
-  "name": "@imerss/inat-curated-species-list-common",
+  "name": "@ecophilia/inat-curated-species-list-common",
   "description": "Shared code and types",
   "private": true,
+  "type": "module",
   "main": "index.ts",
   "types": "index.ts"
 }

@@ -1,4 +1,4 @@
-import type { GeneratorConfig } from '@imerss/inat-curated-species-list-tools';
+import type { GeneratorConfig } from '@ecophilia/inat-curated-species-list-tools';
 import throttledQueue from 'throttled-queue';
 
 import { getApiUrl } from './api';

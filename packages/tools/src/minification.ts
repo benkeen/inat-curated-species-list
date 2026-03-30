@@ -2,7 +2,7 @@
  * The data needed for this package is very large, after extracting only what we need from the iNat requests. This file
  * contains some helpers to minimize and expand the raw data so requests to the data source are kept as small as possible.
  */
-import { CuratedSpeciesData, Taxon, CuratedSpeciesDataMinified } from '@imerss/inat-curated-species-list-common';
+import { CuratedSpeciesData, Taxon, CuratedSpeciesDataMinified } from '@ecophilia/inat-curated-species-list-common';
 import { getShortestUniqueKey } from './helpers';
 
 import { version } from '../package.json';
@@ -30,7 +30,7 @@ export const minifySpeciesData = (data: CuratedSpeciesData, targetTaxons: Taxon[
     taxonData: {},
     taxons: targetTaxons,
     dateGenerated: new Date().toString(),
-    '@imerss/inat-curated-species-list-tools': version,
+    '@ecophilia/inat-curated-species-list-tools': version,
   };
 
   Object.keys(data).forEach((taxonId) => {

@@ -1,4 +1,4 @@
-import { CuratedSpeciesTableProps } from '@imerss/inat-curated-species-list-ui';
+import { CuratedSpeciesTableProps } from '@ecophilia/inat-curated-species-list-ui';
 
 declare global {
   interface Window {

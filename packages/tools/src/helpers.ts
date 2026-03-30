@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { Taxon, TaxonomyMap } from '@imerss/inat-curated-species-list-common';
+import { Taxon, TaxonomyMap } from '@ecophilia/inat-curated-species-list-common';
 import { GetDataPacketResponse, INatTaxonAncestor, Observation, TaxonChangeData } from '../types/generator.types';
 import fs from 'fs';
 import path from 'path';
@@ -39,7 +39,7 @@ export const getShortestUniqueKey: () => string = () => {
 export const getTaxonomy = (ancestors: INatTaxonAncestor[], taxonsToReturn: Taxon[]): TaxonomyMap =>
   ancestors.reduce((acc, curr) => {
     if (taxonsToReturn.indexOf(curr.rank) !== -1) {
-      acc[curr.rank] = curr.name;
+      (acc as Record<string, string>)[curr.rank] = curr.name;
     }
     return acc;
   }, {} as TaxonomyMap);
@@ -107,8 +107,8 @@ export const getConfirmationDateAccountingForTaxonChanges = (
         newSpeciesName: lastCuratorObservation.taxon.name,
         newSpeciesTaxonId: lastCuratorObservation.taxon_id,
         taxonChangeObsCreatedAt: lastCuratorObservation.created_at,
-        taxonChangeId: lastCuratorObservation.taxon_change.id,
-        taxonChangeType: lastCuratorObservation.taxon_change.type,
+        taxonChangeId: lastCuratorObservation.taxon_change!.id,
+        taxonChangeType: lastCuratorObservation.taxon_change!.type,
         active: lastCuratorObservation.taxon.is_active,
       });
 
@@ -129,7 +129,7 @@ export const getConfirmationDateAccountingForTaxonChanges = (
   // now loop through the curator observations. The first one that ISN'T a taxon change will be the original observation.
   // This could be a single taxon swap or a series. Any earlier identifications by the curator don't matter.
   const deprecatedTaxonIds: number[] = [];
-  let originalConfirmationDate: string;
+  let originalConfirmationDate = '';
   for (let i = 0; i < curatorObservations.length; i++) {
     if (i !== 0) {
       deprecatedTaxonIds.push(curatorObservations[i].taxonId);
@@ -149,7 +149,7 @@ const parseDataFile = (
   file: string,
   curators: string[],
   taxonsToReturn: Taxon[],
-  processedData,
+  processedData: Record<number, any>,
   taxonsToRemove: number[],
   taxonChangeData: TaxonChangeData[],
 ) => {
@@ -246,9 +246,9 @@ export const parseDataFiles = (
   omitTaxonChangeIds: number[],
   tempFolder: string,
 ) => {
-  const newAdditions = {};
+  const newAdditions: Record<number, any> = {};
   const taxonsToRemove: number[] = [];
-  const taxonChangeData = [];
+  const taxonChangeData: TaxonChangeData[] = [];
 
   for (let i = 1; i <= numFiles; i++) {
     parseDataFile(
@@ -287,7 +287,7 @@ export const getTaxonChangeDataGroupedByYear = (taxonChangeData: TaxonChangeData
     taxonChangesBySpecies[row.previousSpeciesTaxonId].push(row);
   });
 
-  const sortByCreationDate = (a, b) => {
+  const sortByCreationDate = (a: TaxonChangeData, b: TaxonChangeData) => {
     if (a.taxonChangeObsCreatedAt > b.taxonChangeObsCreatedAt) {
       return 1;
     } else if (a.taxonChangeObsCreatedAt < b.taxonChangeObsCreatedAt) {
@@ -299,7 +299,8 @@ export const getTaxonChangeDataGroupedByYear = (taxonChangeData: TaxonChangeData
   // sort them by creation date so the earliest taxon change observation is first
   const currentYear = new Date().getFullYear();
   let earliestYear = currentYear;
-  const taxonChangeDataGroupedByYear = {};
+
+  const taxonChangeDataGroupedByYear: Record<number, TaxonChangeData[]> = {};
   Object.keys(taxonChangesBySpecies).forEach((speciesTaxonId) => {
     taxonChangesBySpecies[speciesTaxonId].sort(sortByCreationDate);
     const firstLoggedTaxonChangeForSpecies = taxonChangesBySpecies[speciesTaxonId][0];
@@ -315,7 +316,7 @@ export const getTaxonChangeDataGroupedByYear = (taxonChangeData: TaxonChangeData
     taxonChangeDataGroupedByYear[year].push(firstLoggedTaxonChangeForSpecies);
   });
 
-  const sortByCreationDateReversed = (a, b) => {
+  const sortByCreationDateReversed = (a: TaxonChangeData, b: TaxonChangeData) => {
     if (a.taxonChangeObsCreatedAt > b.taxonChangeObsCreatedAt) {
       return -1;
     } else if (a.taxonChangeObsCreatedAt < b.taxonChangeObsCreatedAt) {
@@ -325,7 +326,7 @@ export const getTaxonChangeDataGroupedByYear = (taxonChangeData: TaxonChangeData
   };
 
   // sort each year's species changes by the reverse order that they were added (so the most recent shows up first)
-  const yearDataSortedByReverseAdditionDate = {};
+  const yearDataSortedByReverseAdditionDate: Record<number, TaxonChangeData[]> = {};
   for (let i = earliestYear; i <= currentYear; i++) {
     yearDataSortedByReverseAdditionDate[i] = [];
     if (taxonChangeDataGroupedByYear[i]) {
@@ -343,6 +344,13 @@ export const getTaxonChangeDataGroupedByYear = (taxonChangeData: TaxonChangeData
  * the data files anyway.
  */
 export const getNumINatPacketFiles = (tempFolder: string) => {
+  if (!fs.existsSync(tempFolder)) {
+    console.error(
+      `Temp folder not found: ${tempFolder}. Have you downloaded the iNat data files first? If not, set useLocalInatDataFiles to false in your config.`,
+    );
+    process.exit(1);
+  }
+
   const files = fs.readdirSync(tempFolder);
 
   let lastPacketNum = 1;

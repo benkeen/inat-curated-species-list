@@ -1,7 +1,7 @@
 'use client';
 
 import { FC } from 'react';
-import { CuratedSpeciesTable } from '@imerss/inat-curated-species-list-ui';
+import { CuratedSpeciesTable } from '@ecophilia/inat-curated-species-list-ui';
 import config from '../../dev-generator/config';
 
 import './globals.css';

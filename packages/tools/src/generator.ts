@@ -1,3 +1,4 @@
+#!/usr/bin/env tsx
 /**
  * The main data file generation script.
  */
@@ -12,7 +13,7 @@ import { clearTempFolder, initLogger } from './logs';
 import { DEFAULT_TAXONS } from './constants';
 import { getNumINatPacketFiles, parseDataFiles } from './helpers';
 import { GeneratorConfig, NewAddition } from '../types/generator.types';
-import { CuratedSpeciesData } from '@imerss/inat-curated-species-list-common';
+import { CuratedSpeciesData } from '@ecophilia/inat-curated-species-list-common';
 import { performance } from 'perf_hooks';
 
 export type { GeneratorConfig };

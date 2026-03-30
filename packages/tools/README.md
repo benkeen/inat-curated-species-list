@@ -1,6 +1,6 @@
-## @imerss/inat-curated-species-list-tools
+## @ecophilia/inat-curated-species-list-tools
 
-This package contains a script to generate the data files used for the [@imerss/inat-curated-species-list](https://github.com/IMERSS/inat-curated-species-list)
+This package contains a script to generate the data files used for the [@ecophilia/inat-curated-species-list](https://github.com/IMERSS/inat-curated-species-list)
 react components. Depending on what you want, it creates three separate JSON files for use by the script. The filenames
 are configurable, but these are the defaults:
 

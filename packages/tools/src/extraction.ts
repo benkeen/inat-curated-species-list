@@ -1,5 +1,5 @@
 import { GeneratorConfig, GetDataPacketResponse } from '../types/generator.types';
-import { CuratedSpeciesData, Taxon } from '@imerss/inat-curated-species-list-common';
+import { CuratedSpeciesData, Taxon } from '@ecophilia/inat-curated-species-list-common';
 import { getTaxonomy } from './helpers';
 import path from 'path';
 import fs from 'fs';

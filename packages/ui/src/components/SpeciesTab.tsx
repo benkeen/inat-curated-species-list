@@ -8,7 +8,7 @@ import {
   CuratedSpeciesDataMinified,
   Taxon,
   TaxonomyMap,
-} from '@imerss/inat-curated-species-list-common';
+} from '@ecophilia/inat-curated-species-list-common';
 
 export interface SpeciesTabProps {
   readonly dataUrl: string;

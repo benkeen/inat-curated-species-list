@@ -8,6 +8,9 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
 
+    "clean": {
+      "cache": false
+    },
     "generate": {},
     "lint": {
       "dependsOn": ["^lint"]

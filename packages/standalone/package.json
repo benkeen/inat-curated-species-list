@@ -1,17 +1,18 @@
 {
-  "name": "@imerss/inat-curated-species-list-standalone",
+  "name": "@ecophilia/inat-curated-species-list-standalone",
   "version": "2.0.0",
   "type": "module",
   "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "rollup --config"
+    "build": "rollup --config",
+    "clean": "rm -rf generated"
   },
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "@imerss/inat-curated-species-list-ui": "workspace:*"
+    "@ecophilia/inat-curated-species-list-ui": "workspace:*"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.2",

@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from 'react';
 import { Loader } from './Loader';
-import { constants } from '@imerss/inat-curated-species-list-common';
+import { constants } from '@ecophilia/inat-curated-species-list-common';
 import { YearNavigation } from './YearNavigation';
 import { getNewAdditionDataForUI, formatDate } from '../utils/helpers';
-import { NewAddition } from '@imerss/inat-curated-species-list-tools';
+import { NewAddition } from '@ecophilia/inat-curated-species-list-tools';
 import { NewAdditionsByYear } from '../ui.types';
 import { ViewIcon } from './ViewIcon';
 

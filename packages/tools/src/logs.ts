@@ -1,12 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import { createLogger, format, transports, Logger } from 'winston';
+import { createLogger, format, transports } from 'winston';
 import { sync } from 'rimraf';
 
 const { combine, timestamp, printf } = format;
 
 export const initLogger = (temporaryFolder: string) => {
-  const myFormat = printf(({ level, message, label, timestamp }) => {
+  const myFormat = printf(({ level, message, timestamp }) => {
     return `${timestamp} [${level}]: ${message}`;
   });
 

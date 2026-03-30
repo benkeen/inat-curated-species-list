@@ -1,4 +1,4 @@
-import { NewAddition } from '@imerss/inat-curated-species-list-tools';
+import { NewAddition } from '@ecophilia/inat-curated-species-list-tools';
 import { getNewAdditionDataForUI } from './helpers';
 import { describe, expect, test } from 'vitest';
 

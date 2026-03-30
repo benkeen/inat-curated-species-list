@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { CuratedSpeciesTable, CuratedSpeciesTableProps } from '@imerss/inat-curated-species-list-ui';
+import { CuratedSpeciesTable, CuratedSpeciesTableProps } from '@ecophilia/inat-curated-species-list-ui';
 
 // expose an initialization method on the window object
 window.initInatCuratedSpeciesList = (domElementId: string, config: CuratedSpeciesTableProps) => {

@@ -3,7 +3,7 @@ import { SpeciesTab } from './SpeciesTab';
 import { NewAdditionsTab } from './NewAdditionsTab';
 import { TaxonChangesTab } from './TaxonChangesTab';
 import { formatDate } from '../utils/helpers';
-import { CuratedSpeciesDataMinified } from '@imerss/inat-curated-species-list-common';
+import { CuratedSpeciesDataMinified } from '@ecophilia/inat-curated-species-list-common';
 
 export interface CuratedSpeciesTableProps {
   readonly speciesDataUrl: string;

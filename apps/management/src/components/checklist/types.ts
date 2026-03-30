@@ -1,7 +1,7 @@
 /**
  * Package exports:
  *
- * import { App, generateDataFiles } from '@imerss/inat-curated-species-list';
+ * import { App, generateDataFiles } from '@ecophilia/inat-curated-species-list';
  *
  * - `App`:               the top-level app. This outputs two tabs, one for the full species list table and another
  *                        showing new additions to the list.

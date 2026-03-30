@@ -1,5 +1,5 @@
 import { Logger } from 'winston';
-import { Taxon } from '@imerss/inat-curated-species-list-types';
+import { Taxon } from '@ecophilia/inat-curated-species-list-types';
 
 export type INatApiObsRequestParams = {
   readonly place_id: number;

@@ -1,4 +1,4 @@
-import type { GeneratorConfig } from '@imerss/inat-curated-species-list-tools';
+import type { GeneratorConfig } from '@ecophilia/inat-curated-species-list-tools';
 
 const config: GeneratorConfig = {
   curators: ['oneofthedavesiknow', 'gpohl', 'crispinguppy'],
@@ -8,15 +8,17 @@ const config: GeneratorConfig = {
   showLastGeneratedDate: true,
   baselineEndDate: '2024-01-01',
   trackNewAdditions: true,
-  trackTaxonChanges: true,
   newAdditionsFilename: 'new-additions-data.json',
+  trackTaxonChanges: true,
   taxonChangesFilename: 'taxon-changes-data.json',
   omitTaxonChangeIds: [136709],
   tempFolder: './temp',
 
-  useLocalInatDataFiles: true,
-  // generateSpeciesFile: false,
-  // generateNewAdditionsFile: false,
+  // only
+  useLocalInatDataFiles: false,
+
+  generateSpeciesFile: false,
+  generateNewAdditionsFile: false,
   generateTaxonChangesFile: true,
 };
 

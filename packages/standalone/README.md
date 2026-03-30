@@ -1,4 +1,4 @@
-## @imerss/inat-curated-species-list-standalone
+## @ecophilia/inat-curated-species-list-standalone
 
 This package contains a generated, minified version of the front-end JS code that you can add to your webpage and add the curated
 checklist and related features (new additions, taxon changes). You'll need to have generated the data files and.
@@ -8,7 +8,7 @@ files on whatever frequency you think it suitable.
 
 ### How to add
 
-1. First, add this to the `<head>` of your document (the body is fine, if that's a problem).
+1. First, add this to the `<head>` of your document (the body is fine, if adding it `head` is a problem).
 
 <script src="/path/to/inat-curated-species-list-standalone.js"></script>
 

@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { NewAddition } from '@imerss/inat-curated-species-list-tools';
+import { NewAddition } from '@ecophilia/inat-curated-species-list-tools';
 import { NewAdditionsByYear } from '../ui.types';
 
 export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);

@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { firstBy } from 'thenby';
-import { CuratedSpeciesData, CuratedSpeciesArrayItem, Taxon } from '@imerss/inat-curated-species-list-common';
-import { constants } from '@imerss/inat-curated-species-list-common';
+import { CuratedSpeciesData, CuratedSpeciesArrayItem, Taxon } from '@ecophilia/inat-curated-species-list-common';
+import { constants } from '@ecophilia/inat-curated-species-list-common';
 import { ViewIcon } from './ViewIcon';
 
 const { INAT_OBSERVATIONS_URL } = constants;

@@ -1,10 +1,10 @@
 import { FC, useEffect, useState } from 'react';
 import { Loader } from './Loader';
-import { constants } from '@imerss/inat-curated-species-list-common';
+import { constants } from '@ecophilia/inat-curated-species-list-common';
 import { YearNavigation } from './YearNavigation';
 import { formatDate, getCurrentYear } from '../utils/helpers';
 import { ViewIcon } from './ViewIcon';
-import { TaxonChangeType } from '@imerss/inat-curated-species-list-tools';
+import { TaxonChangeType } from '@ecophilia/inat-curated-species-list-tools';
 
 const { INAT_TAXON_CHANGES_URL, INAT_TAXON_URL } = constants;
 

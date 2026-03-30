@@ -1,6 +1,6 @@
 {
   "name": "inat-curated-list-dev-ui",
-  "description": "A local dev environment for the components in the published @imerss/inat-curated-species-list package.",
+  "description": "A local dev environment for the components in the published @ecophilia/inat-curated-species-list package.",
   "version": "0.1.0",
   "type": "module",
   "private": true,
@@ -9,11 +9,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --max-warnings 0",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf .next"
   },
   "dependencies": {
-    "@imerss/inat-curated-species-list-ui": "workspace:*",
-    "@imerss/inat-curated-species-list-common": "workspace:*",
+    "@ecophilia/inat-curated-species-list-ui": "workspace:*",
+    "@ecophilia/inat-curated-species-list-common": "workspace:*",
     "next": "^15.1.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"

@@ -41,5 +41,5 @@ export type CuratedSpeciesDataMinified = {
   };
   taxons: Taxon[];
   dateGenerated: string;
-  '@imerss/inat-curated-species-list-tools': string;
+  '@ecophilia/inat-curated-species-list-tools': string;
 };
