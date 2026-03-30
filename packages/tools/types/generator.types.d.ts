@@ -112,21 +112,6 @@ export type GeneratorConfig = {
    * and work off the downloaded files.
    */
   readonly useLocalInatDataFiles?: boolean;
-
-  /**
-   * Generates the species data file. Defaults to true.
-   */
-  readonly generateSpeciesFile?: boolean;
-
-  /**
-   * Generates the new additions data file. Defaults to true.
-   */
-  readonly generateNewAdditionsFile?: boolean;
-
-  /**
-   * Generates the taxon changes data file. Defaults to true.
-   */
-  readonly generateTaxonChangesFile?: boolean;
 };
 
 export type NewAddition = {

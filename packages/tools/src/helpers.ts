@@ -99,7 +99,6 @@ export const getConfirmationDateAccountingForTaxonChanges = (
       // curator
       i !== curatorIdentificationIndex
     ) {
-      if (lastCuratorObservation) console.log();
       taxonChangeData.push({
         observationId: obs.id, // not strictly needed, but useful for tracing purposes
         previousSpeciesName: currIdentification.taxon.name,

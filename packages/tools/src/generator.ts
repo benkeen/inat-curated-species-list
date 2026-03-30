@@ -6,6 +6,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import path from 'path';
 import fs from 'fs';
+import colors from 'ansi-colors';
 import { downloadDataPackets } from './request';
 import { extractSpeciesList } from './extraction';
 import { minifySpeciesData } from './minification';
@@ -17,6 +18,24 @@ import { CuratedSpeciesData } from '@ecophilia/inat-curated-species-list-common'
 import { performance } from 'perf_hooks';
 
 export type { GeneratorConfig };
+
+const DIVIDER = colors.dim('─'.repeat(56));
+
+const formatElapsed = (ms: number): string => {
+  if (ms < 1000) return `${Math.round(ms)}ms`;
+  const mins = Math.floor(ms / 60000);
+  const secs = ((ms % 60000) / 1000).toFixed(1);
+  return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+};
+
+const startStep = (stepNum: number, label: string): number => {
+  console.log(`\n${colors.bold.cyan(`[${stepNum}]`)} ${colors.bold(label)}`);
+  return performance.now();
+};
+
+const completeStep = (startTime: number): void => {
+  console.log(`    ${colors.green('✓')} ${colors.dim(formatElapsed(performance.now() - startTime))}`);
+};
 const { config: configFilePath } = yargs(hideBin(process.argv)).argv;
 
 const generateSpeciesDataFile = (config: GeneratorConfig, speciesData: CuratedSpeciesData, tempFolder: string) => {
@@ -103,15 +122,18 @@ export const getDataFilesContent = (config: GeneratorConfig, numDataFiles: numbe
     taxons: DEFAULT_TAXONS,
     omitTaxonChangeIds: [],
     useLocalInatDataFiles: false,
-    generateSpeciesFile: true,
-    generateNewAdditionsFile: true,
-    generateTaxonChangesFile: true,
     ...config.default,
   };
 
   const tempFolderFullPath = path.resolve(process.cwd(), cleanConfig.tempFolder);
 
+  console.log(`\n${DIVIDER}`);
+  console.log(colors.bold('  iNat Curated Species List Generator'));
+  console.log(DIVIDER);
+
+  const totalStart = performance.now();
   let currentStep = 1;
+  const generatedFiles: string[] = [];
 
   // when `processLocalFilesMode` is enabled, the iNat data has already been generated and is present on disk under `packet-X.json` files.
   let numPacketFiles: number;
@@ -120,53 +142,52 @@ export const getDataFilesContent = (config: GeneratorConfig, numDataFiles: numbe
   } else {
     clearTempFolder(tempFolderFullPath);
     const logger = initLogger(tempFolderFullPath);
-    const start = performance.now();
 
-    console.log(`Step ${currentStep}: download data from iNat`);
+    const t = startStep(currentStep++, 'Downloading data from iNat');
     numPacketFiles = await downloadDataPackets(cleanConfig, tempFolderFullPath, logger);
-    const end = performance.now();
-    const date = new Date(end - start);
-    console.log(`Time taken: ${date.getMinutes()}:${date.getSeconds()}s`);
-    currentStep++;
+    completeStep(t);
   }
 
-  const generatedFiles = [];
-  if (cleanConfig.generateSpeciesFile) {
-    console.log(`\nStep ${currentStep}: extract species list`);
+  if (cleanConfig.trackNewAdditions) {
+    let t = startStep(currentStep++, 'Extracting species list');
     const speciesData = extractSpeciesList(cleanConfig, tempFolderFullPath, numPacketFiles);
-    currentStep++;
+    completeStep(t);
 
-    console.log(`\nStep ${currentStep}: generate species data file`);
+    t = startStep(currentStep++, 'Generating species data file');
     const speciesDataFilename = generateSpeciesDataFile(cleanConfig, speciesData, tempFolderFullPath);
     generatedFiles.push(speciesDataFilename);
-    currentStep++;
+    completeStep(t);
   }
 
-  console.log(`\nStep ${currentStep}: parsing iNat data`);
+  let t = startStep(currentStep++, 'Parsing iNat data');
   const { newAdditionsArray, taxonChangeDataGroupedByYear } = getDataFilesContent(
     cleanConfig,
     numPacketFiles,
     tempFolderFullPath,
   );
-  currentStep++;
+  completeStep(t);
 
-  if (cleanConfig.trackNewAdditions && cleanConfig.generateNewAdditionsFile) {
-    console.log(`\nStep ${currentStep}: generate new additions data file`);
+  if (cleanConfig.trackNewAdditions) {
+    t = startStep(currentStep++, 'Generating new additions file');
     const newAdditionsFilename = path.resolve(`${tempFolderFullPath}/${cleanConfig.newAdditionsFilename}`);
     fs.writeFileSync(newAdditionsFilename, JSON.stringify(newAdditionsArray), 'utf-8');
     generatedFiles.push(newAdditionsFilename);
-    currentStep++;
+    completeStep(t);
   }
 
-  if (cleanConfig.trackTaxonChanges && cleanConfig.generateTaxonChangesFile) {
-    console.log(`\nStep ${currentStep}: generate taxon changes data file`);
+  if (cleanConfig.trackTaxonChanges) {
+    t = startStep(currentStep++, 'Generating taxon changes file');
     const taxonChangesFilename = path.resolve(`${tempFolderFullPath}/${cleanConfig.taxonChangesFilename}`);
     fs.writeFileSync(taxonChangesFilename, JSON.stringify(taxonChangeDataGroupedByYear), 'utf-8');
     generatedFiles.push(taxonChangesFilename);
-    currentStep++;
+    completeStep(t);
   }
 
-  console.log('\n__________________________________________\n');
-  console.log(`Complete. Data file(s) generated:`);
-  console.log(generatedFiles.join('\n') + '\n\n');
+  const totalElapsed = formatElapsed(performance.now() - totalStart);
+  console.log(`\n${DIVIDER}`);
+  console.log(
+    `  ${colors.bold.green('✓ Complete')} ${colors.dim(`in ${totalElapsed}`)} — ${colors.bold(String(generatedFiles.length))} file(s) generated:`,
+  );
+  generatedFiles.forEach((f) => console.log(`    ${colors.dim('→')} ${f}`));
+  console.log(`${DIVIDER}\n`);
 })();
