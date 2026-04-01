@@ -153,11 +153,13 @@ const parseDataFile = (
 
   content.results.forEach((obs) => {
     // now loop through all identifications on this observation and log the first one that was confirmed or added by
-    // one of our curators
-    // *** assumption: the array is ordered oldest to newest
+    // one of our curators. Sort oldest to newest first since iNat doesn't guarantee ordering.
+    const identifications = [...obs.identifications].sort((a, b) =>
+      a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : 0,
+    );
     let curatorTaxonId: number | null = null;
-    for (let i = 0; i < obs.identifications.length; i++) {
-      const ident = obs.identifications[i]!;
+    for (let i = 0; i < identifications.length; i++) {
+      const ident = identifications[i]!;
 
       if (!ident.current) {
         continue;
@@ -195,7 +197,7 @@ const parseDataFile = (
 
       const { deprecatedTaxonIds, originalConfirmationDate } = getConfirmationDateAccountingForTaxonChanges(
         i,
-        obs,
+        { ...obs, identifications },
         taxonChangeData,
       );
       taxonsToRemove.push(...deprecatedTaxonIds);

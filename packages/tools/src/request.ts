@@ -75,19 +75,27 @@ export const downloadDataPackets = async (config: GeneratorConfig, tempFolder: s
   progress.start(numRequests, 1);
 
   // this processes each request sequentially to prevent too many requests to the iNat server
-  for (let packetNum = 2; packetNum <= numRequests; packetNum++) {
-    const { totalResults } = await throttle(() =>
-      downloadDataPacket({
-        curators: curatorList,
-        placeId,
-        taxonId,
-        packetNum,
-        tempFolder,
-        logger,
-      }),
-    );
-    logger.log('info', `Packet num ${formatNum(packetNum)}, results left to retrieve: ${formatNum(totalResults)}`);
-    progress.update(packetNum);
+  try {
+    for (let packetNum = 2; packetNum <= numRequests; packetNum++) {
+      const { totalResults } = await throttle(() =>
+        downloadDataPacket({
+          curators: curatorList,
+          placeId,
+          taxonId,
+          packetNum,
+          tempFolder,
+          logger,
+        }),
+      );
+      logger.log('info', `Packet num ${formatNum(packetNum)}, results left to retrieve: ${formatNum(totalResults)}`);
+      progress.update(packetNum);
+    }
+  } catch (e) {
+    progress.stop();
+    const message = e instanceof Error ? e.message : String(e);
+    console.error(`\n\n  ERROR: iNat request failed — ${message}`);
+    console.error(`  Check the log file in the temp folder for details.\n`);
+    throw e;
   }
 
   logger.log('info', 'All data downloaded');
@@ -120,9 +128,10 @@ export const downloadDataPacket = async ({
   try {
     rawResponse = await getDataPacket(placeId, taxonId, curators, logger);
   } catch (e) {
-    logger.log('error', `request error: ${JSON.stringify(e)}`);
+    const message = e instanceof Error ? e.message : JSON.stringify(e);
+    logger.log('error', `request error: ${message}`);
     logger.log('debug', `resume transaction data: ${JSON.stringify({ curators, placeId, taxonId, lastId })}`);
-    process.exit(1);
+    throw e;
   }
 
   const resp: any = (await rawResponse.json()) as GetDataPacketResponse;
