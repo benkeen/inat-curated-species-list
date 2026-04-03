@@ -20,7 +20,7 @@ export const loadBaselineData = () => async (dispatch: any) => {
 
 export const BASELINE_DATA_SAVE = 'BASELINE_DATA_SAVE';
 export const BASELINE_DATA_SAVED = 'BASELINE_DATA_SAVED';
-export const saveBaselineData = (data) => {};
+export const saveBaselineData = (_data: any) => {};
 
 export const BASELINE_DATA_SORT = 'BASELINE_DATA_SORT';
 export const sortBaselineData = (sortCol: SortCol, sortDir: SortDir) => ({
@@ -28,4 +28,4 @@ export const sortBaselineData = (sortCol: SortCol, sortDir: SortDir) => ({
   payload: { sortCol, sortDir },
 });
 
-export const deleteBaselineTaxon = (taxonId) => {};
+export const deleteBaselineTaxon = (_taxonId: any) => {};

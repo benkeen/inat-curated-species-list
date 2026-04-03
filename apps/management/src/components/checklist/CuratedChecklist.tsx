@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import Box from '@mui/material/Box';
 import { Logger } from './Logger';
-import { loggerHandle } from './types';
+import { LoggerHandle } from './types';
 
 export const CuratedChecklist = () => {
   //   const [curatorUsernames, setCuratorUsernames] = useState(() => C.DEMO_DEFAULT_CURATOR_INAT_USERNAMES.join(','));

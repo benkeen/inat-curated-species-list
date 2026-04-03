@@ -71,7 +71,7 @@ export const ValidateBaselineSpeciesDialog = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={() => onComplete(regionSpecies)} disabled={loading}>
+          <Button onClick={() => onComplete(regionSpecies as RegionSpecies)} disabled={loading}>
             Update
           </Button>
         </DialogActions>

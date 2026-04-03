@@ -10,7 +10,7 @@ export type DownloadDataPacketResponse = {
 
 // let lastId: number | null = null;
 let numResults = 0;
-let numRequests = 0;
+// let numRequests = 0;
 
 /**
  * This method:

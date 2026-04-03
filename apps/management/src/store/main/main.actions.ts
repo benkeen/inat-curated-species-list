@@ -8,7 +8,7 @@ export const purgeState = () => ({
 
 export const requestInatObservations =
   ({ placeId, taxonId, curators }: any) =>
-  async (dispatch: any) => {
+  async () => {
     const throttle = throttledQueue(1, 1050);
 
     // do our initial request. This is the only request that returns the total number of results in the result set. Once

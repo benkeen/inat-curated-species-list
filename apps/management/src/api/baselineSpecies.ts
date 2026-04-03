@@ -28,7 +28,7 @@ export const requestSpeciesData = async (ids: number[]) => {
   );
   const json = await resp.json();
 
-  return json.results.map(({ id, name, is_active }) => ({
+  return json.results.map(({ id, name, is_active }: any) => ({
     id,
     name,
     isActive: is_active,
