@@ -13,12 +13,11 @@ export const requestInatObservations =
 
     // do our initial request. This is the only request that returns the total number of results in the result set. Once
     // we get the data back, initialize the progress bar and kick off all the remaining requests within our request throttler
-    // @ts-ignore
     const { totalResults, numRequests, lastId } = await throttle<DownloadDataPacketResponse>(() =>
       getObservationData({ placeId, taxonId, curators }),
     );
 
-    console.log({ totalResults, lastId });
+    console.log({ totalResults, lastId, numRequests });
   };
 
 const getObservationData = async ({ placeId, taxonId, curators }: any) => {

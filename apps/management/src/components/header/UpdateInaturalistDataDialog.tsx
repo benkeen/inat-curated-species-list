@@ -5,20 +5,15 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
+import { useUpdateInaturalistData } from './hooks/useUpdateInaturalistData';
 
 type UpdateInaturalistDataDialogProps = {
   open: boolean;
   onClose: () => void;
-  isActive: boolean;
-  startSync: () => void;
 };
 
-export const UpdateInaturalistDataDialog = ({
-  open,
-  onClose,
-  isActive,
-  startSync,
-}: UpdateInaturalistDataDialogProps) => {
+export const UpdateInaturalistDataDialog = ({ open, onClose }: UpdateInaturalistDataDialogProps) => {
+  const { isActive, startSync } = useUpdateInaturalistData();
   return (
     <Dialog
       open={open}

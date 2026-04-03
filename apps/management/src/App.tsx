@@ -9,7 +9,7 @@ import * as mainActions from './store/main/main.actions';
 import * as mainSelectors from './store/main/main.selectors';
 import * as C from './constants';
 import { createTheme, ThemeProvider } from '@mui/material';
-import BaselineSpecies from './components/baseline/BaselineSpecies.container';
+import { BaselineSpecies } from './components/baseline/BaselineSpecies';
 import { FileSettings } from './components/settings/FileSettings';
 import { MainSettingsPage } from './components/settings/MainSettings';
 import { PublishSettings } from './components/settings/PublishSettings';

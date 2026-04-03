@@ -1,5 +1,6 @@
 import fs from 'fs';
 import fetch from 'node-fetch';
+import path from 'path';
 import qs from 'query-string';
 import { getBackupSettings } from './backup-settings.js';
 
@@ -27,7 +28,7 @@ export const downloadDataPacket = async ({ curators, packetNum, placeId, taxonId
   const totalResults = resp.total_results;
 
   // logger.log('info', 'request successful');
-
+  let numRequests = 0;
   if (totalResults <= 0) {
     return {
       totalResults,

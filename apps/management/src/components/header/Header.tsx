@@ -13,7 +13,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Logout from '@mui/icons-material/Logout';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import UpdateInaturalistDataDialog from './UpdateInaturalistDataDialog.container';
+import { UpdateInaturalistDataDialog } from './UpdateInaturalistDataDialog';
 
 export const Header = () => {
   const [updateDataDialogVisible, setUpdateDataDialogVisibility] = useState(false);
@@ -23,7 +23,7 @@ export const Header = () => {
       <AppBar position="fixed" elevation={0}>
         <Toolbar>
           <Typography variant="h6" sx={{ my: 2 }}>
-            Checklist Manager
+            Curated Checklist Manager
           </Typography>{' '}
           <Divider />
           <Box sx={{ flexGrow: 1 }} />
