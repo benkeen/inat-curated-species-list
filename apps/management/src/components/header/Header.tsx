@@ -1,22 +1,35 @@
 import { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Logout from '@mui/icons-material/Logout';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import { UpdateInaturalistDataDialog } from './UpdateInaturalistDataDialog';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { Link as RouterLink } from 'react-router-dom';
+import { useInatDownloadStatus } from '../../hooks/useInatDownloadStatus';
 
 export const Header = () => {
-  const [updateDataDialogVisible, setUpdateDataDialogVisibility] = useState(false);
+  const [settingsMenuAnchor, setSettingsMenuAnchor] = useState<null | HTMLElement>(null);
+  const { status: downloadStatus, startedAt, progress } = useInatDownloadStatus();
+
+  const downloadTooltip = (() => {
+    if (downloadStatus !== 'running') return '';
+    if (!progress || !startedAt || progress.packetNum <= 1) return 'Active iNat observation download';
+    const elapsed = Date.now() - new Date(startedAt).getTime();
+    const msPerPacket = elapsed / progress.packetNum;
+    const remainingMs = (progress.totalPackets - progress.packetNum) * msPerPacket;
+    const mins = Math.floor(remainingMs / 60_000);
+    const secs = Math.round((remainingMs % 60_000) / 1000);
+    const etaStr = mins > 0 ? `~${mins}m ${secs}s remaining` : `~${secs}s remaining`;
+    return `Active iNat observation download — ${etaStr}`;
+  })();
 
   return (
     <>
@@ -27,16 +40,49 @@ export const Header = () => {
           </Typography>{' '}
           <Divider />
           <Box sx={{ flexGrow: 1 }} />
-          <List>
-            <ListItem key="" disablePadding>
-              <ListItemButton onClick={() => setUpdateDataDialogVisibility(true)}>
-                <ListItemIcon sx={{ minWidth: 30 }}>
-                  <RefreshIcon />
-                </ListItemIcon>
-                <ListItemText sx={{ my: 0 }} primary="Update Checklist Data from iNat" />
-              </ListItemButton>
-            </ListItem>
-          </List>
+          {downloadStatus === 'running' && (
+            <Tooltip title={downloadTooltip}>
+              <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+            </Tooltip>
+          )}
+          <IconButton
+            size="large"
+            aria-label="settings"
+            color="inherit"
+            onClick={(e) => setSettingsMenuAnchor(e.currentTarget)}
+          >
+            <SettingsIcon />
+          </IconButton>
+          <Menu
+            anchorEl={settingsMenuAnchor}
+            open={Boolean(settingsMenuAnchor)}
+            onClose={() => setSettingsMenuAnchor(null)}
+          >
+            <MenuItem
+              component={RouterLink}
+              to="/settings/main"
+              onClick={() => setSettingsMenuAnchor(null)}
+              sx={{ fontSize: '0.85rem' }}
+            >
+              Main Settings
+            </MenuItem>
+            <MenuItem
+              component={RouterLink}
+              to="/settings/files"
+              onClick={() => setSettingsMenuAnchor(null)}
+              sx={{ fontSize: '0.85rem' }}
+            >
+              Files/Backup
+            </MenuItem>
+            <MenuItem
+              component={RouterLink}
+              to="/settings/publish"
+              onClick={() => setSettingsMenuAnchor(null)}
+              sx={{ fontSize: '0.85rem' }}
+            >
+              Publish Settings
+            </MenuItem>
+          </Menu>
           <IconButton size="large" color="inherit">
             <AccountCircle />
           </IconButton>
@@ -45,10 +91,6 @@ export const Header = () => {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <UpdateInaturalistDataDialog
-        open={updateDataDialogVisible}
-        onClose={() => setUpdateDataDialogVisibility(false)}
-      />
     </>
   );
 };

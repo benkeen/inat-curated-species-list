@@ -2,7 +2,8 @@ import express from 'express';
 import { getBackupSettings, updateBackupSettings } from './backup-settings.js';
 import { getMainSettings, updateMainSettings } from './main-settings.js';
 import { getBaselineSpecies, updateBaselineSpecies } from './baseline-species.js';
-import { downloadDataPacket } from './observation-data.js';
+import { startInatDataDownload, getInatDataLog } from './observation-data.js';
+import { getDownloadState, setDownloadState, subscribeToDownload } from './inat-download-state.js';
 import cors from 'cors';
 import nocache from 'nocache';
 import bodyParser from 'body-parser';
@@ -52,11 +53,56 @@ app.post('/baseline-species', (req, res) => {
 
 app.post('/species-counts', (req, res) => {});
 
-app.get('/obs-data', async (req, res) => {
-  const { placeId, taxonId, curators, packetNum = 1 } = req.query;
-  const resp = await downloadDataPacket({ placeId, taxonId, curators, packetNum, lastId: 1, numResults: 10 });
+app.get('/inat-data-log', (req, res) => {
+  const data = getInatDataLog();
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(resp));
+  res.end(JSON.stringify(data));
+});
+
+// POST /start-inat-download — fires the download in the background and returns immediately.
+// Progress is tracked in inat-download-state.js so any SSE subscriber can follow along.
+app.post('/start-inat-download', (req, res) => {
+  const current = getDownloadState();
+  if (current.status === 'running') {
+    return res.json({ success: false, error: 'A download is already in progress.' });
+  }
+
+  const maxPackets = req.query.maxPackets ? parseInt(req.query.maxPackets, 10) : null;
+
+  setDownloadState({
+    status: 'running',
+    startedAt: new Date().toISOString(),
+    progress: null,
+    result: null,
+    error: null,
+  });
+
+  // Run without awaiting so the request returns immediately
+  startInatDataDownload((progress) => setDownloadState({ status: 'running', progress }), { maxPackets })
+    .then((result) => setDownloadState({ status: 'done', result, progress: null }))
+    .catch((e) => setDownloadState({ status: 'error', error: e.message, progress: null }));
+
+  res.json({ success: true });
+});
+
+// GET /inat-download-progress — SSE stream of the current download state.
+// Sends the current state immediately on connect, then pushes updates as they happen.
+// Clients can disconnect and reconnect freely without affecting the download.
+app.get('/inat-download-progress', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+
+  const sendState = (state) => {
+    res.write(`data: ${JSON.stringify(state)}\n\n`);
+  };
+
+  // Immediately send the current state so reconnecting clients are up to date
+  sendState(getDownloadState());
+
+  const unsubscribe = subscribeToDownload(sendState);
+  req.on('close', unsubscribe);
 });
 
 app.listen(port, () => {

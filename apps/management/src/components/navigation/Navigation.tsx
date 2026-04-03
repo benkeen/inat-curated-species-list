@@ -1,15 +1,10 @@
 import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListSubheader from '@mui/material/ListSubheader';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import SettingsIcon from '@mui/icons-material/Settings';
-import BackupIcon from '@mui/icons-material/Backup';
-import PublishIcon from '@mui/icons-material/Publish';
 
 export const Navigation = () => {
   const location = useLocation();
@@ -59,36 +54,17 @@ export const Navigation = () => {
             </ListItem>
           ))}
         </List>
-        <Divider />
-        <List
-          subheader={
-            <ListSubheader component="div" id="nested-list-subheader">
-              Settings
-            </ListSubheader>
-          }
-        >
+        <Divider sx={{ borderColor: 'grey.200' }} />
+        <List>
           <ListItem disablePadding>
-            <ListItemButton component={(props) => <RouterLink {...props} to="/settings/main" />}>
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary="Main Settings" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component={(props) => <RouterLink {...props} to="/settings/files" />}>
-              <ListItemIcon>
-                <BackupIcon />
-              </ListItemIcon>
-              <ListItemText primary="Files/Backup" />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton component={(props) => <RouterLink {...props} to="/settings/publish" />}>
-              <ListItemIcon>
-                <PublishIcon />
-              </ListItemIcon>
-              <ListItemText primary="Publish Settings" />
+            <ListItemButton
+              component={(props) => <RouterLink {...props} to="/update-inat-data" />}
+              selected={location.pathname === '/update-inat-data'}
+            >
+              <ListItemText
+                primary="Update iNat Data"
+                primaryTypographyProps={{ fontWeight: 'bold', color: 'primary.main' }}
+              />
             </ListItemButton>
           </ListItem>
         </List>

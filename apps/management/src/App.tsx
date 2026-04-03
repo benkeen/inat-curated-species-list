@@ -10,6 +10,7 @@ import * as mainSelectors from './store/main/main.selectors';
 import * as C from './constants';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { BaselineSpecies } from './components/baseline/BaselineSpecies';
+import { UpdateInatData } from './components/update-inat-data/UpdateInatData';
 import { FileSettings } from './components/settings/FileSettings';
 import { MainSettingsPage } from './components/settings/MainSettings';
 import { PublishSettings } from './components/settings/PublishSettings';
@@ -26,7 +27,7 @@ const checkState = async (store: any) => {
 function App() {
   const theme = createTheme({
     typography: {
-      fontFamily: 'georgia',
+      fontFamily: 'Trebuchet MS',
     },
     palette: {
       primary: {
@@ -46,8 +47,8 @@ function App() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor} onBeforeLift={() => checkState(store)}>
         <ThemeProvider theme={theme}>
-          <Header />
           <BrowserRouter>
+            <Header />
             <Container maxWidth="lg" style={{ height: '100%' }}>
               <Grid container spacing={3} paddingTop={10} height="100%">
                 <Grid size={3}>
@@ -58,6 +59,7 @@ function App() {
                     <Route index path="/" element={<div>(router - login or redirect to curated checklist page)</div>} />
                     <Route path="curated-checklist" element={<CuratedChecklist />} />
                     <Route path="baseline-species" element={<BaselineSpecies />} />
+                    <Route path="update-inat-data" element={<UpdateInatData />} />
                     <Route path="settings/main" element={<MainSettingsPage />} />
                     <Route path="settings/files" element={<FileSettings />} />
                     <Route path="settings/publish" element={<PublishSettings />} />
