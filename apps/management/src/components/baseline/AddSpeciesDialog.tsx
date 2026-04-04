@@ -62,25 +62,46 @@ export const AddSpeciesDialog = ({ open, onClose }: Props) => {
         return;
       }
 
-      const url = `https://api.inaturalist.org/v2/observations?place_id=${placeId}&taxon_id=${taxonIdInput}&per_page=1&quality_grade=research&order=desc&order_by=created_at&fields=(taxon:(name:!t))`;
+      const speciesCountsUrl = `https://api.inaturalist.org/v2/observations/species_counts?spam=false&taxon_id=${taxonIdInput}&place_id=${placeId}&preferred_place_id=${placeId}&quality_grade=research&locale=en-US&per_page=1&fields=(taxon:(id:!t,is_active:!t,name:!t,preferred_common_name:!t,rank:!t))`;
 
-      const [inatResp, curatorResp] = await Promise.all([fetch(url), getCuratorReviewCount(taxonId).catch(() => null)]);
+      const [speciesCountsResp, curatorResp] = await Promise.all([
+        fetch(speciesCountsUrl),
+        getCuratorReviewCount(taxonId).catch(() => null),
+      ]);
 
-      if (!inatResp.ok) throw new Error(`iNat API returned ${inatResp.status}`);
-      const [inatData, curatorData] = await Promise.all([
-        inatResp.json(),
+      if (!speciesCountsResp.ok) throw new Error(`iNat API returned ${speciesCountsResp.status}`);
+      const [speciesCountsData, curatorData] = await Promise.all([
+        speciesCountsResp.json(),
         curatorResp ? curatorResp.json().catch(() => null) : Promise.resolve(null),
       ]);
 
-      if (!inatData.results?.length) {
-        setLookupError('No research grade observations found for this taxon in the configured place.');
+      let taxonName: string;
+      let researchGradeCount: number;
+
+      if (speciesCountsData.results?.length > 0) {
+        taxonName = speciesCountsData.results[0].taxon.name;
+        researchGradeCount = speciesCountsData.results[0].count;
       } else {
-        setLookupResult({
-          name: inatData.results[0].taxon.name,
-          researchGradeCount: inatData.total_results,
-          curatorReviewCount: curatorData?.count ?? null,
-        });
+        // No RG observations in region — look up taxon name separately
+        researchGradeCount = 0;
+        const taxaResp = await fetch(
+          `https://api.inaturalist.org/v2/taxa/${taxonIdInput}?fields=(name:!t,is_active:!t)`,
+        );
+        if (!taxaResp.ok) throw new Error(`iNat taxa API returned ${taxaResp.status}`);
+        const taxaData = await taxaResp.json();
+        if (!taxaData.results?.length) {
+          setLookupError('Taxon not found on iNaturalist.');
+          setLoading(false);
+          return;
+        }
+        taxonName = taxaData.results[0].name;
       }
+
+      setLookupResult({
+        name: taxonName,
+        researchGradeCount,
+        curatorReviewCount: curatorData?.count ?? null,
+      });
     } catch (e: any) {
       setLookupError(e.message || 'Failed to fetch data from iNaturalist.');
     } finally {

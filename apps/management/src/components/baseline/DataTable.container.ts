@@ -23,7 +23,7 @@ const mapStateToProps = (state: ReduxState, ownProps: OwnProps) => {
 
 const mapDispatchToProps = (dispatch: any) => ({
   onSort: (sortCol: SortCol, sortDir: SortDir) => dispatch(actions.sortBaselineData(sortCol, sortDir)),
-  onDeleteRow: () => {},
+  onDeleteRows: (taxonIds: number[]) => dispatch(actions.deleteAndSaveBaselineSpecies(taxonIds)),
 });
 
 const container = connect(mapStateToProps, mapDispatchToProps)(DataTable);

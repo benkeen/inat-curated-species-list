@@ -33,7 +33,15 @@ export const generateCuratorSummary = () => {
   }
 
   const settings = getMainSettings();
-  const curatorList = Array.isArray(settings.curators) ? settings.curators : [];
+  const rawCurators = settings.curators;
+  const curatorList = Array.isArray(rawCurators)
+    ? rawCurators
+    : typeof rawCurators === 'string' && rawCurators.trim()
+      ? rawCurators
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
 
   if (!curatorList.length) {
     throw new Error('No curators configured in main settings.');

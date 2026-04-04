@@ -3,6 +3,7 @@ export type BaselineSpeciesInatData = {
   readonly name: string;
   readonly isActive: boolean;
   readonly researchGradeReviewCount?: number;
+  readonly totalObservationCount?: number;
   readonly curatorReviewCount?: number;
 };
 

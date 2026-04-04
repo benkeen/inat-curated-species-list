@@ -46,10 +46,14 @@ const getSortedTaxonIds = (data: BaselineSpeciesInatData[], sortDir: SortDir, so
         }
       } else if (sortCol === 'researchGradeReviewCount') {
         if (sortDir === 'asc') {
-          return (a.researchGradeReviewCount || 0) - (b.researchGradeReviewCount || 0);
+          return (a.totalObservationCount || 0) - (b.totalObservationCount || 0);
         } else {
-          return (b.researchGradeReviewCount || 0) - (a.researchGradeReviewCount || 0);
+          return (b.totalObservationCount || 0) - (a.totalObservationCount || 0);
         }
+      } else if (sortCol === 'isActive') {
+        const aVal = a.isActive ? 1 : 0;
+        const bVal = b.isActive ? 1 : 0;
+        return sortDir === 'asc' ? aVal - bVal : bVal - aVal;
       }
 
       if (sortDir === 'asc') {
@@ -62,8 +66,8 @@ const getSortedTaxonIds = (data: BaselineSpeciesInatData[], sortDir: SortDir, so
 
 const initialState: BaselineDataState = {
   data: {},
-  sortCol: 'researchGradeReviewCount',
-  sortDir: 'desc',
+  sortCol: 'name',
+  sortDir: 'asc',
   sortedTaxonIds: [],
   isLoading: false,
   isLoaded: false,
@@ -110,6 +114,21 @@ const baselineDataReducer = (state = initialState, action: any) => {
       };
     }
 
+    case actions.BASELINE_DATA_DELETE: {
+      const idsToDelete: number[] = action.payload;
+      const newData = { ...state.data };
+      idsToDelete.forEach((id) => delete newData[id]);
+      const newArray: BaselineSpeciesInatData[] = Object.keys(newData).map((id) => ({
+        id: parseInt(id),
+        ...newData[id],
+      }));
+      return {
+        ...state,
+        data: newData,
+        sortedTaxonIds: getSortedTaxonIds(newArray, state.sortDir, state.sortCol),
+      };
+    }
+
     case actions.BASELINE_DATA_ADD: {
       const species: BaselineSpeciesInatData = action.payload;
       const newData = {
@@ -121,6 +140,38 @@ const baselineDataReducer = (state = initialState, action: any) => {
           curatorReviewCount: species.curatorReviewCount,
         },
       };
+      const newArray: BaselineSpeciesInatData[] = Object.keys(newData).map((id) => ({
+        id: parseInt(id),
+        ...newData[id],
+      }));
+      return {
+        ...state,
+        data: newData,
+        sortedTaxonIds: getSortedTaxonIds(newArray, state.sortDir, state.sortCol),
+      };
+    }
+
+    case actions.BASELINE_DATA_BULK_UPDATE: {
+      const updates: Array<{
+        id: number;
+        isActive: boolean;
+        researchGradeReviewCount: number;
+        totalObservationCount: number;
+      }> = action.payload;
+      const updatesMap = new Map(updates.map((u) => [u.id, u]));
+      const newData = { ...state.data };
+      for (const idStr of Object.keys(newData)) {
+        const id = parseInt(idStr);
+        const update = updatesMap.get(id);
+        if (update) {
+          newData[id] = {
+            ...newData[id],
+            isActive: update.isActive,
+            researchGradeReviewCount: update.researchGradeReviewCount,
+            totalObservationCount: update.totalObservationCount,
+          };
+        }
+      }
       const newArray: BaselineSpeciesInatData[] = Object.keys(newData).map((id) => ({
         id: parseInt(id),
         ...newData[id],

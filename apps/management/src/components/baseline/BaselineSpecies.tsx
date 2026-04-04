@@ -9,68 +9,28 @@ import Tabs from '@mui/material/Tabs';
 import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { IconButton } from '@mui/material';
-// import { updateBaselineSpecies } from '../../api/api';
-// import { AddBaselineTaxonsDialog } from './AddBaselineTaxonsDialog';
-// import { ValidateBaselineSpeciesDialog } from './ValidateBaselineSpeciesDialog';
 import { Spinner } from '../loading/spinner';
 import DataTable from './DataTable.container';
 import { AddSpeciesDialog } from './AddSpeciesDialog';
-// import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-// import { combineSpeciesLists } from '../../utils';
+import { CheckBaselineSpeciesDialog } from './CheckBaselineSpeciesDialog';
 import { useBaselineSpecies } from './hooks/useBaselineSpecies';
 
 export const BaselineSpecies = () => {
-  const { data, isLoading, validationDate } = useBaselineSpecies();
-  // const [saving, setSaving] = useState(false);
-  // const [error, setError] = useState('');
-  // const [saved, setSaved] = useState(false);
+  const { data, isLoading } = useBaselineSpecies();
   const [currentTab, setCurrentTab] = useState(0);
   const [filterInput, setFilterInput] = useState('');
   const [filterText, setFilterText] = useState('');
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [checkDialogOpen, setCheckDialogOpen] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setFilterText(filterInput), 300);
     return () => clearTimeout(t);
   }, [filterInput]);
-  // const [mainSettings, setMainSettings] = useState<MainSettings | {}>({});
-  // const [addBaselineTaxonDialogOpen, setBaselineTaxonDialogOpen] = useState(false);
-  // const [validateBaselineTaxonDialogOpen, setValidateBaselineTaxonDialogOpen] = useState(false);
-
-  // const onSubmit = async (e?: any) => {
-  //   e.preventDefault();
-  //   // setSaving(true);
-
-  //   const resp = await updateBaselineSpecies(data);
-  //   const { success, error: updateConfigError } = await resp.json();
-
-  //   // setSaving(false);
-
-  //   if (success) {
-  //     setError('');
-  //     setSaved(true);
-  //   } else {
-  //     setError(updateConfigError);
-  //   }
-  // };
-
-  const loader = isLoading ? <Spinner /> : null;
-
-  // const getAlert = () => {
-  //   if (error) {
-  //     return <Alert severity="error">{error}</Alert>;
-  //   }
-
-  //   if (saved) {
-  //     return <Alert severity="success">The baselines species have been saved.</Alert>;
-  //   }
-
-  //   return null;
-  // };
 
   const getContent = () => {
     if (isLoading) {
-      return 'loading...';
+      return <Spinner />;
     }
 
     if (!data.length) {
@@ -79,36 +39,36 @@ export const BaselineSpecies = () => {
 
     return (
       <>
-        <DataTable filterText={filterText} />
-        {/* <div style={{ padding: '20px 0', display: 'flex' }}>
-          <div style={{ flex: 1 }}>
-            <Button
-              variant="outlined"
-              type="submit"
-              size="medium"
-              onClick={() => setBaselineTaxonDialogOpen(true)}
-              startIcon={<AddCircleOutlineIcon />}
-              style={{ marginRight: 10 }}
-            >
-              Add Species
-            </Button>
-            {data.length > 0 && (
-              <Button
-                variant="outlined"
-                type="submit"
-                size="medium"
-                onClick={() => setValidateBaselineTaxonDialogOpen(true)}
-                color="secondary"
-              >
-                Validate
-              </Button>
-            )}
-          </div>
-
-          <Button type="button" variant="contained" size="medium" onClick={onSubmit} disabled>
-            Save
+        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <TextField
+            size="small"
+            sx={{ width: 300 }}
+            placeholder="Filter by species name…"
+            value={filterInput}
+            onChange={(e) => setFilterInput(e.target.value)}
+            slotProps={{
+              input: {
+                endAdornment: filterInput && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        setFilterInput('');
+                        setFilterText('');
+                      }}
+                    >
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+          <Button variant="outlined" size="small" onClick={() => setAddDialogOpen(true)}>
+            Add &raquo;
           </Button>
-        </div> */}
+        </Box>
+        <DataTable filterText={filterText} />
       </>
     );
   };
@@ -119,6 +79,11 @@ export const BaselineSpecies = () => {
         <h2 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           Baseline Species
           {data.length > 0 && <Chip label={data.length} size="small" />}
+          <Box sx={{ ml: 'auto' }}>
+            <Button variant="outlined" size="small" onClick={() => setCheckDialogOpen(true)} disabled={!data.length}>
+              Check Baseline Species
+            </Button>
+          </Box>
         </h2>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: '10px' }}>
           <Tabs
@@ -132,88 +97,9 @@ export const BaselineSpecies = () => {
         </Box>
       </div>
 
-      <Box hidden={currentTab !== 0}>
-        {loader}
+      <Box sx={{ display: currentTab !== 0 ? 'none' : 'block' }}>{getContent()}</Box>
 
-        {!isLoading && data.length > 0 && (
-          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <TextField
-              size="small"
-              sx={{ width: 300 }}
-              placeholder="Filter by species name…"
-              value={filterInput}
-              onChange={(e) => setFilterInput(e.target.value)}
-              slotProps={{
-                input: {
-                  endAdornment: filterInput && (
-                    <InputAdornment position="end">
-                      <IconButton
-                        size="small"
-                        onClick={() => {
-                          setFilterInput('');
-                          setFilterText('');
-                        }}
-                      >
-                        <ClearIcon fontSize="small" />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-            <Button variant="outlined" size="small" onClick={() => setAddDialogOpen(true)}>
-              Add &raquo;
-            </Button>
-          </Box>
-        )}
-        {/* {getAlert()} */}
-
-        {validationDate && (
-          <p>
-            <small>
-              Last validated: <b>...</b>
-            </small>
-          </p>
-        )}
-
-        {/* <AddBaselineTaxonsDialog
-          open={addBaselineTaxonDialogOpen}
-          onClose={() => setBaselineTaxonDialogOpen(false)}
-          onComplete={(data: BaselineSpeciesInatData[]) => {
-            const updatedList = combineSpeciesLists(baselineSpecies, data);
-            setBaselineSpecies(updatedList);
-            setBaselineTaxonDialogOpen(false);
-          }}
-        /> */}
-
-        {/* <ValidateBaselineSpeciesDialog
-          placeId={mainSettings.placeId}
-          taxonId={mainSettings.taxonId}
-          open={validateBaselineTaxonDialogOpen}
-          onClose={() => setValidateBaselineTaxonDialogOpen(false)}
-          onComplete={(latestData: RegionSpecies) => {
-            const updatedBaselineSpeciesData = baselineSpecies.map((row) => {
-              if (latestData[row.id]) {
-                return {
-                  ...row,
-                  isActive: latestData[row.id].isActive,
-                  researchGradeReviewCount: latestData[row.id].count,
-                };
-              }
-
-              // TODO this should never occur. Remove altogether?
-              return row;
-            });
-
-            // setBaselineSpecies(updatedBaselineSpeciesData);
-            setValidateBaselineTaxonDialogOpen(false);
-          }}
-        /> */}
-
-        {getContent()}
-      </Box>
-
-      <Box hidden={currentTab !== 1} sx={{ p: 2 }}>
+      <Box sx={{ display: currentTab !== 1 ? 'none' : 'block', p: 2 }}>
         <p>
           This page lets you provide a list of species that you know are in the region, but don't have any observations
           on iNaturalist yet. These species will used to supplement actual observations made in the province, when
@@ -227,9 +113,10 @@ export const BaselineSpecies = () => {
         <h3>Tips</h3>
 
         <p>
-          Keep the list as short as possible. Only add species that don't have actual confirmed iNat observations - or
-          have very few. While it's rare, technically iNat users can delete their own observations so if a species has
-          very few, providing a baseline record will prevent it accidentally getting left off the checklist.
+          Keep the list as short as possible. As soon as a species gets enough confirmation by curators, it should be
+          removed from the baseline list. Note: while it's rare, technically iNat users can delete their own
+          observations so if a species has very few, providing a baseline record will prevent it accidentally getting
+          left off the checklist. But you'll want to keep the list short to minimize the amount of maintenance needed.
         </p>
         <p>
           The reason that you want to keep this list short is because this area requires maintenance. Taxonomies change
@@ -254,6 +141,7 @@ export const BaselineSpecies = () => {
       </Box>
 
       <AddSpeciesDialog open={addDialogOpen} onClose={() => setAddDialogOpen(false)} />
+      <CheckBaselineSpeciesDialog open={checkDialogOpen} onClose={() => setCheckDialogOpen(false)} />
     </>
   );
 };

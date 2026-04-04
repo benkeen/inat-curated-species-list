@@ -31,6 +31,17 @@ export const sortBaselineData = (sortCol: SortCol, sortDir: SortDir) => ({
 
 export const deleteBaselineTaxon = (_taxonId: any) => {};
 
+export const BASELINE_DATA_DELETE = 'BASELINE_DATA_DELETE';
+export const deleteAndSaveBaselineSpecies = (taxonIds: number[]) => async (dispatch: any, getState: any) => {
+  const state = getState();
+  const remaining: BaselineSpeciesInatData[] = Object.keys(state.baselineData.data)
+    .map((id) => ({ id: parseInt(id), ...state.baselineData.data[id] }))
+    .filter(({ id }) => !taxonIds.includes(id));
+
+  await updateBaselineSpecies({ data: remaining });
+  dispatch({ type: BASELINE_DATA_DELETE, payload: taxonIds });
+};
+
 export const BASELINE_DATA_ADD = 'BASELINE_DATA_ADD';
 export const addAndSaveBaselineSpecies = (species: BaselineSpeciesInatData) => async (dispatch: any, getState: any) => {
   const state = getState();
@@ -44,3 +55,28 @@ export const addAndSaveBaselineSpecies = (species: BaselineSpeciesInatData) => a
 
   dispatch({ type: BASELINE_DATA_ADD, payload: species });
 };
+
+export const BASELINE_DATA_BULK_UPDATE = 'BASELINE_DATA_BULK_UPDATE';
+export const bulkUpdateAndSaveBaselineSpecies =
+  (
+    updates: Array<{ id: number; isActive: boolean; researchGradeReviewCount: number; totalObservationCount: number }>,
+  ) =>
+  async (dispatch: any, getState: any) => {
+    const state = getState();
+    const updatedArray: BaselineSpeciesInatData[] = Object.keys(state.baselineData.data).map((id) => {
+      const numId = parseInt(id);
+      const update = updates.find((u) => u.id === numId);
+      const existing = { id: numId, ...state.baselineData.data[id] };
+      if (update) {
+        return {
+          ...existing,
+          isActive: update.isActive,
+          researchGradeReviewCount: update.researchGradeReviewCount,
+          totalObservationCount: update.totalObservationCount,
+        };
+      }
+      return existing;
+    });
+    await updateBaselineSpecies({ data: updatedArray });
+    dispatch({ type: BASELINE_DATA_BULK_UPDATE, payload: updates });
+  };

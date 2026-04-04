@@ -12,9 +12,7 @@ export const useBaselineSpecies = () => {
   const validationDate = useSelector(selectors.getValidationDate);
 
   useEffect(() => {
-    if (!isLoaded) {
-      dispatch(actions.loadBaselineData() as any);
-    }
+    dispatch(actions.loadBaselineData() as any);
   }, []);
 
   return { data, isLoading, isLoaded, validationDate };
