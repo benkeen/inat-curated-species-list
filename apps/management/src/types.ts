@@ -20,6 +20,9 @@ export type MainSettings = {
   readonly placeId?: number | null;
   readonly omitObservationsByUsers?: string;
   readonly baselineCompletionDate?: string;
+  readonly newAdditions?: {
+    readonly enabled: boolean;
+  };
 };
 
 export type RegionSpecies = {

@@ -33,3 +33,33 @@ export const updateMainSettings = (data: Record<string, unknown>): { success: bo
     success: true,
   };
 };
+
+export type NewAdditionsSettings = {
+  enabled: boolean;
+};
+
+const readSettingsFile = (backupFolder: string): Record<string, unknown> => {
+  const settingsFile = `${backupFolder}/project-settings.json`;
+  if (!fs.existsSync(settingsFile)) {
+    return {};
+  }
+  const content = fs.readFileSync(settingsFile, { encoding: 'utf8' });
+  return JSON.parse(content) as Record<string, unknown>;
+};
+
+export const getNewAdditionsSettings = (): NewAdditionsSettings | null => {
+  const { exists, backupSettings } = getBackupSettings();
+  if (!exists || !backupSettings) {
+    return null;
+  }
+  const settings = readSettingsFile(backupSettings.backupFolder);
+  return (settings.newAdditions as NewAdditionsSettings) ?? null;
+};
+
+export const updateNewAdditionsSettings = (data: NewAdditionsSettings): { success: boolean } => {
+  const { backupSettings } = getBackupSettings();
+  const settingsFile = `${backupSettings!.backupFolder}/project-settings.json`;
+  const existing = readSettingsFile(backupSettings!.backupFolder);
+  fs.writeFileSync(settingsFile, JSON.stringify({ ...existing, newAdditions: data }, null, '  '));
+  return { success: true };
+};

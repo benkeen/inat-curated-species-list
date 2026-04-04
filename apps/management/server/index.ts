@@ -1,10 +1,24 @@
 import express, { type Request, type Response } from 'express';
+import fs from 'fs';
+import path from 'path';
 import { getBackupSettings, updateBackupSettings } from './backup-settings.js';
-import { getMainSettings, updateMainSettings } from './project-settings.js';
+import {
+  getMainSettings,
+  updateMainSettings,
+  getNewAdditionsSettings,
+  updateNewAdditionsSettings,
+} from './project-settings.js';
 import { getBaselineSpecies, updateBaselineSpecies } from './baseline-species.js';
 import { startInatDataDownload, getInatDataLog } from './observation-data.js';
 import { getDownloadState, setDownloadState, subscribeToDownload } from './inat-download-state.js';
 import { generateCuratorSummary, getCuratorReviewCount } from './curator-summary.js';
+import { generateChecklistFiles, getIsGenerating } from './generate-checklist.js';
+import { startUnconfirmedSpeciesCheck, getUnconfirmedSpecies } from './unconfirmed-species.js';
+import {
+  getUnconfirmedCheckState,
+  setUnconfirmedCheckState,
+  subscribeToUnconfirmedCheck,
+} from './unconfirmed-species-state.js';
 import cors from 'cors';
 import nocache from 'nocache';
 import bodyParser from 'body-parser';
@@ -116,6 +130,20 @@ app.get('/inat-download-progress', (req: Request, res: Response) => {
   req.on('close', unsubscribe);
 });
 
+// POST /generate-checklist — runs checklist file generation using already-downloaded raw iNat data.
+// Synchronous (awaited inline) since generation is local I/O and completes quickly.
+app.post('/generate-checklist', async (_req: Request, res: Response) => {
+  if (getIsGenerating()) {
+    return res.json({ success: false, error: 'Checklist generation is already in progress.' });
+  }
+  try {
+    const result = generateChecklistFiles();
+    res.json({ success: true, ...result });
+  } catch (e) {
+    res.json({ success: false, error: (e as Error).message });
+  }
+});
+
 // GET /curator-review-count/:taxonId — returns the number of current curator identifications for a taxon.
 // Returns { count: null } if the summary file hasn't been generated yet.
 app.get('/curator-review-count/:taxonId', (req: Request, res: Response) => {
@@ -136,6 +164,78 @@ app.post('/generate-curator-summary', (_req: Request, res: Response) => {
   } catch (e) {
     res.json({ success: false, error: (e as Error).message });
   }
+});
+
+// GET /new-additions-settings — returns the newAdditions root config from project-settings.json.
+app.get('/new-additions-settings', (_req: Request, res: Response) => {
+  const settings = getNewAdditionsSettings();
+  res.json({ settings });
+});
+
+// POST /new-additions-settings — updates the newAdditions root config in project-settings.json.
+app.post('/new-additions-settings', (req: Request, res: Response) => {
+  const { success } = updateNewAdditionsSettings(req.body as { enabled: boolean });
+  res.json({ success });
+});
+
+// GET /new-additions-data — returns the contents of new-additions-data.json from the backup folder.
+app.get('/new-additions-data', (_req: Request, res: Response) => {
+  const { exists, backupSettings } = getBackupSettings();
+  if (!exists || !backupSettings) {
+    return res.status(404).json({ error: 'Backup settings not configured.' });
+  }
+  const filePath = path.join(backupSettings.backupFolder, 'new-additions-data.json');
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: 'new-additions-data.json not found. Run checklist generation first.' });
+  }
+  try {
+    const content = fs.readFileSync(filePath, { encoding: 'utf8' });
+    res.setHeader('Content-Type', 'application/json');
+    res.end(content);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to read new-additions-data.json.' });
+  }
+});
+
+// GET /unconfirmed-species — returns the contents of unconfirmed-species.json, or { exists: false } if not yet generated.
+app.get('/unconfirmed-species', (_req: Request, res: Response) => {
+  const result = getUnconfirmedSpecies();
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(result));
+});
+
+// POST /start-unconfirmed-species-check — fires the check in the background and returns immediately.
+// Progress is tracked in unconfirmed-species-state.ts so any SSE subscriber can follow along.
+app.post('/start-unconfirmed-species-check', (_req: Request, res: Response) => {
+  const current = getUnconfirmedCheckState();
+  if (current.status === 'running') {
+    return res.json({ success: false, error: 'A check is already in progress.' });
+  }
+
+  setUnconfirmedCheckState({ status: 'running', progress: null, result: null, error: null });
+
+  startUnconfirmedSpeciesCheck((progress) => setUnconfirmedCheckState({ status: 'running', progress }))
+    .then((result) => setUnconfirmedCheckState({ status: 'done', result, progress: null }))
+    .catch((e: Error) => setUnconfirmedCheckState({ status: 'error', error: e.message, progress: null }));
+
+  res.json({ success: true });
+});
+
+// GET /unconfirmed-species-progress — SSE stream of the current unconfirmed species check state.
+app.get('/unconfirmed-species-progress', (req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+
+  const sendState = (state: ReturnType<typeof getUnconfirmedCheckState>): void => {
+    res.write(`data: ${JSON.stringify(state)}\n\n`);
+  };
+
+  sendState(getUnconfirmedCheckState());
+
+  const unsubscribe = subscribeToUnconfirmedCheck(sendState);
+  req.on('close', unsubscribe);
 });
 
 app.listen(port, () => {

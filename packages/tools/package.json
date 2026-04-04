@@ -40,6 +40,7 @@
       "types": "./types/generator.types.d.ts",
       "default": "./src/generator.ts"
     },
-    "./utils": "./src/exported-utils.ts"
+    "./utils": "./src/exported-utils.ts",
+    "./generation-utils": "./src/generation-utils.ts"
   }
 }

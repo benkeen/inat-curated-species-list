@@ -53,3 +53,27 @@ export const validateBaselineSpecies = () => {
 export const getCuratorReviewCount = (taxonId: number) => {
   return fetch(getApiUrl(`curator-review-count/${taxonId}`));
 };
+
+export const getNewAdditionsData = () => {
+  return fetch(getApiUrl('new-additions-data'));
+};
+
+export const getUnconfirmedSpecies = () => {
+  return fetch(getApiUrl('unconfirmed-species'));
+};
+
+export const startUnconfirmedSpeciesCheck = () => {
+  return fetch(getApiUrl('start-unconfirmed-species-check'), { method: 'POST' });
+};
+
+export const getNewAdditionsSettings = () => {
+  return fetch(getApiUrl('new-additions-settings'));
+};
+
+export const updateNewAdditionsSettings = (content: { enabled: boolean }) => {
+  return fetch(getApiUrl('new-additions-settings'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(content),
+  });
+};

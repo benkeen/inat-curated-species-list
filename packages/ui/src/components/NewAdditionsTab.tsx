@@ -10,12 +10,13 @@ import { ViewIcon } from './ViewIcon';
 const { INAT_OBSERVATIONS_URL } = constants;
 
 export interface NewAdditionsTabProps {
-  readonly dataUrl: string;
+  readonly dataUrl?: string;
+  readonly initialData?: NewAddition[];
   readonly showRowNumbers: boolean;
   readonly tabText?: any;
 }
 
-export const NewAdditionsTab: FC<NewAdditionsTabProps> = ({ dataUrl, tabText, showRowNumbers }) => {
+export const NewAdditionsTab: FC<NewAdditionsTabProps> = ({ dataUrl, initialData, tabText, showRowNumbers }) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   const [data, setData] = useState<NewAdditionsByYear>();
@@ -25,6 +26,19 @@ export const NewAdditionsTab: FC<NewAdditionsTabProps> = ({ dataUrl, tabText, sh
   const onChangeYear = (year: string) => setCurrentYear(year);
 
   useEffect(() => {
+    if (initialData) {
+      const { currentYear, years, groupedByYear } = getNewAdditionDataForUI(initialData);
+      setCurrentYear(currentYear);
+      setYears(years);
+      setData(groupedByYear);
+      setLoaded(true);
+      return;
+    }
+
+    if (!dataUrl) {
+      return;
+    }
+
     fetch(dataUrl, {
       headers: {
         Accept: 'application/json',
@@ -39,7 +53,7 @@ export const NewAdditionsTab: FC<NewAdditionsTabProps> = ({ dataUrl, tabText, sh
         setLoaded(true);
       })
       .catch(() => setError(true));
-  }, [dataUrl]);
+  }, [dataUrl, initialData]);
 
   if (error) {
     return <p>Sorry, there was an error loading the data.</p>;
@@ -65,8 +79,8 @@ export const NewAdditionsTab: FC<NewAdditionsTabProps> = ({ dataUrl, tabText, sh
             {showRowNumbers && <th></th>}
             <th>Species</th>
             <th>Observer</th>
-            <th>Date observed</th>
-            <th>Date confirmed</th>
+            <th>Observed</th>
+            <th>Confirmed</th>
             <th>Curator</th>
             <th style={{ width: 40 }}></th>
           </tr>

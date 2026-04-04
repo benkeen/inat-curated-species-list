@@ -135,7 +135,7 @@ const baselineDataReducer = (state = initialState, action: any) => {
 
     case actions.BASELINE_DATA_ADD: {
       const species: BaselineSpeciesInatData = action.payload;
-      const newData = {
+      const newData: BaselineDataObj = {
         ...state.data,
         [species.id]: {
           name: species.name,
