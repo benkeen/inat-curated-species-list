@@ -21,6 +21,10 @@ export const getBaselineSpecies = () => {
 export const updateBaselineSpecies = (data) => {
   const { backupSettings } = getBackupSettings();
 
+  // `data` is the raw species array. The POST endpoint passes req.body which is { data: [...] },
+  // so unwrap it here if needed.
+  const speciesArray = Array.isArray(data) ? data : (data?.data ?? []);
+
   const baselineSpeciesFile = `${backupSettings.backupFolder}/baseline-species.json`;
 
   let error;
@@ -28,7 +32,7 @@ export const updateBaselineSpecies = (data) => {
   try {
     const baselineData = {
       validationDate: new Date(),
-      data,
+      data: speciesArray,
     };
 
     fs.writeFileSync(baselineSpeciesFile, JSON.stringify(baselineData, null, '  '));

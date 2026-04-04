@@ -49,3 +49,7 @@ export const updateBaselineSpecies = (content: any) => {
 export const validateBaselineSpecies = () => {
   return fetch(getApiUrl('validate-baseline-species'));
 };
+
+export const getCuratorReviewCount = (taxonId: number) => {
+  return fetch(getApiUrl(`curator-review-count/${taxonId}`));
+};

@@ -1,5 +1,6 @@
-import { getBaselineSpecies } from '../../api/api';
+import { getBaselineSpecies, updateBaselineSpecies } from '../../api/api';
 import { SortCol, SortDir } from '../../components/baseline/BaselineData.types';
+import { BaselineSpeciesInatData } from '../../types';
 
 export const BASELINE_DATA_LOAD = 'BASELINE_DATA_LOAD';
 export const BASELINE_DATA_LOADED = 'BASELINE_DATA_LOADED';
@@ -29,3 +30,17 @@ export const sortBaselineData = (sortCol: SortCol, sortDir: SortDir) => ({
 });
 
 export const deleteBaselineTaxon = (_taxonId: any) => {};
+
+export const BASELINE_DATA_ADD = 'BASELINE_DATA_ADD';
+export const addAndSaveBaselineSpecies = (species: BaselineSpeciesInatData) => async (dispatch: any, getState: any) => {
+  const state = getState();
+  const existingData: BaselineSpeciesInatData[] = Object.keys(state.baselineData.data).map((id) => ({
+    id: parseInt(id),
+    ...state.baselineData.data[id],
+  }));
+
+  const updated = [...existingData, species];
+  await updateBaselineSpecies({ data: updated });
+
+  dispatch({ type: BASELINE_DATA_ADD, payload: species });
+};

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid2';
+import TextField from '@mui/material/TextField';
 import { getMainSettings, updateMainSettings } from '../../api/api';
 import { Spinner } from '../loading/spinner';
 import type { MainSettings } from '../../types';
@@ -74,30 +76,61 @@ export const MainSettingsPage = () => {
         <Grid container spacing={2}>
           <Grid size={3}>Curators</Grid>
           <Grid size={9}>
-            <input
-              type="text"
-              style={{ width: '100%' }}
+            <TextField
+              size="small"
+              fullWidth
               value={settings.curators || ''}
               onChange={(e) => updateData('curators', e.target.value)}
+              helperText="Comma-delimited list of curator iNaturalist usernames, e.g. username1,username2"
             />
           </Grid>
           <Grid size={3}>Taxon ID</Grid>
           <Grid size={9}>
-            <input
-              type="number"
-              style={{ width: 80 }}
-              value={settings.taxonId || ''}
-              onChange={(e) => updateData('taxonId', e.target.value)}
-            />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <TextField
+                size="small"
+                type="number"
+                sx={{ width: 120 }}
+                value={settings.taxonId || ''}
+                onChange={(e) => updateData('taxonId', e.target.value)}
+              />
+              {settings.taxonId && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  href={`https://www.inaturalist.org/taxa/${settings.taxonId}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  component="a"
+                >
+                  Confirm »
+                </Button>
+              )}
+            </Box>
           </Grid>
           <Grid size={3}>Place ID</Grid>
           <Grid size={9}>
-            <input
-              type="number"
-              style={{ width: 80 }}
-              value={settings.placeId || ''}
-              onChange={(e) => updateData('placeId', e.target.value)}
-            />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <TextField
+                size="small"
+                type="number"
+                sx={{ width: 120 }}
+                value={settings.placeId || ''}
+                onChange={(e) => updateData('placeId', e.target.value)}
+              />
+              {settings.placeId && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  href={`https://www.inaturalist.org/observations?place_id=${settings.placeId}&subview=map`}
+                  target="_blank"
+                  rel="noreferrer"
+                  component="a"
+                >
+                  Confirm »
+                </Button>
+              )}
+            </Box>
           </Grid>
           {/* <Grid size={12}>
             <input

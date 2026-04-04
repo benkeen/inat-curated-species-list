@@ -1,15 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
+import InputAdornment from '@mui/material/InputAdornment';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-// import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import ClearIcon from '@mui/icons-material/Clear';
+import { IconButton } from '@mui/material';
 // import { updateBaselineSpecies } from '../../api/api';
 // import { AddBaselineTaxonsDialog } from './AddBaselineTaxonsDialog';
 // import { ValidateBaselineSpeciesDialog } from './ValidateBaselineSpeciesDialog';
 import { Spinner } from '../loading/spinner';
 import DataTable from './DataTable.container';
+import { AddSpeciesDialog } from './AddSpeciesDialog';
 // import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 // import { combineSpeciesLists } from '../../utils';
 import { useBaselineSpecies } from './hooks/useBaselineSpecies';
@@ -20,6 +25,14 @@ export const BaselineSpecies = () => {
   // const [error, setError] = useState('');
   // const [saved, setSaved] = useState(false);
   const [currentTab, setCurrentTab] = useState(0);
+  const [filterInput, setFilterInput] = useState('');
+  const [filterText, setFilterText] = useState('');
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setFilterText(filterInput), 300);
+    return () => clearTimeout(t);
+  }, [filterInput]);
   // const [mainSettings, setMainSettings] = useState<MainSettings | {}>({});
   // const [addBaselineTaxonDialogOpen, setBaselineTaxonDialogOpen] = useState(false);
   // const [validateBaselineTaxonDialogOpen, setValidateBaselineTaxonDialogOpen] = useState(false);
@@ -66,7 +79,7 @@ export const BaselineSpecies = () => {
 
     return (
       <>
-        <DataTable />
+        <DataTable filterText={filterText} />
         {/* <div style={{ padding: '20px 0', display: 'flex' }}>
           <div style={{ flex: 1 }}>
             <Button
@@ -121,6 +134,38 @@ export const BaselineSpecies = () => {
 
       <Box hidden={currentTab !== 0}>
         {loader}
+
+        {!isLoading && data.length > 0 && (
+          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <TextField
+              size="small"
+              sx={{ width: 300 }}
+              placeholder="Filter by species name…"
+              value={filterInput}
+              onChange={(e) => setFilterInput(e.target.value)}
+              slotProps={{
+                input: {
+                  endAdornment: filterInput && (
+                    <InputAdornment position="end">
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          setFilterInput('');
+                          setFilterText('');
+                        }}
+                      >
+                        <ClearIcon fontSize="small" />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+            <Button variant="outlined" size="small" onClick={() => setAddDialogOpen(true)}>
+              Add &raquo;
+            </Button>
+          </Box>
+        )}
         {/* {getAlert()} */}
 
         {validationDate && (
@@ -207,6 +252,8 @@ export const BaselineSpecies = () => {
           region, and you won't have to maintain it on the baseline list anymore.
         </p>
       </Box>
+
+      <AddSpeciesDialog open={addDialogOpen} onClose={() => setAddDialogOpen(false)} />
     </>
   );
 };

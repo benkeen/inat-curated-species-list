@@ -4,6 +4,7 @@ import { getMainSettings, updateMainSettings } from './main-settings.js';
 import { getBaselineSpecies, updateBaselineSpecies } from './baseline-species.js';
 import { startInatDataDownload, getInatDataLog } from './observation-data.js';
 import { getDownloadState, setDownloadState, subscribeToDownload } from './inat-download-state.js';
+import { generateCuratorSummary, getCuratorReviewCount } from './curator-summary.js';
 import cors from 'cors';
 import nocache from 'nocache';
 import bodyParser from 'body-parser';
@@ -79,7 +80,17 @@ app.post('/start-inat-download', (req, res) => {
 
   // Run without awaiting so the request returns immediately
   startInatDataDownload((progress) => setDownloadState({ status: 'running', progress }), { maxPackets })
-    .then((result) => setDownloadState({ status: 'done', result, progress: null }))
+    .then((result) => {
+      setDownloadState({ status: 'done', result, progress: null });
+      // Regenerate the curator review summary from the freshly-downloaded raw-inat-data
+      if (!maxPackets) {
+        try {
+          generateCuratorSummary();
+        } catch (e) {
+          console.error('Failed to regenerate curator summary after download:', e.message);
+        }
+      }
+    })
     .catch((e) => setDownloadState({ status: 'error', error: e.message, progress: null }));
 
   res.json({ success: true });
@@ -103,6 +114,28 @@ app.get('/inat-download-progress', (req, res) => {
 
   const unsubscribe = subscribeToDownload(sendState);
   req.on('close', unsubscribe);
+});
+
+// GET /curator-review-count/:taxonId — returns the number of current curator identifications for a taxon.
+// Returns { count: null } if the summary file hasn't been generated yet.
+app.get('/curator-review-count/:taxonId', (req, res) => {
+  const count = getCuratorReviewCount(req.params.taxonId);
+  res.json({ count });
+});
+
+// POST /generate-curator-summary — builds the curator-review-summary.json from raw-inat-data/.
+// This is called automatically after each full iNat download, and can also be triggered manually.
+app.post('/generate-curator-summary', (req, res) => {
+  try {
+    const summary = generateCuratorSummary();
+    res.json({
+      success: true,
+      fileCount: summary.fileCount,
+      speciesCount: Object.keys(summary.counts).length,
+    });
+  } catch (e) {
+    res.json({ success: false, error: e.message });
+  }
 });
 
 app.listen(port, () => {
