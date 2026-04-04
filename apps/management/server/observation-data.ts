@@ -1,35 +1,58 @@
 import fs from 'fs';
-import fetch from 'node-fetch';
 import path from 'path';
 import qs from 'query-string';
 import { getBackupSettings } from './backup-settings.js';
 import { getMainSettings } from './project-settings.js';
 import { clearLog, log } from './inat-download-logger.js';
+import type { DownloadProgress } from './inat-download-state.js';
 
 const INAT_REQUEST_RESULTS_PER_PAGE = 200;
 const INAT_API_URL = 'https://api.inaturalist.org/v1/observations';
+
+type DownloadPacketParams = {
+  curators: string;
+  packetNum: number;
+  placeId: string | number;
+  taxonId: string | number;
+  numResults: number | null;
+  lastId: number | null;
+};
+
+type DownloadPacketResult = {
+  totalResults?: number;
+  numRequests?: number;
+  lastId?: number;
+  error?: string;
+};
+
+type InatApiResponse = {
+  total_results: number;
+  results: Array<{ id: number }>;
+};
 
 /**
  * Simple high-level method that just downloads a chunk of data from iNat and stores the result in a temporary file on disk.
  * Later steps parse, convert and minify the relevant data.
  */
-export const downloadDataPacket = async ({ curators, packetNum, placeId, taxonId, numResults, lastId }) => {
+export const downloadDataPacket = async ({
+  curators,
+  packetNum,
+  placeId,
+  taxonId,
+  lastId,
+}: DownloadPacketParams): Promise<DownloadPacketResult> => {
   let rawResponse;
   try {
-    rawResponse = await getDataPacket(placeId, taxonId, curators, numResults, lastId);
+    rawResponse = await getDataPacket(placeId, taxonId, curators, lastId);
   } catch (e) {
-    // logger.log('error', `request error: ${JSON.stringify(e)}`);
-    // logger.log('debug', `resume transaction data: ${JSON.stringify({ curators, placeId, taxonId, lastId })}`);
-    // process.exit(1);
     return {
       error: JSON.stringify(e),
     };
   }
 
-  const resp = await rawResponse.json();
+  const resp = (await rawResponse.json()) as InatApiResponse;
   const totalResults = resp.total_results;
 
-  // logger.log('info', 'request successful');
   let numRequests = 0;
   if (totalResults <= 0) {
     return {
@@ -41,26 +64,28 @@ export const downloadDataPacket = async ({ curators, packetNum, placeId, taxonId
   }
 
   // write the entire API response to a file. We'll extract what we need once the data's fully downloaded
-  const packetDataFile = logPacket(packetNum, resp);
-
-  // logger.log('info', `data stored in file: ${packetDataFile}`);
-  // logger.log('info', `total results: ${formatNum(totalResults)}`);
+  logPacket(packetNum, resp);
 
   // the iNat API works by passing in a property to return data above a particular ID. This tracks it for subsequent requests
-  lastId = resp.results[resp.results.length - 1].id;
+  const newLastId = resp.results[resp.results.length - 1].id;
 
   return {
     totalResults,
     numRequests,
-    lastId,
+    lastId: newLastId,
   };
 };
 
 /**
  * Performs a single request to the iNat API.
  */
-export const getDataPacket = async (placeId, taxonId, curators, numResults, lastId) => {
-  const apiParams = {
+export const getDataPacket = (
+  placeId: string | number,
+  taxonId: string | number,
+  curators: string,
+  lastId: number | null,
+) => {
+  const apiParams: Record<string, string | number> = {
     place_id: placeId,
     taxon_id: taxonId,
     order: 'asc',
@@ -70,39 +95,19 @@ export const getDataPacket = async (placeId, taxonId, curators, numResults, last
     ident_user_id: curators,
   };
 
-  // if (numResults && lastId) {
   if (lastId) {
-    apiParams.id_above = lastId;
+    apiParams['id_above'] = lastId;
   }
 
   const paramsStr = qs.stringify(apiParams);
   const apiUrl = `${INAT_API_URL}?${paramsStr}`;
 
-  // logger.log('info', `Request: ${apiUrl}`);
-
   return fetch(apiUrl);
 };
 
-export const getBaselineSpecies = () => {
-  const { exists, backupSettings } = getBackupSettings();
-
-  if (!exists) {
-    return [];
-  }
-
-  const baselineSpecies = `${backupSettings.backupFolder}/baseline-species.json`;
-  let data = {};
-  if (fs.existsSync(baselineSpecies)) {
-    const content = fs.readFileSync(baselineSpecies, { encoding: 'utf8' });
-    data = JSON.parse(content);
-  }
-
-  return data;
-};
-
-export const logPacket = (packetNum, content) => {
+export const logPacket = (packetNum: number, content: unknown): string => {
   const { backupSettings } = getBackupSettings();
-  const tempFolder = `${backupSettings.backupFolder}/temp-raw-inat-data`;
+  const tempFolder = `${backupSettings!.backupFolder}/temp-raw-inat-data`;
 
   fs.mkdirSync(tempFolder, { recursive: true });
 
@@ -112,12 +117,35 @@ export const logPacket = (packetNum, content) => {
   return packetDataFile;
 };
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const writeInatDataLog = ({ totalObservations, totalPackets, completedAt, durationSeconds, success, error }) => {
+type InatDataLogEntry = {
+  lastRun: string;
+  totalObservations: number;
+  totalPackets: number;
+  durationSeconds: number;
+  success: boolean;
+  error?: string;
+};
+
+export const writeInatDataLog = ({
+  totalObservations,
+  totalPackets,
+  completedAt,
+  durationSeconds,
+  success,
+  error,
+}: {
+  totalObservations: number;
+  totalPackets: number;
+  completedAt: string;
+  durationSeconds: number;
+  success: boolean;
+  error?: string;
+}): void => {
   const { backupSettings } = getBackupSettings();
-  const logFile = `${backupSettings.backupFolder}/inat-data-log.json`;
-  const data = {
+  const logFile = `${backupSettings!.backupFolder}/inat-data-log.json`;
+  const data: InatDataLogEntry = {
     lastRun: completedAt,
     totalObservations,
     totalPackets,
@@ -128,34 +156,43 @@ export const writeInatDataLog = ({ totalObservations, totalPackets, completedAt,
   fs.writeFileSync(logFile, JSON.stringify(data, null, '  '), 'utf-8');
 };
 
-export const getInatDataLog = () => {
+export const getInatDataLog = (): InatDataLogEntry | null => {
   const { backupSettings } = getBackupSettings();
-  const logFile = `${backupSettings.backupFolder}/inat-data-log.json`;
+  const logFile = `${backupSettings!.backupFolder}/inat-data-log.json`;
   if (!fs.existsSync(logFile)) {
     return null;
   }
-  return JSON.parse(fs.readFileSync(logFile, { encoding: 'utf-8' }));
+  return JSON.parse(fs.readFileSync(logFile, { encoding: 'utf-8' })) as InatDataLogEntry;
 };
 
-export const startInatDataDownload = async (onProgress, { maxPackets = null } = {}) => {
+type MainSettings = {
+  placeId?: string | number;
+  taxonId?: string | number;
+  curators?: string | string[];
+};
+
+export const startInatDataDownload = async (
+  onProgress: (progress: DownloadProgress) => void,
+  { maxPackets = null }: { maxPackets?: number | null } = {},
+): Promise<{ totalObservations: number; totalPackets: number; completedAt: string }> => {
   const { exists, backupSettings } = getBackupSettings();
   if (!exists) {
     throw new Error('Backup settings not configured.');
   }
 
-  const settings = getMainSettings();
+  const settings = getMainSettings() as MainSettings;
   const { placeId, taxonId, curators } = settings;
 
-  if (!placeId || !taxonId || !curators?.length) {
+  if (!placeId || !taxonId || !(Array.isArray(curators) ? curators.length : curators)) {
     throw new Error('Main settings not configured (placeId, taxonId, curators required).');
   }
 
-  const backupFolder = backupSettings.backupFolder;
+  const backupFolder = backupSettings!.backupFolder;
   const tempFolder = `${backupFolder}/temp-raw-inat-data`;
   const finalFolder = `${backupFolder}/raw-inat-data`;
 
   clearLog();
-  log('info', `Starting iNat data download. placeId=${placeId}, taxonId=${taxonId}, curators=${curators}`);
+  log('info', `Starting iNat data download. placeId=${placeId}, taxonId=${taxonId}, curators=${String(curators)}`);
 
   const startTime = Date.now();
 
@@ -165,7 +202,7 @@ export const startInatDataDownload = async (onProgress, { maxPackets = null } = 
   }
   fs.mkdirSync(tempFolder, { recursive: true });
 
-  const curatorList = Array.isArray(curators) ? curators.join(',') : curators;
+  const curatorList = (Array.isArray(curators) ? curators.join(',') : curators) as string;
 
   // First packet — also gives us totalResults and numRequests
   const firstResult = await downloadDataPacket({
@@ -182,8 +219,10 @@ export const startInatDataDownload = async (onProgress, { maxPackets = null } = 
     throw new Error(firstResult.error);
   }
 
-  const { totalResults, numRequests } = firstResult;
-  let lastId = firstResult.lastId;
+  const { totalResults, numRequests } = firstResult as Required<
+    Pick<DownloadPacketResult, 'totalResults' | 'numRequests'>
+  >;
+  let lastId = firstResult.lastId ?? null;
 
   const packetLimit = maxPackets ? Math.min(maxPackets, numRequests) : numRequests;
   if (maxPackets) {
@@ -210,7 +249,7 @@ export const startInatDataDownload = async (onProgress, { maxPackets = null } = 
       throw new Error(result.error);
     }
 
-    lastId = result.lastId;
+    lastId = result.lastId ?? null;
     log('info', `Packet ${packetNum}/${numRequests} downloaded.`);
     onProgress({ packetNum, totalPackets: numRequests, totalResults });
   }

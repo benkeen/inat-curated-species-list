@@ -7,13 +7,22 @@ const __dirname = path.dirname(__filename);
 
 const backupSettingsFile = path.resolve(__dirname, './generated/backup-settings.json');
 
-export const getBackupSettings = () => {
-  let backupSettings;
+export type BackupSettings = {
+  backupFolder: string;
+};
+
+export type GetBackupSettingsResult = {
+  exists: boolean;
+  backupSettings?: BackupSettings;
+};
+
+export const getBackupSettings = (): GetBackupSettingsResult => {
+  let backupSettings: BackupSettings | undefined;
   let exists = false;
 
   try {
     const content = fs.readFileSync(backupSettingsFile, { encoding: 'utf8' });
-    backupSettings = JSON.parse(content);
+    backupSettings = JSON.parse(content) as BackupSettings;
     exists = true;
   } catch (e) {
     console.log('error: ', backupSettingsFile, e);
@@ -25,7 +34,7 @@ export const getBackupSettings = () => {
   };
 };
 
-export const updateBackupSettings = (data) => {
+export const updateBackupSettings = (data: { backupFolder: string }): { success: boolean; error?: string } => {
   const { backupFolder } = data;
 
   // verify the folder exists

@@ -1,16 +1,16 @@
 import fs from 'fs';
 import { getBackupSettings } from './backup-settings.js';
 
-const getLogFile = () => {
+const getLogFile = (): string => {
   const { backupSettings } = getBackupSettings();
-  return `${backupSettings.backupFolder}/inat-download.log`;
+  return `${backupSettings!.backupFolder}/inat-download.log`;
 };
 
-export const clearLog = () => {
+export const clearLog = (): void => {
   fs.writeFileSync(getLogFile(), '', 'utf-8');
 };
 
-export const log = (level, message) => {
+export const log = (level: string, message: string): void => {
   const line = `[${new Date().toISOString()}] [${level.toUpperCase()}] ${message}\n`;
   fs.appendFileSync(getLogFile(), line, 'utf-8');
 };

@@ -5,19 +5,25 @@ import { getMainSettings } from './project-settings.js';
 
 const SUMMARY_FILENAME = 'curator-review-summary.json';
 
-const getSummaryFilePath = (backupFolder) => path.join(backupFolder, SUMMARY_FILENAME);
+type CuratorSummary = {
+  generatedAt: string;
+  fileCount: number;
+  counts: Record<string, number>;
+};
+
+const getSummaryFilePath = (backupFolder: string): string => path.join(backupFolder, SUMMARY_FILENAME);
 
 /**
  * Returns the curator review count for a single taxon ID, or null if the summary file doesn't exist yet.
  */
-export const getCuratorReviewCount = (taxonId) => {
+export const getCuratorReviewCount = (taxonId: string): number | null => {
   const { exists, backupSettings } = getBackupSettings();
   if (!exists) return null;
 
-  const summaryFile = getSummaryFilePath(backupSettings.backupFolder);
+  const summaryFile = getSummaryFilePath(backupSettings!.backupFolder);
   if (!fs.existsSync(summaryFile)) return null;
 
-  const summary = JSON.parse(fs.readFileSync(summaryFile, { encoding: 'utf8' }));
+  const summary = JSON.parse(fs.readFileSync(summaryFile, { encoding: 'utf8' })) as CuratorSummary;
   return summary.counts[String(taxonId)] ?? 0;
 };
 
@@ -26,15 +32,15 @@ export const getCuratorReviewCount = (taxonId) => {
  * identifications exist per species taxon ID, and writes a compact summary file to the backup folder.
  * This summary is used for fast lookups without re-parsing the full raw data.
  */
-export const generateCuratorSummary = () => {
+export const generateCuratorSummary = (): CuratorSummary => {
   const { exists, backupSettings } = getBackupSettings();
   if (!exists) {
     throw new Error('Backup settings not configured.');
   }
 
   const settings = getMainSettings();
-  const rawCurators = settings.curators;
-  const curatorList = Array.isArray(rawCurators)
+  const rawCurators = settings['curators'] as string | string[] | undefined;
+  const curatorList: string[] = Array.isArray(rawCurators)
     ? rawCurators
     : typeof rawCurators === 'string' && rawCurators.trim()
       ? rawCurators
@@ -47,20 +53,36 @@ export const generateCuratorSummary = () => {
     throw new Error('No curators configured in main settings.');
   }
 
-  const rawDataFolder = path.join(backupSettings.backupFolder, 'raw-inat-data');
+  const rawDataFolder = path.join(backupSettings!.backupFolder, 'raw-inat-data');
   if (!fs.existsSync(rawDataFolder)) {
     throw new Error(`raw-inat-data folder not found at: ${rawDataFolder}`);
   }
 
   const files = fs.readdirSync(rawDataFolder).filter((f) => f.endsWith('.json'));
-  const counts = {};
+  const counts: Record<string, number> = {};
+
+  type Identification = {
+    user?: { login: string };
+    current: boolean;
+    hidden: boolean;
+    taxon?: { rank: string };
+    taxon_id: number;
+  };
+
+  type Observation = {
+    identifications?: Identification[];
+  };
+
+  type PacketContent = {
+    results?: Observation[];
+  };
 
   for (const file of files) {
-    const content = JSON.parse(fs.readFileSync(path.join(rawDataFolder, file), { encoding: 'utf8' }));
+    const content = JSON.parse(fs.readFileSync(path.join(rawDataFolder, file), { encoding: 'utf8' })) as PacketContent;
     for (const obs of content.results ?? []) {
       for (const ident of obs.identifications ?? []) {
         if (
-          curatorList.includes(ident.user?.login) &&
+          curatorList.includes(ident.user?.login ?? '') &&
           ident.current === true &&
           !ident.hidden &&
           ident.taxon?.rank === 'species'
@@ -72,13 +94,13 @@ export const generateCuratorSummary = () => {
     }
   }
 
-  const summary = {
+  const summary: CuratorSummary = {
     generatedAt: new Date().toISOString(),
     fileCount: files.length,
     counts,
   };
 
-  fs.writeFileSync(getSummaryFilePath(backupSettings.backupFolder), JSON.stringify(summary, null, '  '), 'utf-8');
+  fs.writeFileSync(getSummaryFilePath(backupSettings!.backupFolder), JSON.stringify(summary, null, '  '), 'utf-8');
 
   return summary;
 };
