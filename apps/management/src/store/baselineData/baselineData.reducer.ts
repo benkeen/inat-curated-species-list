@@ -54,6 +54,10 @@ const getSortedTaxonIds = (data: BaselineSpeciesInatData[], sortDir: SortDir, so
         const aVal = a.isActive ? 1 : 0;
         const bVal = b.isActive ? 1 : 0;
         return sortDir === 'asc' ? aVal - bVal : bVal - aVal;
+      } else if (sortCol === 'notes') {
+        const aHas = a.publicNotes || a.privateNotes ? 1 : 0;
+        const bHas = b.publicNotes || b.privateNotes ? 1 : 0;
+        return sortDir === 'asc' ? aHas - bHas : bHas - aHas;
       }
 
       if (sortDir === 'asc') {
@@ -175,6 +179,22 @@ const baselineDataReducer = (state = initialState, action: any) => {
       const newArray: BaselineSpeciesInatData[] = Object.keys(newData).map((id) => ({
         id: parseInt(id),
         ...newData[id],
+      }));
+      return {
+        ...state,
+        data: newData,
+        sortedTaxonIds: getSortedTaxonIds(newArray, state.sortDir, state.sortCol),
+      };
+    }
+    case actions.BASELINE_DATA_UPDATE_NOTES: {
+      const { id, publicNotes, privateNotes } = action.payload;
+      const newData = { ...state.data };
+      if (newData[id]) {
+        newData[id] = { ...newData[id], publicNotes, privateNotes };
+      }
+      const newArray: BaselineSpeciesInatData[] = Object.keys(newData).map((strId) => ({
+        id: parseInt(strId),
+        ...newData[strId],
       }));
       return {
         ...state,

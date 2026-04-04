@@ -3,6 +3,10 @@ import { Taxon, TaxonomyMap } from '@ecophilia/inat-curated-species-list-common'
 import { GetDataPacketResponse, INatTaxonAncestor, Observation, TaxonChangeData } from '../types/generator.types';
 import fs from 'fs';
 import path from 'path';
+import colors from 'ansi-colors';
+import { performance } from 'perf_hooks';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 export const formatNum = (num: number) => new Intl.NumberFormat('en-US').format(num);
 
@@ -358,6 +362,27 @@ export const getNumINatPacketFiles = (tempFolder: string) => {
   }
   return lastPacketNum - 1;
 };
+
+export const DIVIDER = colors.dim('─'.repeat(56));
+
+export const formatElapsed = (ms: number): string => {
+  if (ms < 1000) return `${Math.round(ms)}ms`;
+  const mins = Math.floor(ms / 60000);
+  const secs = ((ms % 60000) / 1000).toFixed(1);
+  return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+};
+
+export const startStep = (stepNum: number, label: string): number => {
+  console.log(`\n${colors.bold.cyan(`[${stepNum}]`)} ${colors.bold(label)}`);
+  return performance.now();
+};
+
+export const completeStep = (startTime: number): void => {
+  console.log(`    ${colors.green('✓')} ${colors.dim(formatElapsed(performance.now() - startTime))}`);
+};
+
+const { config: configFilePath } = yargs(hideBin(process.argv)).option('config', { type: 'string' }).parseSync();
+export { configFilePath };
 
 /*
 

@@ -5,8 +5,10 @@ export type BaselineDataObj = {
     readonly researchGradeReviewCount?: number;
     readonly totalObservationCount?: number;
     readonly curatorReviewCount?: number;
+    readonly publicNotes?: string;
+    readonly privateNotes?: string;
   };
 };
 
-export type SortCol = 'id' | 'name' | 'isActive' | 'researchGradeReviewCount' | 'curatorReviewCount';
+export type SortCol = 'id' | 'name' | 'isActive' | 'researchGradeReviewCount' | 'curatorReviewCount' | 'notes';
 export type SortDir = 'asc' | 'desc';

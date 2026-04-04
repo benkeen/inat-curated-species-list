@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { getBackupSettings } from './backup-settings.js';
-import { getMainSettings } from './main-settings.js';
+import { getMainSettings } from './project-settings.js';
 
 const SUMMARY_FILENAME = 'curator-review-summary.json';
 

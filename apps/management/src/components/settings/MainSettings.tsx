@@ -12,7 +12,13 @@ export const MainSettingsPage = () => {
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
-  const [settings, setSettings] = useState<MainSettings>({ curators: '', taxonId: null, placeId: null });
+  const [settings, setSettings] = useState<MainSettings>({
+    curators: '',
+    taxonId: null,
+    placeId: null,
+    omitObservationsByUsers: '',
+    baselineCompletionDate: '',
+  });
 
   useEffect(() => {
     (async () => {
@@ -67,7 +73,7 @@ export const MainSettingsPage = () => {
 
   return (
     <>
-      <h2>Main Settings</h2>
+      <h2>Project settings</h2>
 
       {loader}
       {getAlert()}
@@ -132,33 +138,26 @@ export const MainSettingsPage = () => {
               )}
             </Box>
           </Grid>
-          {/* <Grid size={12}>
-            <input
-              type="checkbox"
-              checked={settings.provideBaselineData}
-              onChange={(e) => updateData('provideBaselineData', e.target.checked)}
+          <Grid size={3}>Omit observations by users</Grid>
+          <Grid size={9}>
+            <TextField
+              size="small"
+              fullWidth
+              value={settings.omitObservationsByUsers || ''}
+              onChange={(e) => updateData('omitObservationsByUsers', e.target.value)}
+              helperText="Comma-delimited list of iNaturalist usernames whose observations should be ignored"
             />
-            Provide baseline species
           </Grid>
-          <Grid size={12}>
-            <input
-              type="checkbox"
-              checked={settings.trackNewAdditions}
-              onChange={(e) => updateData('trackNewAdditions', e.target.checked)}
+          <Grid size={3}>Baseline completion date</Grid>
+          <Grid size={9}>
+            <TextField
+              size="small"
+              type="date"
+              value={settings.baselineCompletionDate || ''}
+              onChange={(e) => updateData('baselineCompletionDate', e.target.value)}
             />
-            Track new additions
           </Grid>
-          <Grid size={12}>
-            <input
-              type="checkbox"
-              checked={settings.trackTaxonChanges}
-              onChange={(e) => updateData('trackTaxonChanges', e.target.value)}
-            />
-            Track taxon changes
-          </Grid> */}
         </Grid>
-
-        {/* omitTaxonChangeIds */}
 
         <p>
           <Button variant="outlined" type="submit" size="small">

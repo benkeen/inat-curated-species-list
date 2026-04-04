@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 export const Navigation = () => {
@@ -12,10 +12,14 @@ export const Navigation = () => {
     label: string;
     path: string;
   };
-  const navItems: NavItem[] = [
+  const managementItems: NavItem[] = [
     {
-      label: 'Curated checklist',
-      path: '/curated-checklist',
+      label: 'iNat Sync',
+      path: '/update-inat-data',
+    },
+    {
+      label: 'Baseline species',
+      path: '/baseline-species',
     },
     {
       label: 'New additions',
@@ -26,10 +30,6 @@ export const Navigation = () => {
       path: '/taxon-changes',
     },
     {
-      label: 'Baseline species',
-      path: '/baseline-species',
-    },
-    {
       label: 'Unconfirmed species',
       path: '/unconfirmed-species',
     },
@@ -38,36 +38,36 @@ export const Navigation = () => {
       path: '/accounts',
     },
   ];
+  const viewItems: NavItem[] = [
+    {
+      label: 'Curated checklist',
+      path: '/curated-checklist',
+    },
+  ];
+
+  const renderNavItems = (items: NavItem[]) =>
+    items.map(({ label, path }) => (
+      <ListItem disablePadding key={label}>
+        <ListItemButton
+          component={(props) => <RouterLink {...props} to={path} />}
+          selected={location.pathname === path}
+        >
+          <ListItemText primary={label} />
+        </ListItemButton>
+      </ListItem>
+    ));
 
   return (
     <Box sx={{ width: '100%', maxWidth: 260, position: 'fixed' }}>
       <nav>
-        <List>
-          {navItems.map(({ label, path }) => (
-            <ListItem disablePadding key={label}>
-              <ListItemButton
-                component={(props) => <RouterLink {...props} to={path} />}
-                selected={location.pathname === path}
-              >
-                <ListItemText primary={label} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider sx={{ borderColor: 'grey.200' }} />
-        <List>
-          <ListItem disablePadding>
-            <ListItemButton
-              component={(props) => <RouterLink {...props} to="/update-inat-data" />}
-              selected={location.pathname === '/update-inat-data'}
-            >
-              <ListItemText
-                primary="Update iNat Data"
-                primaryTypographyProps={{ fontWeight: 'bold', color: 'primary.main' }}
-              />
-            </ListItemButton>
-          </ListItem>
-        </List>
+        <Typography variant="overline" sx={{ px: 2, color: 'text.secondary' }}>
+          Management
+        </Typography>
+        <List>{renderNavItems(managementItems)}</List>
+        <Typography variant="overline" sx={{ px: 2, color: 'text.secondary' }}>
+          View
+        </Typography>
+        <List>{renderNavItems(viewItems)}</List>
       </nav>
     </Box>
   );

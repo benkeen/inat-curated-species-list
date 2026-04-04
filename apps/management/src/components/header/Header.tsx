@@ -64,7 +64,7 @@ export const Header = () => {
               onClick={() => setSettingsMenuAnchor(null)}
               sx={{ fontSize: '0.85rem' }}
             >
-              Main Settings
+              Project settings
             </MenuItem>
             <MenuItem
               component={RouterLink}

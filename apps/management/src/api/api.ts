@@ -19,11 +19,11 @@ export const updateMainConfig = (content: any) => {
 };
 
 export const getMainSettings = () => {
-  return fetch(getApiUrl('main-settings'));
+  return fetch(getApiUrl('project-settings'));
 };
 
 export const updateMainSettings = (content: any) => {
-  return fetch(getApiUrl('main-settings'), {
+  return fetch(getApiUrl('project-settings'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

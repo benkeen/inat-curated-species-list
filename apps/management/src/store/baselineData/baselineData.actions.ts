@@ -56,6 +56,22 @@ export const addAndSaveBaselineSpecies = (species: BaselineSpeciesInatData) => a
   dispatch({ type: BASELINE_DATA_ADD, payload: species });
 };
 
+export const BASELINE_DATA_UPDATE_NOTES = 'BASELINE_DATA_UPDATE_NOTES';
+export const updateAndSaveSpeciesNotes =
+  (id: number, publicNotes: string, privateNotes: string) => async (dispatch: any, getState: any) => {
+    const state = getState();
+    const updatedArray: BaselineSpeciesInatData[] = Object.keys(state.baselineData.data).map((strId) => {
+      const numId = parseInt(strId);
+      const existing = { id: numId, ...state.baselineData.data[strId] };
+      if (numId === id) {
+        return { ...existing, publicNotes, privateNotes };
+      }
+      return existing;
+    });
+    await updateBaselineSpecies({ data: updatedArray });
+    dispatch({ type: BASELINE_DATA_UPDATE_NOTES, payload: { id, publicNotes, privateNotes } });
+  };
+
 export const BASELINE_DATA_BULK_UPDATE = 'BASELINE_DATA_BULK_UPDATE';
 export const bulkUpdateAndSaveBaselineSpecies =
   (

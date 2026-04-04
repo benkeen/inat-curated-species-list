@@ -1,6 +1,6 @@
 import express from 'express';
 import { getBackupSettings, updateBackupSettings } from './backup-settings.js';
-import { getMainSettings, updateMainSettings } from './main-settings.js';
+import { getMainSettings, updateMainSettings } from './project-settings.js';
 import { getBaselineSpecies, updateBaselineSpecies } from './baseline-species.js';
 import { startInatDataDownload, getInatDataLog } from './observation-data.js';
 import { getDownloadState, setDownloadState, subscribeToDownload } from './inat-download-state.js';
@@ -28,13 +28,13 @@ app.post('/backup-settings', (req, res) => {
   res.end(JSON.stringify({ success, error }));
 });
 
-app.get('/main-settings', (req, res) => {
+app.get('/project-settings', (req, res) => {
   const settings = getMainSettings();
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify({ settings }));
 });
 
-app.post('/main-settings', (req, res) => {
+app.post('/project-settings', (req, res) => {
   const { success } = updateMainSettings(req.body);
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify({ success }));

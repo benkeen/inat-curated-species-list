@@ -106,7 +106,7 @@ export const BaselineSpecies = () => {
           constructing the final checklist.
         </p>
         <p>
-          <b>You don't need to use this feature</b>. This is only needed when you have prior knowledge of the species in
+          <b>This is an optional feature</b>. It's only needed when you have historical data of the relevant species in
           your region and iNat is currently missing records for those species.
         </p>
 

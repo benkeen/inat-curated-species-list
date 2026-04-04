@@ -12,7 +12,13 @@ export const extractSpeciesList = (config: GeneratorConfig, tempFolder: string, 
     const rawData: GetDataPacketResponse = JSON.parse(
       fs.readFileSync(path.resolve(tempFolder, `packet-${packetNum}.json`), 'utf-8'),
     );
-    appendSpeciesFromPacket(rawData, config.curators, config.taxons ?? DEFAULT_TAXONS, curatedSpeciesData);
+    appendSpeciesFromPacket(
+      rawData,
+      config.curators,
+      config.taxons ?? DEFAULT_TAXONS,
+      curatedSpeciesData,
+      config.omitObservationsByUsers ?? [],
+    );
   }
 
   return curatedSpeciesData;
@@ -23,8 +29,13 @@ export const appendSpeciesFromPacket = (
   curators: string[],
   taxonsToReturn: Taxon[],
   curatedSpeciesData: CuratedSpeciesData,
+  omitUsers: string[] = [],
 ) => {
+  const omitUsersLower = omitUsers.map((u) => u.toLowerCase());
   rawData.results.forEach((obs) => {
+    if (omitUsersLower.includes(obs.user.login.toLowerCase())) {
+      return;
+    }
     obs.identifications.forEach((ident) => {
       if (curators.indexOf(ident.user.login) === -1) {
         return;

@@ -5,6 +5,8 @@ export type BaselineSpeciesInatData = {
   readonly researchGradeReviewCount?: number;
   readonly totalObservationCount?: number;
   readonly curatorReviewCount?: number;
+  readonly publicNotes?: string;
+  readonly privateNotes?: string;
 };
 
 export type BaselineDataFileContent = {
@@ -16,6 +18,8 @@ export type MainSettings = {
   readonly curators: string;
   readonly taxonId?: number | null;
   readonly placeId?: number | null;
+  readonly omitObservationsByUsers?: string;
+  readonly baselineCompletionDate?: string;
 };
 
 export type RegionSpecies = {

@@ -112,6 +112,12 @@ export type GeneratorConfig = {
    * and work off the downloaded files.
    */
   readonly useLocalInatDataFiles?: boolean;
+
+  /**
+   * Optional array of iNat usernames. When provided, any observations made by these users will be ignored and
+   * not included in the generated data.
+   */
+  readonly omitObservationsByUsers?: string[];
 };
 
 export type NewAddition = {

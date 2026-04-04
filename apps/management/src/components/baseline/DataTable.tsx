@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import NotesIcon from '@mui/icons-material/Notes';
 import Tooltip from '@mui/material/Tooltip';
 import { Link } from 'react-router';
 import { INAT_SPECIES_URL } from '../../constants';
@@ -22,6 +23,7 @@ import { BaselineSpeciesInatData } from '../../types';
 import { IconButton } from '@mui/material';
 import { formatNumber } from '../../utils';
 import { SortCol, SortDir } from './BaselineData.types';
+import { NotesDialog } from './NotesDialog';
 
 type DataTableProps = {
   data: BaselineSpeciesInatData[];
@@ -76,9 +78,10 @@ type DataRowProps = {
   rowNum: number;
   isSelected: boolean;
   onToggle: (id: number) => void;
+  onOpenNotes: (row: BaselineSpeciesInatData) => void;
 };
 
-const DataRow = memo(({ row, rowNum, isSelected, onToggle }: DataRowProps) => (
+const DataRow = memo(({ row, rowNum, isSelected, onToggle, onOpenNotes }: DataRowProps) => (
   <tr>
     <td className={classes.rowNum}>{rowNum + 1}</td>
     <td>{row.id}</td>
@@ -98,6 +101,13 @@ const DataRow = memo(({ row, rowNum, isSelected, onToggle }: DataRowProps) => (
       <Chip label={formatNumber(row.curatorReviewCount ?? 0)} size="small" color="default" />
     </td>
     <td width={30}>
+      <IconButton size="small" onClick={() => onOpenNotes(row)} sx={{ p: 0.25 }}>
+        <NotesIcon
+          sx={{ fontSize: 16, color: row.publicNotes || row.privateNotes ? 'primary.main' : 'action.disabled' }}
+        />
+      </IconButton>
+    </td>
+    <td width={30}>
       <Checkbox size="small" checked={isSelected} onChange={() => onToggle(row.id)} sx={{ p: 0 }} />
     </td>
   </tr>
@@ -106,6 +116,7 @@ const DataRow = memo(({ row, rowNum, isSelected, onToggle }: DataRowProps) => (
 export const DataTable = ({ data, onDeleteRows, sortCol, sortDir, onSort }: DataTableProps) => {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [notesRow, setNotesRow] = useState<BaselineSpeciesInatData | null>(null);
   const tbodyRef = useRef<HTMLTableSectionElement>(null);
   const [scrollMargin, setScrollMargin] = useState(0);
 
@@ -135,6 +146,14 @@ export const DataTable = ({ data, onDeleteRows, sortCol, sortDir, onSort }: Data
     });
   }, []);
 
+  const handleOpenNotes = useCallback((row: BaselineSpeciesInatData) => {
+    setNotesRow(row);
+  }, []);
+
+  const handleCloseNotes = useCallback(() => {
+    setNotesRow(null);
+  }, []);
+
   const handleConfirmDelete = () => {
     onDeleteRows([...selectedIds]);
     setSelectedIds(new Set());
@@ -150,21 +169,14 @@ export const DataTable = ({ data, onDeleteRows, sortCol, sortDir, onSort }: Data
           <thead>
             <tr>
               <th></th>
-              <Th
-                col="id"
-                label="Taxon ID"
-                style={{ width: 120 }}
-                sortCol={sortCol}
-                sortDir={sortDir}
-                onSort={onSort}
-              />
+              <Th col="id" label="ID" style={{ width: 75 }} sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
               <Th col="name" label="Species" sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
               <Th col="isActive" label="Active" sortCol={sortCol} sortDir={sortDir} onSort={onSort} />
               <Th
                 col="researchGradeReviewCount"
                 label={
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
-                    Observations
+                    Obs
                     <Tooltip title="Total verifiable observations / Research grade observations" arrow>
                       <InfoOutlinedIcon sx={{ fontSize: 14, verticalAlign: 'middle', cursor: 'help', ml: '2px' }} />
                     </Tooltip>
@@ -201,6 +213,14 @@ export const DataTable = ({ data, onDeleteRows, sortCol, sortDir, onSort }: Data
                 sortDir={sortDir}
                 onSort={onSort}
               />
+              <Th
+                col="notes"
+                label="Notes"
+                style={{ width: 100 }}
+                sortCol={sortCol}
+                sortDir={sortDir}
+                onSort={onSort}
+              />
               <th>
                 <Button
                   variant="outlined"
@@ -217,7 +237,7 @@ export const DataTable = ({ data, onDeleteRows, sortCol, sortDir, onSort }: Data
           <tbody ref={tbodyRef}>
             {paddingTop > 0 && (
               <tr>
-                <td style={{ height: paddingTop }} colSpan={7} />
+                <td style={{ height: paddingTop }} colSpan={8} />
               </tr>
             )}
             {virtualItems.map((virtualRow) => {
@@ -229,12 +249,13 @@ export const DataTable = ({ data, onDeleteRows, sortCol, sortDir, onSort }: Data
                   rowNum={virtualRow.index}
                   isSelected={selectedIds.has(row.id)}
                   onToggle={toggleRow}
+                  onOpenNotes={handleOpenNotes}
                 />
               );
             })}
             {paddingBottom > 0 && (
               <tr>
-                <td style={{ height: paddingBottom }} colSpan={7} />
+                <td style={{ height: paddingBottom }} colSpan={8} />
               </tr>
             )}
           </tbody>
@@ -267,6 +288,7 @@ export const DataTable = ({ data, onDeleteRows, sortCol, sortDir, onSort }: Data
           </Button>
         </DialogActions>
       </Dialog>
+      <NotesDialog row={notesRow} open={notesRow !== null} onClose={handleCloseNotes} />
     </>
   );
 };

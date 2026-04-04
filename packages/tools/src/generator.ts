@@ -2,8 +2,6 @@
 /**
  * The main data file generation script.
  */
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
 import path from 'path';
 import fs from 'fs';
 import colors from 'ansi-colors';
@@ -12,31 +10,20 @@ import { extractSpeciesList } from './extraction';
 import { minifySpeciesData } from './minification';
 import { clearTempFolder, initLogger } from './logs';
 import { DEFAULT_TAXONS } from './constants';
-import { getNumINatPacketFiles, parseDataFiles } from './helpers';
+import {
+  getNumINatPacketFiles,
+  parseDataFiles,
+  DIVIDER,
+  startStep,
+  completeStep,
+  configFilePath,
+  formatElapsed,
+} from './helpers';
 import { GeneratorConfig, NewAddition } from '../types/generator.types';
 import { CuratedSpeciesData } from '@ecophilia/inat-curated-species-list-common';
 import { performance } from 'perf_hooks';
 
 export type { GeneratorConfig };
-
-const DIVIDER = colors.dim('─'.repeat(56));
-
-const formatElapsed = (ms: number): string => {
-  if (ms < 1000) return `${Math.round(ms)}ms`;
-  const mins = Math.floor(ms / 60000);
-  const secs = ((ms % 60000) / 1000).toFixed(1);
-  return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
-};
-
-const startStep = (stepNum: number, label: string): number => {
-  console.log(`\n${colors.bold.cyan(`[${stepNum}]`)} ${colors.bold(label)}`);
-  return performance.now();
-};
-
-const completeStep = (startTime: number): void => {
-  console.log(`    ${colors.green('✓')} ${colors.dim(formatElapsed(performance.now() - startTime))}`);
-};
-const { config: configFilePath } = yargs(hideBin(process.argv)).option('config', { type: 'string' }).parseSync();
 
 const generateSpeciesDataFile = (config: GeneratorConfig, speciesData: CuratedSpeciesData, tempFolder: string) => {
   const minifiedSpeciesData = minifySpeciesData(speciesData, config.taxons ?? DEFAULT_TAXONS);

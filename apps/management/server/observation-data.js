@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import path from 'path';
 import qs from 'query-string';
 import { getBackupSettings } from './backup-settings.js';
-import { getMainSettings } from './main-settings.js';
+import { getMainSettings } from './project-settings.js';
 import { clearLog, log } from './inat-download-logger.js';
 
 const INAT_REQUEST_RESULTS_PER_PAGE = 200;
