@@ -1,15 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import { IconButton } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import DriveFileMoveOutlinedIcon from '@mui/icons-material/DriveFileMoveOutlined';
 import { getUnconfirmedSpecies } from '../../api/api';
+import { addAndSaveBaselineSpecies } from '../../store/baselineData/baselineData.actions';
 import { CheckUnconfirmedSpeciesDialog } from './CheckUnconfirmedSpeciesDialog';
 import { INAT_SPECIES_URL } from '../../constants';
 import classes from '../baseline/baseline.module.css';
@@ -74,6 +81,7 @@ const Th = ({
 );
 
 export const UnconfirmedSpecies = () => {
+  const dispatch = useDispatch();
   const [data, setData] = useState<UnconfirmedSpeciesData | null>(null);
   const [fileExists, setFileExists] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -82,6 +90,8 @@ export const UnconfirmedSpecies = () => {
   const [sortCol, setSortCol] = useState<SortCol>('count');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [currentTab, setCurrentTab] = useState(0);
+  const [moveTarget, setMoveTarget] = useState<UnconfirmedSpeciesEntry | null>(null);
+  const [moving, setMoving] = useState(false);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -116,6 +126,32 @@ export const UnconfirmedSpecies = () => {
       setSortCol(col);
       setSortDir(col === 'count' ? 'desc' : 'asc');
     }
+  };
+
+  const handleConfirmMove = async () => {
+    if (!moveTarget) return;
+    setMoving(true);
+    await (dispatch as any)(
+      addAndSaveBaselineSpecies({
+        id: parseInt(moveTarget.taxonId, 10),
+        name: moveTarget.name,
+        isActive: true,
+        researchGradeReviewCount: 0,
+        curatorReviewCount: undefined,
+      }),
+    );
+    setMoving(false);
+    setMoveTarget(null);
+    // Remove from local data so the table updates immediately
+    setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            totalUnconfirmed: prev.totalUnconfirmed - 1,
+            species: prev.species.filter((s) => s.taxonId !== moveTarget.taxonId),
+          }
+        : prev,
+    );
   };
 
   const sortedSpecies = useMemo(() => {
@@ -195,6 +231,7 @@ export const UnconfirmedSpecies = () => {
                         sortDir={sortDir}
                         onSort={handleSort}
                       />
+                      <th style={{ width: 60 }}>Move</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -208,6 +245,11 @@ export const UnconfirmedSpecies = () => {
                           </a>
                         </td>
                         <td>{row.count.toLocaleString()}</td>
+                        <td>
+                          <IconButton size="small" onClick={() => setMoveTarget(row)} title="Move to baseline species">
+                            <DriveFileMoveOutlinedIcon fontSize="small" />
+                          </IconButton>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -225,6 +267,23 @@ export const UnconfirmedSpecies = () => {
       </Box>
 
       <CheckUnconfirmedSpeciesDialog open={dialogOpen} onClose={handleDialogClose} />
+
+      <Dialog open={moveTarget !== null} onClose={() => !moving && setMoveTarget(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>Move to Baseline Species</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2">
+            Add <b>{moveTarget?.name}</b> (taxon ID: {moveTarget?.taxonId}) to the baseline species list?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button size="small" onClick={() => setMoveTarget(null)} disabled={moving}>
+            No
+          </Button>
+          <Button size="small" variant="contained" onClick={handleConfirmMove} disabled={moving}>
+            {moving ? 'Adding…' : 'Yes'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

@@ -125,6 +125,16 @@ export const startUnconfirmedSpeciesCheck = async (
     confirmedIds = new Set(Object.keys(speciesData.taxonData));
   }
 
+  // Also exclude any species in baseline-species.json
+  const baselineSpeciesFile = path.join(backupFolder, 'baseline-species.json');
+  if (fs.existsSync(baselineSpeciesFile)) {
+    const baselineRaw = fs.readFileSync(baselineSpeciesFile, 'utf-8');
+    const baseline = JSON.parse(baselineRaw) as { data?: Array<{ id: number }> };
+    for (const entry of baseline.data ?? []) {
+      confirmedIds.add(String(entry.id));
+    }
+  }
+
   // Find unconfirmed species and sort by count descending
   const unconfirmedSpecies: UnconfirmedSpeciesEntry[] = [];
   for (const [taxonId, { name, count }] of allSpecies) {
