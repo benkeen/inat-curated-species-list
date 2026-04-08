@@ -11,7 +11,8 @@ import {
 } from '@ecophilia/inat-curated-species-list-common';
 
 export interface SpeciesTabProps {
-  readonly dataUrl: string;
+  readonly dataUrl?: string;
+  readonly initialData?: CuratedSpeciesDataMinified;
   readonly onLoad: (data: CuratedSpeciesDataMinified) => void;
   readonly curatorUsernames: string[];
   readonly placeId: number;
@@ -22,6 +23,7 @@ export interface SpeciesTabProps {
 
 export const SpeciesTab: FC<SpeciesTabProps> = ({
   dataUrl,
+  initialData,
   onLoad,
   curatorUsernames,
   placeId,
@@ -51,6 +53,18 @@ export const SpeciesTab: FC<SpeciesTabProps> = ({
   );
 
   useEffect(() => {
+    if (initialData) {
+      onLoad(initialData);
+      setTaxons(initialData.taxons);
+      setData(unminifySpeciesData(initialData));
+      setLoaded(true);
+      return;
+    }
+
+    if (!dataUrl) {
+      return;
+    }
+
     fetch(dataUrl, {
       headers: {
         Accept: 'application/json',
@@ -64,7 +78,7 @@ export const SpeciesTab: FC<SpeciesTabProps> = ({
         setLoaded(true);
       })
       .catch(() => setError(true));
-  }, [dataUrl]);
+  }, [dataUrl, initialData]);
 
   useEffect(() => {
     if (!data) {

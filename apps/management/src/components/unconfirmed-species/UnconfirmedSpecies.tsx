@@ -261,9 +261,13 @@ export const UnconfirmedSpecies = () => {
       </Box>
 
       <Box sx={{ display: currentTab !== 1 ? 'none' : 'block', p: 2 }}>
-        <Typography variant="body2" color="text.secondary">
-          Species reported on iNaturalist for the configured place and taxon that are not yet in the curated checklist.
-        </Typography>
+        <div>
+          This page lists species that have been reported on iNaturalist within the configured place and taxon, but
+          don't have a confirmed observation by a curator, nor a record in the baseline species list. These are
+          candidates to be added to the curated checklist, but require curator review. Use the button above to check for
+          unconfirmed species, which will download all reported species from iNaturalist and cross-reference them
+          against the curated list.
+        </div>
       </Box>
 
       <CheckUnconfirmedSpeciesDialog open={dialogOpen} onClose={handleDialogClose} />

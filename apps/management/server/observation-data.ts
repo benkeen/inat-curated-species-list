@@ -46,7 +46,7 @@ export const downloadDataPacket = async ({
     rawResponse = await getDataPacket(placeId, taxonId, curators, lastId);
   } catch (e) {
     return {
-      error: JSON.stringify(e),
+      error: e instanceof Error ? e.message : String(e),
     };
   }
 

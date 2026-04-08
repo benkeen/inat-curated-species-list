@@ -58,6 +58,14 @@ export const getNewAdditionsData = () => {
   return fetch(getApiUrl('new-additions-data'));
 };
 
+export const getSpeciesData = () => {
+  return fetch(getApiUrl('species-data'));
+};
+
+export const getTaxonChangesData = () => {
+  return fetch(getApiUrl('taxon-changes-data'));
+};
+
 export const getUnconfirmedSpecies = () => {
   return fetch(getApiUrl('unconfirmed-species'));
 };

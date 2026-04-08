@@ -8,8 +8,9 @@ import {
   getNewAdditionsSettings,
   updateNewAdditionsSettings,
 } from './project-settings.js';
-import { getBaselineSpecies, updateBaselineSpecies } from './baseline-species.js';
+import { getBaselineSpecies, updateBaselineSpecies, patchCuratorReviewCounts } from './baseline-species.js';
 import { startInatDataDownload, getInatDataLog } from './observation-data.js';
+import { log } from './inat-download-logger.js';
 import { getDownloadState, setDownloadState, subscribeToDownload } from './inat-download-state.js';
 import { generateCuratorSummary, getCuratorReviewCount } from './curator-summary.js';
 import { generateChecklistFiles, getIsGenerating } from './generate-checklist.js';
@@ -98,11 +99,20 @@ app.post('/start-inat-download', (req: Request, res: Response) => {
       setDownloadState({ status: 'done', result, progress: null });
       // Regenerate the curator review summary from the freshly-downloaded raw-inat-data
       if (!maxPackets) {
+        let curatorPatch: { taxaCount: number; totalIdents: number } | { error: string };
         try {
-          generateCuratorSummary();
+          const summary = generateCuratorSummary();
+          const taxaCount = Object.keys(summary.counts).length;
+          const totalIdents = Object.values(summary.counts).reduce((a, b) => a + b, 0);
+          log('info', `[curator-summary] Generated: ${taxaCount} taxa, ${totalIdents} total curator identifications.`);
+          patchCuratorReviewCounts(summary.counts);
+          log('info', '[curator-summary] baseline-species.json patched with curator review counts.');
+          curatorPatch = { taxaCount, totalIdents };
         } catch (e) {
-          console.error('Failed to regenerate curator summary after download:', (e as Error).message);
+          log('error', `[curator-summary] Failed: ${(e as Error).message}`);
+          curatorPatch = { error: (e as Error).message };
         }
+        setDownloadState({ result: { ...result, curatorPatch } });
       }
     })
     .catch((e: Error) => setDownloadState({ status: 'error', error: e.message, progress: null }));
@@ -194,6 +204,44 @@ app.get('/new-additions-data', (_req: Request, res: Response) => {
     res.end(content);
   } catch (e) {
     res.status(500).json({ error: 'Failed to read new-additions-data.json.' });
+  }
+});
+
+// GET /species-data — returns the contents of species-data.json from the backup folder.
+app.get('/species-data', (_req: Request, res: Response) => {
+  const { exists, backupSettings } = getBackupSettings();
+  if (!exists || !backupSettings) {
+    return res.status(404).json({ error: 'Backup settings not configured.' });
+  }
+  const filePath = path.join(backupSettings.backupFolder, 'species-data.json');
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: 'species-data.json not found. Run checklist generation first.' });
+  }
+  try {
+    const content = fs.readFileSync(filePath, { encoding: 'utf8' });
+    res.setHeader('Content-Type', 'application/json');
+    res.end(content);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to read species-data.json.' });
+  }
+});
+
+// GET /taxon-changes-data — returns the contents of taxon-changes-data.json from the backup folder.
+app.get('/taxon-changes-data', (_req: Request, res: Response) => {
+  const { exists, backupSettings } = getBackupSettings();
+  if (!exists || !backupSettings) {
+    return res.status(404).json({ error: 'Backup settings not configured.' });
+  }
+  const filePath = path.join(backupSettings.backupFolder, 'taxon-changes-data.json');
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: 'taxon-changes-data.json not found. Run checklist generation first.' });
+  }
+  try {
+    const content = fs.readFileSync(filePath, { encoding: 'utf8' });
+    res.setHeader('Content-Type', 'application/json');
+    res.end(content);
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to read taxon-changes-data.json.' });
   }
 });
 

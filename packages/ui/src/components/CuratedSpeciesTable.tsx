@@ -4,9 +4,11 @@ import { NewAdditionsTab } from './NewAdditionsTab';
 import { TaxonChangesTab } from './TaxonChangesTab';
 import { formatDate } from '../utils/helpers';
 import { CuratedSpeciesDataMinified } from '@ecophilia/inat-curated-species-list-common';
+import { NewAddition, TaxonChangeData } from '@ecophilia/inat-curated-species-list-tools';
 
 export interface CuratedSpeciesTableProps {
-  readonly speciesDataUrl: string;
+  readonly speciesDataUrl?: string;
+  readonly initialSpeciesData?: CuratedSpeciesDataMinified;
   readonly curatorUsernames: string[];
   readonly placeId: number;
   readonly showLastGeneratedDate: boolean;
@@ -14,8 +16,10 @@ export interface CuratedSpeciesTableProps {
   readonly showReviewerCount?: boolean;
   readonly showNewAdditions?: boolean;
   readonly newAdditionsDataUrl?: string;
+  readonly initialNewAdditionsData?: NewAddition[];
   readonly showTaxonChanges?: boolean;
   readonly taxonChangesDataUrl?: string;
+  readonly initialTaxonChangesData?: Record<string, TaxonChangeData[]>;
 
   readonly tabText?: {
     readonly speciesTab?: any;
@@ -26,6 +30,7 @@ export interface CuratedSpeciesTableProps {
 
 export const CuratedSpeciesTable: FC<CuratedSpeciesTableProps> = ({
   speciesDataUrl,
+  initialSpeciesData,
   curatorUsernames,
   placeId,
   showLastGeneratedDate,
@@ -33,14 +38,16 @@ export const CuratedSpeciesTable: FC<CuratedSpeciesTableProps> = ({
   showReviewerCount = false,
   showNewAdditions,
   newAdditionsDataUrl,
+  initialNewAdditionsData,
   showTaxonChanges,
   taxonChangesDataUrl,
+  initialTaxonChangesData,
   tabText = {},
 }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [lastGenerated, setLastGeneratedDate] = useState('');
-  const hasNewAdditions = showNewAdditions && newAdditionsDataUrl;
-  const hasTaxonChanges = showTaxonChanges && taxonChangesDataUrl;
+  const hasNewAdditions = showNewAdditions && (newAdditionsDataUrl || initialNewAdditionsData);
+  const hasTaxonChanges = showTaxonChanges && (taxonChangesDataUrl || initialTaxonChangesData);
 
   const onLoadSpeciesData = useCallback((data: CuratedSpeciesDataMinified) => {
     setLastGeneratedDate(formatDate(data.dateGenerated));
@@ -89,6 +96,7 @@ export const CuratedSpeciesTable: FC<CuratedSpeciesTableProps> = ({
       <div style={{ display: tabIndex === 0 ? 'block' : 'none' }}>
         <SpeciesTab
           dataUrl={speciesDataUrl}
+          initialData={initialSpeciesData}
           onLoad={onLoadSpeciesData}
           curatorUsernames={curatorUsernames}
           placeId={placeId}
@@ -100,13 +108,21 @@ export const CuratedSpeciesTable: FC<CuratedSpeciesTableProps> = ({
 
       {hasNewAdditions && (
         <div style={{ display: tabIndex === 1 ? 'block' : 'none' }}>
-          <NewAdditionsTab dataUrl={newAdditionsDataUrl} showRowNumbers={showRowNumbers} />
+          <NewAdditionsTab
+            dataUrl={newAdditionsDataUrl}
+            initialData={initialNewAdditionsData}
+            showRowNumbers={showRowNumbers}
+          />
         </div>
       )}
 
       {hasTaxonChanges && (
         <div style={{ display: tabIndex === 2 ? 'block' : 'none' }}>
-          <TaxonChangesTab dataUrl={taxonChangesDataUrl} showRowNumbers={showRowNumbers} />
+          <TaxonChangesTab
+            dataUrl={taxonChangesDataUrl}
+            initialData={initialTaxonChangesData}
+            showRowNumbers={showRowNumbers}
+          />
         </div>
       )}
     </>

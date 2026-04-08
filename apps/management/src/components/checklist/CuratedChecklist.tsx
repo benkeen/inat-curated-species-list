@@ -1,82 +1,126 @@
-import { useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import { Logger } from './Logger';
-import { LoggerHandle } from './types';
+import Alert from '@mui/material/Alert';
+import { CuratedSpeciesTable } from '@ecophilia/inat-curated-species-list-ui';
+import { NewAddition, TaxonChangeData } from '@ecophilia/inat-curated-species-list-tools';
+import {
+  getMainSettings,
+  getSpeciesData,
+  getNewAdditionsData,
+  getTaxonChangesData,
+  getNewAdditionsSettings,
+} from '../../api/api';
+import type { MainSettings } from '../../types';
+import { Spinner } from '../loading/spinner';
+
+type ChecklistSettings = {
+  placeId: number;
+  curatorUsernames: string[];
+};
 
 export const CuratedChecklist = () => {
-  //   const [curatorUsernames, setCuratorUsernames] = useState(() => C.DEMO_DEFAULT_CURATOR_INAT_USERNAMES.join(','));
-  //   const [placeId, setPlaceId] = useState<number | ''>(C.DEMO_DEFAULT_PLACE_ID);
-  //   const [taxonId, setTaxonId] = useState<number | ''>(C.DEMO_DEFAULT_TAXON_ID);
-  //   const [loading, setLoading] = useState(false);
-  //   const [dataLoaded, setDataLoaded] = useState(false);
-  //   const [curatedSpeciesData, setCuratedSpeciesData] = useState<CuratedSpeciesData | null>(null);
-  //   //   const [newAdditionsData, setNewAdditionsData] = useState(null);
-  //   const [tabIndex, setTabIndex] = useState(0);
-  const loggerRef = useRef<LoggerHandle>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [speciesData, setSpeciesData] = useState<any>(null);
+  const [newAdditionsData, setNewAdditionsData] = useState<NewAddition[] | null>(null);
+  const [taxonChangesData, setTaxonChangesData] = useState<Record<string, TaxonChangeData[]> | null>(null);
+  const [settings, setSettings] = useState<ChecklistSettings | null>(null);
+  const [newAdditionsEnabled, setNewAdditionsEnabled] = useState(false);
 
-  //   const onChangeTab = (_e: React.SyntheticEvent, newValue: number) => {
-  //     setTabIndex(newValue);
-  //   };
+  useEffect(() => {
+    (async () => {
+      try {
+        const [settingsResp, speciesResp, newAdditionsSettingsResp] = await Promise.all([
+          getMainSettings(),
+          getSpeciesData(),
+          getNewAdditionsSettings(),
+        ]);
 
-  //   const downloadData = () => {
-  //     if (!loggerRef || !placeId || !taxonId) {
-  //       return;
-  //     }
+        const { settings: mainSettings } = (await settingsResp.json()) as { settings: MainSettings };
 
-  //     // clear out any old data and start the new requests
-  //     // resetData();
-  //     setLoading(true);
+        if (!mainSettings?.placeId) {
+          setError('Project settings not configured. Please set placeId and curators in Settings → Main.');
+          return;
+        }
 
-  //     loggerRef.current!.clear();
-  //     loggerRef.current!.addLogRow('Pinging iNat for observation data.', 'info');
+        if (!speciesResp.ok) {
+          const body = await speciesResp.json();
+          setError(body?.error ?? 'Failed to load species data.');
+          return;
+        }
 
-  //     const onSuccess = (
-  //       curatedSpeciesData: any, // newAdditionsData
-  //     ) => {
-  //       setLoading(false);
-  //       setDataLoaded(true);
+        setSpeciesData(await speciesResp.json());
 
-  //       console.log('on success [all]', curatedSpeciesData);
+        const curatorUsernames = mainSettings.curators
+          ? mainSettings.curators
+              .split(',')
+              .map((c) => c.trim())
+              .filter(Boolean)
+          : [];
 
-  //       loggerRef.current!.addLogRows([
-  //         ['Observation data all returned.', 'info'],
-  //         ['Parsing data.', 'info'],
-  //         [`Found <b>${Object.keys(curatedSpeciesData).length}</b> unique species in observation results.`, 'success'],
-  //       ]);
+        setSettings({ placeId: mainSettings.placeId, curatorUsernames });
 
-  //       setCuratedSpeciesData(curatedSpeciesData);
-  //       // setNewAdditionsData(minifyNewAdditionsData(newAdditionsData, C.NEW_ADDITIONS_IGNORE_SPECIES_OBSERVED_BY));
-  //     };
+        const { settings: naSettings } = await newAdditionsSettingsResp.json();
+        const isNewAdditionsEnabled = naSettings?.enabled ?? false;
+        setNewAdditionsEnabled(isNewAdditionsEnabled);
 
-  //     const onError = () => {
-  //       loggerRef.current!.addLogRow('Error pinging the iNat API.', 'error');
-  //       setLoading(false);
-  //     };
+        if (isNewAdditionsEnabled) {
+          const naResp = await getNewAdditionsData();
+          if (naResp.ok) {
+            setNewAdditionsData(await naResp.json());
+          }
+        }
 
-  //     downloadDataByPacket({
-  //       curators: curatorUsernames,
-  //       placeId,
-  //       taxonId,
-  //       visibleTaxons: C.VISIBLE_TAXONS, // TODO allow option via UI to configure?
-  //       maxResults: 1000,
-  //       packetNum: 1,
-  //       logger: loggerRef,
-  //       logFormat: 'html',
-  //       onSuccess,
-  //       onError,
-  //     });
+        const taxonResp = await getTaxonChangesData();
+        if (taxonResp.ok) {
+          setTaxonChangesData(await taxonResp.json());
+        }
+      } catch (e) {
+        setError((e as Error).message);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, []);
 
-  //     // const d = require('./test-data.json');
-  //     // setNewAdditionsData(minifyNewAdditionsData(d));
-  //   };
-  // return <DataTable data={curatedSpeciesData} curatorUsernames={curatorUsernames} placeId={placeId} />;
+  if (isLoading) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Spinner />
+      </Box>
+    );
+  }
 
-  // style={{ display: 'flex', visibility: true, height: 100 }}
+  if (error) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Alert severity="error">{error}</Alert>
+      </Box>
+    );
+  }
+
+  if (!speciesData || !settings) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Alert severity="info">No checklist data found. Run checklist generation first.</Alert>
+      </Box>
+    );
+  }
+
   return (
-    <Box>
-      <Logger ref={loggerRef} />
+    <Box sx={{ p: 2 }}>
+      <CuratedSpeciesTable
+        initialSpeciesData={speciesData}
+        curatorUsernames={settings.curatorUsernames}
+        placeId={settings.placeId}
+        showLastGeneratedDate={true}
+        showRowNumbers={true}
+        showReviewerCount={true}
+        showNewAdditions={newAdditionsEnabled}
+        initialNewAdditionsData={newAdditionsData ?? undefined}
+        showTaxonChanges={!!taxonChangesData}
+        initialTaxonChangesData={taxonChangesData ?? undefined}
+      />
     </Box>
   );
-
-  return null;
 };

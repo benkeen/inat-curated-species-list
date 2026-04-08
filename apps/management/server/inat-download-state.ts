@@ -13,6 +13,7 @@ export type DownloadResult = {
   totalObservations: number;
   totalPackets: number;
   completedAt: string;
+  curatorPatch?: { taxaCount: number; totalIdents: number } | { error: string };
 };
 
 export type DownloadState = {

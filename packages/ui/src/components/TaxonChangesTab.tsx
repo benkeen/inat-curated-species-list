@@ -4,12 +4,13 @@ import { constants } from '@ecophilia/inat-curated-species-list-common';
 import { YearNavigation } from './YearNavigation';
 import { formatDate, getCurrentYear } from '../utils/helpers';
 import { ViewIcon } from './ViewIcon';
-import { TaxonChangeType } from '@ecophilia/inat-curated-species-list-tools';
+import { TaxonChangeData, TaxonChangeType } from '@ecophilia/inat-curated-species-list-tools';
 
 const { INAT_TAXON_CHANGES_URL, INAT_TAXON_URL } = constants;
 
 export interface TaxonChangesTabProps {
-  readonly dataUrl: string;
+  readonly dataUrl?: string;
+  readonly initialData?: Record<string, TaxonChangeData[]>;
   readonly showRowNumbers: boolean;
   readonly tabText?: string | JSX.Element;
 }
@@ -29,7 +30,7 @@ const ChangeTypePill = ({ type }: { type: TaxonChangeType }) => {
   return <span className={className}>{label}</span>;
 };
 
-export const TaxonChangesTab: FC<TaxonChangesTabProps> = ({ dataUrl, showRowNumbers, tabText }) => {
+export const TaxonChangesTab: FC<TaxonChangesTabProps> = ({ dataUrl, initialData, showRowNumbers, tabText }) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   const [data, setData] = useState<any>();
@@ -38,6 +39,17 @@ export const TaxonChangesTab: FC<TaxonChangesTabProps> = ({ dataUrl, showRowNumb
   const onChangeYear = (year: string) => setCurrentYear(year);
 
   useEffect(() => {
+    if (initialData) {
+      setYears(Object.keys(initialData));
+      setData(initialData);
+      setLoaded(true);
+      return;
+    }
+
+    if (!dataUrl) {
+      return;
+    }
+
     fetch(dataUrl, {
       headers: {
         Accept: 'application/json',
@@ -52,7 +64,7 @@ export const TaxonChangesTab: FC<TaxonChangesTabProps> = ({ dataUrl, showRowNumb
       })
       .catch(() => setError(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataUrl]);
+  }, [dataUrl, initialData]);
 
   if (error) {
     return <p>Sorry, there was an error loading the data.</p>;

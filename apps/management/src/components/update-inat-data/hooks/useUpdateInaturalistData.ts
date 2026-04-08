@@ -11,6 +11,7 @@ type Result = {
   totalObservations: number;
   totalPackets: number;
   completedAt: string;
+  curatorPatch?: { taxaCount: number; totalIdents: number } | { error: string };
 };
 
 type LastRun = {
@@ -50,6 +51,7 @@ export const useUpdateInaturalistData = () => {
       setProgress(data.progress ?? null);
       setResult(data.result ?? null);
       setError(data.error ?? null);
+
       // When a download completes, refresh the persisted last-run panel
       if (data.status === 'done' && data.result) {
         setLastRun({
