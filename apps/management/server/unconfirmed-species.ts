@@ -178,3 +178,30 @@ export const getUnconfirmedSpecies = (): { exists: boolean; data: UnconfirmedSpe
     return { exists: false, data: null };
   }
 };
+
+export const removeUnconfirmedSpecies = (taxonId: string): { success: boolean; error?: string } => {
+  const { exists, backupSettings } = getBackupSettings();
+  if (!exists || !backupSettings) {
+    return { success: false, error: 'Backup settings not configured.' };
+  }
+
+  const filePath = path.join(backupSettings.backupFolder, 'unconfirmed-species.json');
+  if (!fs.existsSync(filePath)) {
+    return { success: false, error: 'unconfirmed-species.json not found.' };
+  }
+
+  try {
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    const data = JSON.parse(raw) as UnconfirmedSpeciesData;
+    const filtered = data.species.filter((s) => s.taxonId !== taxonId);
+    const updated: UnconfirmedSpeciesData = {
+      ...data,
+      totalUnconfirmed: filtered.length,
+      species: filtered,
+    };
+    fs.writeFileSync(filePath, JSON.stringify(updated), 'utf-8');
+    return { success: true };
+  } catch (e) {
+    return { success: false, error: (e as Error).message };
+  }
+};

@@ -8,13 +8,22 @@ import {
   getNewAdditionsSettings,
   updateNewAdditionsSettings,
 } from './project-settings.js';
-import { getBaselineSpecies, updateBaselineSpecies, patchCuratorReviewCounts } from './baseline-species.js';
+import {
+  getBaselineSpecies,
+  updateBaselineSpecies,
+  patchCuratorReviewCounts,
+  appendBaselineSpecies,
+} from './baseline-species.js';
 import { startInatDataDownload, getInatDataLog } from './observation-data.js';
 import { log } from './inat-download-logger.js';
 import { getDownloadState, setDownloadState, subscribeToDownload } from './inat-download-state.js';
 import { generateCuratorSummary, getCuratorReviewCount } from './curator-summary.js';
 import { generateChecklistFiles, getIsGenerating } from './generate-checklist.js';
-import { startUnconfirmedSpeciesCheck, getUnconfirmedSpecies } from './unconfirmed-species.js';
+import {
+  startUnconfirmedSpeciesCheck,
+  getUnconfirmedSpecies,
+  removeUnconfirmedSpecies,
+} from './unconfirmed-species.js';
 import {
   getUnconfirmedCheckState,
   setUnconfirmedCheckState,
@@ -63,6 +72,12 @@ app.get('/baseline-species', (_req: Request, res: Response) => {
 
 app.post('/baseline-species', (req: Request, res: Response) => {
   const { success, error } = updateBaselineSpecies(req.body);
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ success, error }));
+});
+
+app.post('/baseline-species/append', (req: Request, res: Response) => {
+  const { success, error } = appendBaselineSpecies(req.body);
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify({ success, error }));
 });
@@ -248,6 +263,14 @@ app.get('/taxon-changes-data', (_req: Request, res: Response) => {
 // GET /unconfirmed-species — returns the contents of unconfirmed-species.json, or { exists: false } if not yet generated.
 app.get('/unconfirmed-species', (_req: Request, res: Response) => {
   const result = getUnconfirmedSpecies();
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(result));
+});
+
+// DELETE /unconfirmed-species/:taxonId — removes a single entry from unconfirmed-species.json.
+app.delete('/unconfirmed-species/:taxonId', (req: Request, res: Response) => {
+  const { taxonId } = req.params;
+  const result = removeUnconfirmedSpecies(taxonId);
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(result));
 });

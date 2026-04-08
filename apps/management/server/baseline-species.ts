@@ -25,6 +25,26 @@ export const getBaselineSpecies = (): unknown => {
   return data;
 };
 
+export const appendBaselineSpecies = (species: BaselineSpeciesData): { success: boolean; error?: string } => {
+  const { backupSettings } = getBackupSettings();
+  const baselineSpeciesFile = `${backupSettings!.backupFolder}/baseline-species.json`;
+
+  try {
+    let existing: BaselineSpeciesFile = { validationDate: new Date().toISOString(), data: [] };
+    if (fs.existsSync(baselineSpeciesFile)) {
+      existing = JSON.parse(fs.readFileSync(baselineSpeciesFile, { encoding: 'utf8' })) as BaselineSpeciesFile;
+      if (!Array.isArray(existing.data)) {
+        existing.data = [];
+      }
+    }
+    existing.data.push(species);
+    fs.writeFileSync(baselineSpeciesFile, JSON.stringify(existing, null, '  '));
+    return { success: true };
+  } catch (_e) {
+    return { success: false, error: 'There was a problem appending to the baseline species file.' };
+  }
+};
+
 export const updateBaselineSpecies = (data: unknown): { success: boolean; error?: string } => {
   const { backupSettings } = getBackupSettings();
 

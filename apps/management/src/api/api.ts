@@ -46,6 +46,16 @@ export const updateBaselineSpecies = (content: any) => {
   });
 };
 
+export const appendBaselineSpecies = (content: any) => {
+  return fetch(getApiUrl('baseline-species/append'), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(content),
+  });
+};
+
 export const validateBaselineSpecies = () => {
   return fetch(getApiUrl('validate-baseline-species'));
 };
@@ -68,6 +78,10 @@ export const getTaxonChangesData = () => {
 
 export const getUnconfirmedSpecies = () => {
   return fetch(getApiUrl('unconfirmed-species'));
+};
+
+export const removeUnconfirmedSpecies = (taxonId: string) => {
+  return fetch(getApiUrl(`unconfirmed-species/${taxonId}`), { method: 'DELETE' });
 };
 
 export const startUnconfirmedSpeciesCheck = () => {

@@ -14,7 +14,7 @@ export const Navigation = () => {
   };
   const managementItems: NavItem[] = [
     {
-      label: 'iNat Sync',
+      label: 'Sync iNat Data',
       path: '/update-inat-data',
     },
     {
@@ -32,10 +32,6 @@ export const Navigation = () => {
     {
       label: 'Unconfirmed species',
       path: '/unconfirmed-species',
-    },
-    {
-      label: 'Accounts',
-      path: '/accounts',
     },
   ];
   const viewItems: NavItem[] = [

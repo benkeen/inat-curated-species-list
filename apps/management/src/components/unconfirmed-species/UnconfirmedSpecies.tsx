@@ -15,7 +15,7 @@ import { IconButton } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import DriveFileMoveOutlinedIcon from '@mui/icons-material/DriveFileMoveOutlined';
-import { getUnconfirmedSpecies } from '../../api/api';
+import { getUnconfirmedSpecies, removeUnconfirmedSpecies } from '../../api/api';
 import { addAndSaveBaselineSpecies } from '../../store/baselineData/baselineData.actions';
 import { CheckUnconfirmedSpeciesDialog } from './CheckUnconfirmedSpeciesDialog';
 import { INAT_SPECIES_URL } from '../../constants';
@@ -140,6 +140,7 @@ export const UnconfirmedSpecies = () => {
         curatorReviewCount: undefined,
       }),
     );
+    await removeUnconfirmedSpecies(moveTarget.taxonId);
     setMoving(false);
     setMoveTarget(null);
     // Remove from local data so the table updates immediately

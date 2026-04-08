@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import { CuratedSpeciesTable } from '@ecophilia/inat-curated-species-list-ui';
 import { NewAddition, TaxonChangeData } from '@ecophilia/inat-curated-species-list-tools';
 import {
@@ -12,6 +18,7 @@ import {
 } from '../../api/api';
 import type { MainSettings } from '../../types';
 import { Spinner } from '../loading/spinner';
+import { Styles } from './Styles';
 
 type ChecklistSettings = {
   placeId: number;
@@ -26,6 +33,7 @@ export const CuratedChecklist = () => {
   const [taxonChangesData, setTaxonChangesData] = useState<Record<string, TaxonChangeData[]> | null>(null);
   const [settings, setSettings] = useState<ChecklistSettings | null>(null);
   const [newAdditionsEnabled, setNewAdditionsEnabled] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -109,18 +117,44 @@ export const CuratedChecklist = () => {
 
   return (
     <Box sx={{ p: 2 }}>
-      <CuratedSpeciesTable
-        initialSpeciesData={speciesData}
-        curatorUsernames={settings.curatorUsernames}
-        placeId={settings.placeId}
-        showLastGeneratedDate={true}
-        showRowNumbers={true}
-        showReviewerCount={true}
-        showNewAdditions={newAdditionsEnabled}
-        initialNewAdditionsData={newAdditionsData ?? undefined}
-        showTaxonChanges={!!taxonChangesData}
-        initialTaxonChangesData={taxonChangesData ?? undefined}
-      />
+      <h2 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>Curated Checklist</h2>
+
+      <Button variant="contained" onClick={() => setModalOpen(true)}>
+        View Checklist
+      </Button>
+
+      <Dialog
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        maxWidth={false}
+        PaperProps={{ sx: { width: '92vw', height: '90vh' } }}
+      >
+        <DialogTitle sx={{ pr: 6 }}>
+          Curated Checklist
+          <IconButton
+            onClick={() => setModalOpen(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+            aria-label="close"
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ overflow: 'auto' }}>
+          <Styles />
+          <CuratedSpeciesTable
+            initialSpeciesData={speciesData}
+            curatorUsernames={settings.curatorUsernames}
+            placeId={settings.placeId}
+            showLastGeneratedDate={true}
+            showRowNumbers={true}
+            showReviewerCount={true}
+            showNewAdditions={newAdditionsEnabled}
+            initialNewAdditionsData={newAdditionsData ?? undefined}
+            showTaxonChanges={!!taxonChangesData}
+            initialTaxonChangesData={taxonChangesData ?? undefined}
+          />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

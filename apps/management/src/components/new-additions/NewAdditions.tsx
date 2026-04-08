@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { Link as RouterLink } from 'react-router-dom';
 import { Spinner } from '../loading/spinner';
 import { getNewAdditionsData, getNewAdditionsSettings, updateNewAdditionsSettings } from '../../api/api';
-import { NewAdditionsTab } from '@ecophilia/inat-curated-species-list-ui';
+import { NewAdditionsTab } from './NewAdditionsTab';
 import { NewAddition } from '@ecophilia/inat-curated-species-list-tools';
 
 export const NewAdditions = () => {

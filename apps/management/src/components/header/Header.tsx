@@ -82,6 +82,15 @@ export const Header = () => {
             >
               Publish Settings
             </MenuItem>
+            <Divider />
+            <MenuItem
+              component={RouterLink}
+              to="/accounts"
+              onClick={() => setSettingsMenuAnchor(null)}
+              sx={{ fontSize: '0.85rem' }}
+            >
+              Accounts
+            </MenuItem>
           </Menu>
           <IconButton size="large" color="inherit">
             <AccountCircle />
