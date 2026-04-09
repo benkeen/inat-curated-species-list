@@ -3,7 +3,8 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Typography from '@mui/material/Typography';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import { getTaxonChangesData, getTaxonChangesSettings, updateTaxonChangesSettings } from '../../api/api';
 import { Spinner } from '../loading/spinner';
 import { TaxonChangeData } from '@ecophilia/inat-curated-species-list-tools';
@@ -12,6 +13,7 @@ import { TaxonChangesTable } from './TaxonChangesTable';
 export const TaxonChangesPage = () => {
   const [enabled, setEnabled] = useState<boolean | null>(null);
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  const [currentTab, setCurrentTab] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<TaxonChangeData[]>([]);
@@ -81,8 +83,21 @@ export const TaxonChangesPage = () => {
       )}
       {enabled && (
         <>
-          {!loaded && <Spinner />}
-          {loaded && <TaxonChangesTable data={data} />}
+          <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: '10px' }}>
+            <Tabs
+              value={currentTab}
+              onChange={(_, newValue) => setCurrentTab(newValue)}
+              aria-label="taxon changes tabs"
+            >
+              <Tab label="Data" />
+              <Tab label="Notes" />
+            </Tabs>
+          </Box>
+          <Box sx={{ display: currentTab !== 0 ? 'none' : 'block' }}>
+            {!loaded && <Spinner />}
+            {loaded && <TaxonChangesTable data={data} />}
+          </Box>
+          <Box sx={{ display: currentTab !== 1 ? 'none' : 'block', p: 2 }} />
         </>
       )}
     </Box>

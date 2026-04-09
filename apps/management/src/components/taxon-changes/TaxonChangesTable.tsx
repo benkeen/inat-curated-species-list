@@ -65,7 +65,10 @@ const SortButton = ({ col, currentSortCol, currentSortDir, onSort }: SortButtonP
     <IconButton
       size="small"
       style={{ marginLeft: 4, visibility: isActive ? 'visible' : 'hidden' }}
-      onClick={() => onSort(col, nextDir)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onSort(col, nextDir);
+      }}
     >
       <SortIcon />
     </IconButton>
@@ -113,9 +116,14 @@ export const TaxonChangesTable = ({ data }: TaxonChangesTableProps) => {
 
   const sortedRecords = useMemo(() => {
     return [...data].sort((a, b) => {
-      const valA = (a[sortCol] as string).toLowerCase();
-      const valB = (b[sortCol] as string).toLowerCase();
-      const cmp = valA < valB ? -1 : valA > valB ? 1 : 0;
+      let cmp: number;
+      if (sortCol === 'taxonChangeObsCreatedAt') {
+        cmp = new Date(a[sortCol]).getTime() - new Date(b[sortCol]).getTime();
+      } else {
+        const valA = (a[sortCol] as string).toLowerCase();
+        const valB = (b[sortCol] as string).toLowerCase();
+        cmp = valA < valB ? -1 : valA > valB ? 1 : 0;
+      }
       return sortDir === 'asc' ? cmp : -cmp;
     });
   }, [data, sortCol, sortDir]);
@@ -160,7 +168,7 @@ export const TaxonChangesTable = ({ data }: TaxonChangesTableProps) => {
             ? {}
             : { textDecoration: 'line-through', opacity: 0.6 };
           return (
-            <tr key={taxonChange.taxonChangeId} style={{ height: 30 }}>
+            <tr key={`${taxonChange.taxonChangeId}-${taxonChange.observationId}`} style={{ height: 30 }}>
               <td style={{ width: 40, color: '#999', fontSize: 12 }}>{index + 1}</td>
               <td>{formatDate(taxonChange.taxonChangeObsCreatedAt)}</td>
               <td style={speciesNameStyle}>{taxonChange.previousSpeciesName}</td>
