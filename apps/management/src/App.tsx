@@ -15,9 +15,9 @@ import { FileSettings } from './components/settings/FileSettings';
 import { MainSettingsPage } from './components/settings/MainSettings';
 import { PublishSettings } from './components/settings/PublishSettings';
 import { CuratedChecklist } from './components/checklist/CuratedChecklist';
-import { NewAdditions } from './components/new-additions/NewAdditions';
+import { NewAdditionsPage } from './components/new-additions/NewAdditionsPage';
 import { UnconfirmedSpecies } from './components/unconfirmed-species/UnconfirmedSpecies';
-import { TaxonChanges } from './components/taxon-changes/TaxonChanges';
+import { TaxonChangesPage } from './components/taxon-changes/TaxonChangesPage';
 import store, { persistor } from './store';
 
 const checkState = async (store: any) => {
@@ -68,9 +68,9 @@ function App() {
                     <Route path="curated-checklist" element={<CuratedChecklist />} />
                     <Route path="baseline-species" element={<BaselineSpecies />} />
                     <Route path="update-inat-data" element={<UpdateInatData />} />
-                    <Route path="new-additions" element={<NewAdditions />} />
+                    <Route path="new-additions" element={<NewAdditionsPage />} />
                     <Route path="unconfirmed-species" element={<UnconfirmedSpecies />} />
-                    <Route path="taxon-changes" element={<TaxonChanges />} />
+                    <Route path="taxon-changes" element={<TaxonChangesPage />} />
                     <Route path="settings/main" element={<MainSettingsPage />} />
                     <Route path="settings/files" element={<FileSettings />} />
                     <Route path="settings/publish" element={<PublishSettings />} />

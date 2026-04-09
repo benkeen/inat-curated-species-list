@@ -63,3 +63,24 @@ export const updateNewAdditionsSettings = (data: NewAdditionsSettings): { succes
   fs.writeFileSync(settingsFile, JSON.stringify({ ...existing, newAdditions: data }, null, '  '));
   return { success: true };
 };
+
+export type TaxonChangesSettings = {
+  enabled: boolean;
+};
+
+export const getTaxonChangesSettings = (): TaxonChangesSettings | null => {
+  const { exists, backupSettings } = getBackupSettings();
+  if (!exists || !backupSettings) {
+    return null;
+  }
+  const settings = readSettingsFile(backupSettings.backupFolder);
+  return (settings.taxonChanges as TaxonChangesSettings) ?? null;
+};
+
+export const updateTaxonChangesSettings = (data: TaxonChangesSettings): { success: boolean } => {
+  const { backupSettings } = getBackupSettings();
+  const settingsFile = `${backupSettings!.backupFolder}/project-settings.json`;
+  const existing = readSettingsFile(backupSettings!.backupFolder);
+  fs.writeFileSync(settingsFile, JSON.stringify({ ...existing, taxonChanges: data }, null, '  '));
+  return { success: true };
+};

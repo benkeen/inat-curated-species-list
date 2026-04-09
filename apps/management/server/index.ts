@@ -7,6 +7,8 @@ import {
   updateMainSettings,
   getNewAdditionsSettings,
   updateNewAdditionsSettings,
+  getTaxonChangesSettings,
+  updateTaxonChangesSettings,
 } from './project-settings.js';
 import {
   getBaselineSpecies,
@@ -258,6 +260,18 @@ app.get('/taxon-changes-data', (_req: Request, res: Response) => {
   } catch (e) {
     res.status(500).json({ error: 'Failed to read taxon-changes-data.json.' });
   }
+});
+
+// GET /taxon-changes-settings — returns the taxonChanges root config from project-settings.json.
+app.get('/taxon-changes-settings', (_req: Request, res: Response) => {
+  const settings = getTaxonChangesSettings();
+  res.json({ settings });
+});
+
+// POST /taxon-changes-settings — updates the taxonChanges root config in project-settings.json.
+app.post('/taxon-changes-settings', (req: Request, res: Response) => {
+  const { success } = updateTaxonChangesSettings(req.body as { enabled: boolean });
+  res.json({ success });
 });
 
 // GET /unconfirmed-species — returns the contents of unconfirmed-species.json, or { exists: false } if not yet generated.

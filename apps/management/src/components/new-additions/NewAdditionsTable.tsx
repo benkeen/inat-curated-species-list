@@ -76,7 +76,7 @@ export interface NewAdditionsTabProps {
   readonly tabText?: any;
 }
 
-export const NewAdditionsTab: FC<NewAdditionsTabProps> = ({ dataUrl, initialData, tabText, showRowNumbers }) => {
+export const NewAdditionsTable: FC<NewAdditionsTabProps> = ({ dataUrl, initialData, tabText, showRowNumbers }) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   const [data, setData] = useState<NewAddition[]>([]);

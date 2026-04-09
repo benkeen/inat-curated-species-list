@@ -99,3 +99,15 @@ export const updateNewAdditionsSettings = (content: { enabled: boolean }) => {
     body: JSON.stringify(content),
   });
 };
+
+export const getTaxonChangesSettings = () => {
+  return fetch(getApiUrl('taxon-changes-settings'));
+};
+
+export const updateTaxonChangesSettings = (content: { enabled: boolean }) => {
+  return fetch(getApiUrl('taxon-changes-settings'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(content),
+  });
+};
