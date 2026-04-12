@@ -14,12 +14,13 @@ type Props = {
   onClose: () => void;
 };
 
-const PHASE_ORDER: CheckPhase[] = ['pass1', 'pass2', 'pass3', 'saving'];
+const PHASE_ORDER: CheckPhase[] = ['pass1', 'pass2', 'pass3', 'curator-summary', 'saving'];
 
 const STEPS: { phase: CheckPhase; label: string }[] = [
   { phase: 'pass1', label: 'Check research grade counts' },
   { phase: 'pass2', label: 'Check active status' },
   { phase: 'pass3', label: 'Check total observation counts' },
+  { phase: 'curator-summary', label: 'Update curator review count' },
   { phase: 'saving', label: 'Save updates' },
 ];
 
@@ -86,7 +87,7 @@ export const CheckBaselineSpeciesDialog = ({ open, onClose }: Props) => {
                         >
                           {step.label}
                         </Typography>
-                        {isActive && step.phase !== 'saving' && (
+                        {isActive && step.phase !== 'saving' && step.phase !== 'curator-summary' && (
                           <Typography variant="caption" color="text.secondary">
                             {progress} of {total} batches complete
                           </Typography>
@@ -96,7 +97,11 @@ export const CheckBaselineSpeciesDialog = ({ open, onClose }: Props) => {
                     {isActive && (
                       <Box sx={{ pl: '36px', mt: 0.75 }}>
                         <LinearProgress
-                          variant={step.phase === 'saving' ? 'indeterminate' : 'determinate'}
+                          variant={
+                            step.phase === 'saving' || step.phase === 'curator-summary'
+                              ? 'indeterminate'
+                              : 'determinate'
+                          }
                           value={progressPercent}
                         />
                       </Box>

@@ -10,12 +10,7 @@ import {
   getTaxonChangesSettings,
   updateTaxonChangesSettings,
 } from './project-settings.js';
-import {
-  getBaselineSpecies,
-  updateBaselineSpecies,
-  patchCuratorReviewCounts,
-  appendBaselineSpecies,
-} from './baseline-species.js';
+import { getBaselineSpecies, updateBaselineSpecies, appendBaselineSpecies } from './baseline-species.js';
 import { startInatDataDownload, getInatDataLog } from './observation-data.js';
 import { log } from './inat-download-logger.js';
 import { getDownloadState, setDownloadState, subscribeToDownload } from './inat-download-state.js';
@@ -122,8 +117,6 @@ app.post('/start-inat-download', (req: Request, res: Response) => {
           const taxaCount = Object.keys(summary.counts).length;
           const totalIdents = Object.values(summary.counts).reduce((a, b) => a + b, 0);
           log('info', `[curator-summary] Generated: ${taxaCount} taxa, ${totalIdents} total curator identifications.`);
-          patchCuratorReviewCounts(summary.counts);
-          log('info', '[curator-summary] baseline-species.json patched with curator review counts.');
           curatorPatch = { taxaCount, totalIdents };
         } catch (e) {
           log('error', `[curator-summary] Failed: ${(e as Error).message}`);

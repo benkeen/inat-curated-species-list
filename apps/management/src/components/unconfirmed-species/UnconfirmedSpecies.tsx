@@ -137,7 +137,6 @@ export const UnconfirmedSpecies = () => {
         name: moveTarget.name,
         isActive: true,
         researchGradeReviewCount: 0,
-        curatorReviewCount: undefined,
       }),
     );
     await removeUnconfirmedSpecies(moveTarget.taxonId);

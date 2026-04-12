@@ -2,10 +2,11 @@ import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBaselineData } from '../../../store/baselineData/baselineData.selectors';
 import { getPlaceId } from '../../../store/main/main.selectors';
-import { bulkUpdateAndSaveBaselineSpecies } from '../../../store/baselineData/baselineData.actions';
+import { bulkUpdateAndSaveBaselineSpecies, loadBaselineData } from '../../../store/baselineData/baselineData.actions';
+import { generateCuratorSummary } from '../../../api/api';
 import { BaselineDataObj } from '../BaselineData.types';
 
-export type CheckPhase = 'pass1' | 'pass2' | 'pass3' | 'saving';
+export type CheckPhase = 'pass1' | 'pass2' | 'pass3' | 'curator-summary' | 'saving';
 export type CheckStatus = 'idle' | 'running' | 'complete';
 
 type UpdateResult = {
@@ -173,6 +174,17 @@ export const useCheckBaselineSpecies = () => {
 
     setPhase('saving');
     await (dispatch as any)(bulkUpdateAndSaveBaselineSpecies(updates));
+
+    // --- Update curator review counts ---
+    setPhase('curator-summary');
+    try {
+      await generateCuratorSummary();
+    } catch {
+      // non-fatal: proceed to complete even if the summary fails
+    }
+
+    // Reload baseline data to reflect updated curator review counts
+    await (dispatch as any)(loadBaselineData());
 
     setStatus('complete');
   }, [baselineData, dispatch, placeId]);

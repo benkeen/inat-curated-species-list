@@ -64,6 +64,10 @@ export const getCuratorReviewCount = (taxonId: number) => {
   return fetch(getApiUrl(`curator-review-count/${taxonId}`));
 };
 
+export const generateCuratorSummary = () => {
+  return fetch(getApiUrl('generate-curator-summary'), { method: 'POST' });
+};
+
 export const getNewAdditionsData = () => {
   return fetch(getApiUrl('new-additions-data'));
 };

@@ -118,7 +118,6 @@ export const AddSpeciesDialog = ({ open, onClose }: Props) => {
         name: lookupResult.name,
         isActive: true,
         researchGradeReviewCount: lookupResult.researchGradeCount,
-        curatorReviewCount: lookupResult.curatorReviewCount ?? undefined,
       }),
     );
     setSaving(false);

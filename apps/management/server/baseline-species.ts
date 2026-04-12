@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { getBackupSettings } from './backup-settings.js';
+import { getCuratorSummaryCounts } from './curator-summary.js';
 
 type BaselineSpeciesData = Record<string, unknown>;
 
@@ -16,13 +17,21 @@ export const getBaselineSpecies = (): unknown => {
   }
 
   const baselineSpecies = `${backupSettings!.backupFolder}/baseline-species.json`;
-  let data: unknown = {};
+  let parsed: BaselineSpeciesFile = { validationDate: new Date().toISOString(), data: [] };
   if (fs.existsSync(baselineSpecies)) {
     const content = fs.readFileSync(baselineSpecies, { encoding: 'utf8' });
-    data = JSON.parse(content) as unknown;
+    parsed = JSON.parse(content) as BaselineSpeciesFile;
   }
 
-  return data;
+  const curatorCounts = getCuratorSummaryCounts();
+  if (curatorCounts && Array.isArray(parsed.data)) {
+    parsed.data = parsed.data.map((species) => ({
+      ...species,
+      curatorReviewCount: curatorCounts[String(species['id'])] ?? 0,
+    }));
+  }
+
+  return parsed;
 };
 
 export const appendBaselineSpecies = (species: BaselineSpeciesData): { success: boolean; error?: string } => {
@@ -72,22 +81,4 @@ export const updateBaselineSpecies = (data: unknown): { success: boolean; error?
     success,
     error,
   };
-};
-
-export const patchCuratorReviewCounts = (counts: Record<string, number>): void => {
-  const { backupSettings } = getBackupSettings();
-  const baselineSpeciesFile = `${backupSettings!.backupFolder}/baseline-species.json`;
-
-  if (!fs.existsSync(baselineSpeciesFile)) return;
-
-  const parsed = JSON.parse(fs.readFileSync(baselineSpeciesFile, { encoding: 'utf8' })) as BaselineSpeciesFile;
-
-  if (!Array.isArray(parsed.data)) return;
-
-  parsed.data = parsed.data.map((species) => ({
-    ...species,
-    curatorReviewCount: counts[String(species['id'])] ?? 0,
-  }));
-
-  fs.writeFileSync(baselineSpeciesFile, JSON.stringify(parsed, null, '  '));
 };

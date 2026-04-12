@@ -6,90 +6,35 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
+import LinearProgress from '@mui/material/LinearProgress';
+import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import { CuratedSpeciesTable } from '@ecophilia/inat-curated-species-list-ui';
-import { NewAddition, TaxonChangeData } from '@ecophilia/inat-curated-species-list-tools';
-import {
-  getMainSettings,
-  getSpeciesData,
-  getNewAdditionsData,
-  getTaxonChangesData,
-  getNewAdditionsSettings,
-} from '../../api/api';
-import type { MainSettings } from '../../types';
 import { Spinner } from '../loading/spinner';
 import { Styles } from './Styles';
-
-type ChecklistSettings = {
-  placeId: number;
-  curatorUsernames: string[];
-};
+import { useGenerateChecklist } from './hooks/useGenerateChecklist';
+import { useChecklistData } from './hooks/useChecklistData';
 
 export const CuratedChecklist = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [speciesData, setSpeciesData] = useState<any>(null);
-  const [newAdditionsData, setNewAdditionsData] = useState<NewAddition[] | null>(null);
-  const [taxonChangesData, setTaxonChangesData] = useState<Record<string, TaxonChangeData[]> | null>(null);
-  const [settings, setSettings] = useState<ChecklistSettings | null>(null);
-  const [newAdditionsEnabled, setNewAdditionsEnabled] = useState(false);
+  const { isLoading, error, speciesData, newAdditionsData, taxonChangesData, settings, newAdditionsEnabled, loadData } =
+    useChecklistData();
   const [modalOpen, setModalOpen] = useState(false);
+  const {
+    status: generateStatus,
+    result: generateResult,
+    error: generateError,
+    generateChecklist,
+  } = useGenerateChecklist();
 
   useEffect(() => {
-    (async () => {
-      try {
-        const [settingsResp, speciesResp, newAdditionsSettingsResp] = await Promise.all([
-          getMainSettings(),
-          getSpeciesData(),
-          getNewAdditionsSettings(),
-        ]);
+    loadData();
+  }, [loadData]);
 
-        const { settings: mainSettings } = (await settingsResp.json()) as { settings: MainSettings };
-
-        if (!mainSettings?.placeId) {
-          setError('Project settings not configured. Please set placeId and curators in Settings → Main.');
-          return;
-        }
-
-        if (!speciesResp.ok) {
-          const body = await speciesResp.json();
-          setError(body?.error ?? 'Failed to load species data.');
-          return;
-        }
-
-        setSpeciesData(await speciesResp.json());
-
-        const curatorUsernames = mainSettings.curators
-          ? mainSettings.curators
-              .split(',')
-              .map((c) => c.trim())
-              .filter(Boolean)
-          : [];
-
-        setSettings({ placeId: mainSettings.placeId, curatorUsernames });
-
-        const { settings: naSettings } = await newAdditionsSettingsResp.json();
-        const isNewAdditionsEnabled = naSettings?.enabled ?? false;
-        setNewAdditionsEnabled(isNewAdditionsEnabled);
-
-        if (isNewAdditionsEnabled) {
-          const naResp = await getNewAdditionsData();
-          if (naResp.ok) {
-            setNewAdditionsData(await naResp.json());
-          }
-        }
-
-        const taxonResp = await getTaxonChangesData();
-        if (taxonResp.ok) {
-          setTaxonChangesData(await taxonResp.json());
-        }
-      } catch (e) {
-        setError((e as Error).message);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
+  useEffect(() => {
+    if (generateStatus === 'done') {
+      loadData();
+    }
+  }, [generateStatus, loadData]);
 
   if (isLoading) {
     return (
@@ -99,62 +44,96 @@ export const CuratedChecklist = () => {
     );
   }
 
-  if (error) {
-    return (
-      <Box sx={{ p: 2 }}>
-        <Alert severity="error">{error}</Alert>
-      </Box>
-    );
-  }
-
-  if (!speciesData || !settings) {
-    return (
-      <Box sx={{ p: 2 }}>
-        <Alert severity="info">No checklist data found. Run checklist generation first.</Alert>
-      </Box>
-    );
-  }
-
   return (
     <Box sx={{ p: 2 }}>
-      <h2 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>Curated Checklist</h2>
+      <h2>Curated Checklist</h2>
 
-      <Button variant="contained" onClick={() => setModalOpen(true)}>
-        View Checklist
-      </Button>
+      <p>
+        Once iNat observation data has been downloaded, use this to generate the checklist data files (
+        <code>species-data.json</code>, <code>new-additions-data.json</code>, <code>taxon-changes-data.json</code>).
+        These are written directly into the backup folder.
+      </p>
 
-      <Dialog
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        maxWidth={false}
-        PaperProps={{ sx: { width: '92vw', height: '90vh' } }}
-      >
-        <DialogTitle sx={{ pr: 6 }}>
-          Curated Checklist
-          <IconButton
-            onClick={() => setModalOpen(false)}
-            sx={{ position: 'absolute', right: 8, top: 8 }}
-            aria-label="close"
+      {generateStatus !== 'running' && (
+        <Button variant="outlined" size="small" onClick={() => generateChecklist()}>
+          {generateStatus === 'idle' ? 'Generate Checklist' : 'Generate Again'}
+        </Button>
+      )}
+
+      {generateStatus === 'running' && (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            Generating checklist files...
+          </Typography>
+          <LinearProgress />
+        </Box>
+      )}
+
+      {generateStatus === 'done' && generateResult && (
+        <Alert severity="success" sx={{ mt: 2 }}>
+          Checklist generated in {generateResult.durationSeconds}s — {generateResult.filesGenerated.length} file(s)
+          written.
+        </Alert>
+      )}
+
+      {generateStatus === 'error' && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {generateError}
+        </Alert>
+      )}
+
+      {error && (
+        <Alert severity="error" sx={{ mt: 3 }}>
+          {error}
+        </Alert>
+      )}
+
+      {!error && speciesData && settings ? (
+        <Box sx={{ mt: 3 }}>
+          <Button variant="contained" onClick={() => setModalOpen(true)}>
+            View Checklist
+          </Button>
+
+          <Dialog
+            open={modalOpen}
+            onClose={() => setModalOpen(false)}
+            maxWidth={false}
+            PaperProps={{ sx: { width: '92vw', height: '90vh' } }}
           >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent sx={{ overflow: 'auto' }}>
-          <Styles />
-          <CuratedSpeciesTable
-            initialSpeciesData={speciesData}
-            curatorUsernames={settings.curatorUsernames}
-            placeId={settings.placeId}
-            showLastGeneratedDate={true}
-            showRowNumbers={true}
-            showReviewerCount={true}
-            showNewAdditions={newAdditionsEnabled}
-            initialNewAdditionsData={newAdditionsData ?? undefined}
-            showTaxonChanges={!!taxonChangesData}
-            initialTaxonChangesData={taxonChangesData ?? undefined}
-          />
-        </DialogContent>
-      </Dialog>
+            <DialogTitle sx={{ pr: 6 }}>
+              Curated Checklist
+              <IconButton
+                onClick={() => setModalOpen(false)}
+                sx={{ position: 'absolute', right: 8, top: 8 }}
+                aria-label="close"
+              >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent sx={{ overflow: 'auto' }}>
+              <Styles />
+              <CuratedSpeciesTable
+                initialSpeciesData={speciesData}
+                curatorUsernames={settings.curatorUsernames}
+                placeId={settings.placeId}
+                showLastGeneratedDate={true}
+                showRowNumbers={true}
+                showReviewerCount={true}
+                showNewAdditions={newAdditionsEnabled}
+                initialNewAdditionsData={newAdditionsData ?? undefined}
+                showTaxonChanges={!!taxonChangesData}
+                initialTaxonChangesData={taxonChangesData ?? undefined}
+              />
+            </DialogContent>
+          </Dialog>
+        </Box>
+      ) : (
+        !error && (
+          <Alert severity="info" sx={{ mt: 3 }}>
+            No checklist data found. Generate the checklist above.
+          </Alert>
+        )
+      )}
     </Box>
   );
 };

@@ -2,14 +2,12 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
-import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import LinearProgress from '@mui/material/LinearProgress';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useUpdateInaturalistData } from './hooks/useUpdateInaturalistData';
-import { useGenerateChecklist } from './hooks/useGenerateChecklist';
 
 const formatDuration = (ms: number): string => {
   if (ms < 60_000) return `~${Math.round(ms / 1000)}s`;
@@ -20,12 +18,6 @@ const formatDuration = (ms: number): string => {
 
 export const UpdateInatData = () => {
   const { status, startedAt, progress, result, error, lastRun, startSync } = useUpdateInaturalistData();
-  const {
-    status: generateStatus,
-    result: generateResult,
-    error: generateError,
-    generateChecklist,
-  } = useGenerateChecklist();
   const [testMode, setTestMode] = useState(false);
 
   const eta =
@@ -127,44 +119,6 @@ export const UpdateInatData = () => {
       {status === 'error' && (
         <Alert severity="error" sx={{ mt: 2 }}>
           {error}
-        </Alert>
-      )}
-
-      <Divider sx={{ my: 4 }} />
-
-      <h2>Generate Checklist</h2>
-
-      <p>
-        Once iNat observation data has been downloaded, use this to generate the checklist data files (
-        <code>species-data.json</code>, <code>new-additions-data.json</code>, <code>taxon-changes-data.json</code>).
-        These are written directly into the backup folder.
-      </p>
-
-      {generateStatus !== 'running' && (
-        <Button variant="outlined" size="small" disabled={status === 'running'} onClick={() => generateChecklist()}>
-          {generateStatus === 'idle' ? 'Generate Checklist' : 'Generate Again'}
-        </Button>
-      )}
-
-      {generateStatus === 'running' && (
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Generating checklist files...
-          </Typography>
-          <LinearProgress />
-        </Box>
-      )}
-
-      {generateStatus === 'done' && generateResult && (
-        <Alert severity="success" sx={{ mt: 2 }}>
-          Checklist generated in {generateResult.durationSeconds}s — {generateResult.filesGenerated.length} file(s)
-          written.
-        </Alert>
-      )}
-
-      {generateStatus === 'error' && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {generateError}
         </Alert>
       )}
     </div>

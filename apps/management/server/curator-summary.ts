@@ -14,6 +14,20 @@ type CuratorSummary = {
 const getSummaryFilePath = (backupFolder: string): string => path.join(backupFolder, SUMMARY_FILENAME);
 
 /**
+ * Returns all curator review counts from the summary file, or null if the file doesn't exist yet.
+ */
+export const getCuratorSummaryCounts = (): Record<string, number> | null => {
+  const { exists, backupSettings } = getBackupSettings();
+  if (!exists) return null;
+
+  const summaryFile = getSummaryFilePath(backupSettings!.backupFolder);
+  if (!fs.existsSync(summaryFile)) return null;
+
+  const summary = JSON.parse(fs.readFileSync(summaryFile, { encoding: 'utf8' })) as CuratorSummary;
+  return summary.counts;
+};
+
+/**
  * Returns the curator review count for a single taxon ID, or null if the summary file doesn't exist yet.
  */
 export const getCuratorReviewCount = (taxonId: string): number | null => {

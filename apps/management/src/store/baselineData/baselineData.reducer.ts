@@ -141,7 +141,6 @@ const baselineDataReducer = (state = initialState, action: any) => {
           name: species.name,
           isActive: species.isActive,
           researchGradeReviewCount: species.researchGradeReviewCount,
-          curatorReviewCount: species.curatorReviewCount,
         },
       };
       const newArray: BaselineSpeciesInatData[] = Object.keys(newData).map((id) => ({
