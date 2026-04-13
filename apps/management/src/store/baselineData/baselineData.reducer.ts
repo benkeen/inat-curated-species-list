@@ -160,6 +160,7 @@ const baselineDataReducer = (state = initialState, action: any) => {
         isActive: boolean;
         researchGradeReviewCount: number;
         totalObservationCount: number;
+        taxonomy?: Record<string, string>;
       }> = action.payload;
       const updatesMap = new Map(updates.map((u) => [u.id, u]));
       const newData = { ...state.data };
@@ -172,6 +173,7 @@ const baselineDataReducer = (state = initialState, action: any) => {
             isActive: update.isActive,
             researchGradeReviewCount: update.researchGradeReviewCount,
             totalObservationCount: update.totalObservationCount,
+            ...(update.taxonomy ? { taxonomy: update.taxonomy } : {}),
           };
         }
       }

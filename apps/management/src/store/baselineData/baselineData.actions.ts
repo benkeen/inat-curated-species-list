@@ -67,7 +67,13 @@ export const updateAndSaveSpeciesNotes =
 export const BASELINE_DATA_BULK_UPDATE = 'BASELINE_DATA_BULK_UPDATE';
 export const bulkUpdateAndSaveBaselineSpecies =
   (
-    updates: Array<{ id: number; isActive: boolean; researchGradeReviewCount: number; totalObservationCount: number }>,
+    updates: Array<{
+      id: number;
+      isActive: boolean;
+      researchGradeReviewCount: number;
+      totalObservationCount: number;
+      taxonomy?: Record<string, string>;
+    }>,
   ) =>
   async (dispatch: any, getState: any) => {
     const state = getState();
@@ -81,6 +87,7 @@ export const bulkUpdateAndSaveBaselineSpecies =
           isActive: update.isActive,
           researchGradeReviewCount: update.researchGradeReviewCount,
           totalObservationCount: update.totalObservationCount,
+          ...(update.taxonomy ? { taxonomy: update.taxonomy } : {}),
         };
       }
       return existing;

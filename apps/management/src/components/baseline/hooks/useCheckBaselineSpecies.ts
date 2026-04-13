@@ -14,6 +14,20 @@ type UpdateResult = {
   isActive: boolean;
   researchGradeReviewCount: number;
   totalObservationCount: number;
+  taxonomy: Record<string, string>;
+};
+
+const DEFAULT_TAXONS = ['superfamily', 'family', 'subfamily', 'tribe', 'genus', 'species'];
+
+const getTaxonomy = (ancestors: Array<{ rank: string; name: string }>, speciesName: string): Record<string, string> => {
+  const taxonomy = ancestors.reduce<Record<string, string>>((acc, curr) => {
+    if (DEFAULT_TAXONS.includes(curr.rank)) {
+      acc[curr.rank] = curr.name;
+    }
+    return acc;
+  }, {});
+  taxonomy.species = speciesName;
+  return taxonomy;
 };
 
 const SPECIES_COUNTS_BATCH_SIZE = 20;
@@ -108,6 +122,8 @@ export const useCheckBaselineSpecies = () => {
 
     // isActive[taxonId] = active state from taxa endpoint; falls back to existing value
     const isActiveMap = new Map<number, boolean>(species.map((s) => [s.id, s.isActive]));
+    // taxonomy[taxonId] = taxonomy map built from ancestors returned by the taxa endpoint
+    const taxonomyMap = new Map<number, Record<string, string>>();
 
     for (let i = 0; i < pass2Batches.length; i++) {
       if (i > 0) await sleep(1000);
@@ -120,6 +136,9 @@ export const useCheckBaselineSpecies = () => {
         const data = await resp.json();
         for (const taxon of data.results || []) {
           isActiveMap.set(taxon.id, taxon.is_active);
+          if (Array.isArray(taxon.ancestors)) {
+            taxonomyMap.set(taxon.id, getTaxonomy(taxon.ancestors, taxon.name));
+          }
         }
       } catch {
         // keep existing is_active for this batch on error
@@ -164,6 +183,7 @@ export const useCheckBaselineSpecies = () => {
       isActive: isActiveMap.get(s.id) ?? s.isActive,
       researchGradeReviewCount: rgCounts.get(s.id) ?? 0,
       totalObservationCount: totalObsCounts.get(s.id) ?? 0,
+      taxonomy: taxonomyMap.get(s.id) ?? (s as any).taxonomy ?? {},
     }));
 
     // --- Save ---

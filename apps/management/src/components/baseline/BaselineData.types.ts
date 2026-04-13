@@ -7,6 +7,7 @@ export type BaselineDataObj = {
     readonly curatorReviewCount?: number;
     readonly publicNotes?: string;
     readonly privateNotes?: string;
+    readonly taxonomy?: Record<string, string>;
   };
 };
 

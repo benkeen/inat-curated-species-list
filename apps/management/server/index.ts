@@ -217,7 +217,7 @@ app.get('/new-additions-data', (_req: Request, res: Response) => {
   }
 });
 
-// GET /species-data — returns the contents of species-data.json from the backup folder.
+// GET /species-data — returns the contents of species-data.json from the backup folder
 app.get('/species-data', (_req: Request, res: Response) => {
   const { exists, backupSettings } = getBackupSettings();
   if (!exists || !backupSettings) {

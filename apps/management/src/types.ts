@@ -7,6 +7,7 @@ export type BaselineSpeciesInatData = {
   readonly curatorReviewCount?: number;
   readonly publicNotes?: string;
   readonly privateNotes?: string;
+  readonly taxonomy?: Record<string, string>;
 };
 
 export type BaselineDataFileContent = {
