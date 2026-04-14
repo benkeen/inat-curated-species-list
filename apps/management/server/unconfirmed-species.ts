@@ -75,7 +75,7 @@ export const startUnconfirmedSpeciesCheck = async (
   }
 
   const backupFolder = backupSettings.backupFolder;
-  const rawFolder = path.join(backupFolder, 'raw-full-species-list');
+  const rawFolder = path.join(backupFolder, 'full-region-species-list');
 
   // Clear and recreate the raw folder
   if (fs.existsSync(rawFolder)) {

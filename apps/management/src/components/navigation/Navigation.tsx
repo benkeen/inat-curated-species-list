@@ -36,7 +36,7 @@ export const Navigation = () => {
   ];
   const viewItems: NavItem[] = [
     {
-      label: 'Curated checklist',
+      label: 'Checklist',
       path: '/curated-checklist',
     },
   ];

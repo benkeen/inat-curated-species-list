@@ -3,7 +3,7 @@ import { getBackupSettings } from './backup-settings.js';
 
 const getLogFile = (): string => {
   const { backupSettings } = getBackupSettings();
-  return `${backupSettings!.backupFolder}/inat-download.log`;
+  return `${backupSettings!.backupFolder}/logs/inat-curated-observations-download.log`;
 };
 
 export const clearLog = (): void => {

@@ -42,7 +42,7 @@ export const getCuratorReviewCount = (taxonId: string): number | null => {
 };
 
 /**
- * Reads all packet files from the raw-inat-data folder, counts how many current, non-hidden curator
+ * Reads all packet files from the temp/inat-curated-observation-data folder, counts how many current, non-hidden curator
  * identifications exist per species taxon ID, and writes a compact summary file to the backup folder.
  * This summary is used for fast lookups without re-parsing the full raw data.
  */
@@ -67,9 +67,15 @@ export const generateCuratorSummary = (): CuratorSummary => {
     throw new Error('No curators configured in main settings.');
   }
 
-  const rawDataFolder = path.join(backupSettings!.backupFolder, 'raw-inat-data');
+  const rawOmitUsers = settings['omitObservationsByUsers'] as string;
+  const omitUsers = rawOmitUsers
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+
+  const rawDataFolder = path.join(backupSettings!.backupFolder, 'temp/inat-curated-observation-data');
   if (!fs.existsSync(rawDataFolder)) {
-    throw new Error(`raw-inat-data folder not found at: ${rawDataFolder}`);
+    throw new Error(`temp/inat-curated-observation-data folder not found at: ${rawDataFolder}`);
   }
 
   const files = fs.readdirSync(rawDataFolder).filter((f) => f.endsWith('.json'));
@@ -84,6 +90,7 @@ export const generateCuratorSummary = (): CuratorSummary => {
   };
 
   type Observation = {
+    user?: { login: string };
     identifications?: Identification[];
   };
 
@@ -94,6 +101,9 @@ export const generateCuratorSummary = (): CuratorSummary => {
   for (const file of files) {
     const content = JSON.parse(fs.readFileSync(path.join(rawDataFolder, file), { encoding: 'utf8' })) as PacketContent;
     for (const obs of content.results ?? []) {
+      if (omitUsers.includes((obs.user?.login ?? '').toLowerCase())) {
+        continue;
+      }
       for (const ident of obs.identifications ?? []) {
         if (
           curatorList.includes(ident.user?.login ?? '') &&

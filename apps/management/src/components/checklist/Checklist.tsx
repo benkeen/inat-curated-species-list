@@ -14,11 +14,13 @@ import { Spinner } from '../loading/spinner';
 import { Styles } from './Styles';
 import { useGenerateChecklist } from './hooks/useGenerateChecklist';
 import { useChecklistData } from './hooks/useChecklistData';
+import { useQueuedChanges } from './hooks/useQueuedChanges';
 
-export const CuratedChecklist = () => {
+export const Checklist = () => {
   const { isLoading, error, speciesData, newAdditionsData, taxonChangesData, settings, newAdditionsEnabled, loadData } =
     useChecklistData();
   const [modalOpen, setModalOpen] = useState(false);
+  const { data: queuedChanges, loadData: loadQueuedChanges } = useQueuedChanges();
   const {
     status: generateStatus,
     result: generateResult,
@@ -28,13 +30,15 @@ export const CuratedChecklist = () => {
 
   useEffect(() => {
     loadData();
-  }, [loadData]);
+    loadQueuedChanges();
+  }, [loadData, loadQueuedChanges]);
 
   useEffect(() => {
     if (generateStatus === 'done') {
       loadData();
+      loadQueuedChanges();
     }
-  }, [generateStatus, loadData]);
+  }, [generateStatus, loadData, loadQueuedChanges]);
 
   if (isLoading) {
     return (
@@ -46,7 +50,14 @@ export const CuratedChecklist = () => {
 
   return (
     <Box sx={{ p: 2 }}>
-      <h2>Curated Checklist</h2>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <h2>Checklist</h2>
+        {!error && speciesData && settings && (
+          <Button variant="outlined" size="small" onClick={() => setModalOpen(true)}>
+            View Checklist
+          </Button>
+        )}
+      </Box>
 
       <p>
         Once iNat observation data has been downloaded, use this to generate the checklist data files (
@@ -56,7 +67,7 @@ export const CuratedChecklist = () => {
 
       {generateStatus !== 'running' && (
         <Button variant="outlined" size="small" onClick={() => generateChecklist()}>
-          {generateStatus === 'idle' ? 'Generate Checklist' : 'Generate Again'}
+          Update Checklist
         </Button>
       )}
 
@@ -88,12 +99,86 @@ export const CuratedChecklist = () => {
         </Alert>
       )}
 
+      {queuedChanges && (
+        <Box sx={{ mt: 3 }}>
+          <h3 style={{ marginBottom: 8 }}>Queued Changes</h3>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            <strong>Total species:</strong> {queuedChanges.currentSpeciesCount}
+            {queuedChanges.speciesCountDiff !== null && (
+              <span
+                style={{
+                  marginLeft: 8,
+                  color:
+                    queuedChanges.speciesCountDiff > 0
+                      ? 'green'
+                      : queuedChanges.speciesCountDiff < 0
+                        ? 'red'
+                        : 'inherit',
+                }}
+              >
+                ({queuedChanges.speciesCountDiff > 0 ? '+' : ''}
+                {queuedChanges.speciesCountDiff})
+              </span>
+            )}
+          </Typography>
+
+          {queuedChanges.addedSpecies.length > 0 && (
+            <Box sx={{ mb: 1 }}>
+              <Typography variant="body2">
+                <strong>New Species ({queuedChanges.addedSpecies.length}):</strong>
+              </Typography>
+              <Typography variant="body2" sx={{ pl: 2 }}>
+                {queuedChanges.addedSpecies.join(', ')}
+              </Typography>
+            </Box>
+          )}
+
+          {queuedChanges.removedSpecies.length > 0 && (
+            <Box sx={{ mb: 1 }}>
+              <Typography variant="body2">
+                <strong>Removed Species ({queuedChanges.removedSpecies.length}):</strong>
+              </Typography>
+              <Typography variant="body2" sx={{ pl: 2 }}>
+                {queuedChanges.removedSpecies.join(', ')}
+              </Typography>
+            </Box>
+          )}
+
+          {queuedChanges.addedBaselineSpecies.length > 0 && (
+            <Box sx={{ mb: 1 }}>
+              <Typography variant="body2">
+                <strong>Added Baseline Species ({queuedChanges.addedBaselineSpecies.length}):</strong>
+              </Typography>
+              <Typography variant="body2" sx={{ pl: 2 }}>
+                {queuedChanges.addedBaselineSpecies.join(', ')}
+              </Typography>
+            </Box>
+          )}
+
+          {queuedChanges.removedBaselineSpecies.length > 0 && (
+            <Box sx={{ mb: 1 }}>
+              <Typography variant="body2">
+                <strong>Removed Baseline Species ({queuedChanges.removedBaselineSpecies.length}):</strong>
+              </Typography>
+              <Typography variant="body2" sx={{ pl: 2 }}>
+                {queuedChanges.removedBaselineSpecies.join(', ')}
+              </Typography>
+            </Box>
+          )}
+
+          {queuedChanges.addedSpecies.length === 0 &&
+            queuedChanges.removedSpecies.length === 0 &&
+            queuedChanges.addedBaselineSpecies.length === 0 &&
+            queuedChanges.removedBaselineSpecies.length === 0 && (
+              <Typography variant="body2" color="text.secondary">
+                No changes since last commit.
+              </Typography>
+            )}
+        </Box>
+      )}
+
       {!error && speciesData && settings ? (
         <Box sx={{ mt: 3 }}>
-          <Button variant="contained" onClick={() => setModalOpen(true)}>
-            View Checklist
-          </Button>
-
           <Dialog
             open={modalOpen}
             onClose={() => setModalOpen(false)}

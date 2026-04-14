@@ -107,7 +107,7 @@ export const getDataPacket = (
 
 export const logPacket = (packetNum: number, content: unknown): string => {
   const { backupSettings } = getBackupSettings();
-  const tempFolder = `${backupSettings!.backupFolder}/temp-raw-inat-data`;
+  const tempFolder = `${backupSettings!.backupFolder}/temp/inat-curated-observation-data--downloading`;
 
   fs.mkdirSync(tempFolder, { recursive: true });
 
@@ -158,7 +158,7 @@ export const writeInatDataLog = ({
 
 export const getInatDataLog = (): InatDataLogEntry | null => {
   const { backupSettings } = getBackupSettings();
-  const logFile = `${backupSettings!.backupFolder}/inat-data-log.json`;
+  const logFile = `${backupSettings!.backupFolder}/logs/inat-curated-observations-download.json`;
   if (!fs.existsSync(logFile)) {
     return null;
   }
@@ -188,8 +188,8 @@ export const startInatDataDownload = async (
   }
 
   const backupFolder = backupSettings!.backupFolder;
-  const tempFolder = `${backupFolder}/temp-raw-inat-data`;
-  const finalFolder = `${backupFolder}/raw-inat-data`;
+  const tempFolder = `${backupFolder}/temp/inat-curated-observation-data--downloading`;
+  const finalFolder = `${backupFolder}/temp/inat-curated-observation-data`;
 
   clearLog();
   log('info', `Starting iNat data download. placeId=${placeId}, taxonId=${taxonId}, curators=${String(curators)}`);
@@ -257,7 +257,10 @@ export const startInatDataDownload = async (
   // Swap folders: delete old final, rename temp → final
   // Skip in test mode to avoid overwriting real data
   if (maxPackets) {
-    log('info', 'TEST MODE: skipping folder swap. temp-raw-inat-data has NOT replaced raw-inat-data.');
+    log(
+      'info',
+      'TEST MODE: skipping folder swap. temp/inat-curated-observation-data--downloading has NOT replaced temp/inat-curated-observation-data.',
+    );
     fs.rmSync(tempFolder, { recursive: true, force: true });
   } else {
     if (fs.existsSync(finalFolder)) {

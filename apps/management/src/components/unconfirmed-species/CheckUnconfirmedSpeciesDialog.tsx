@@ -50,7 +50,7 @@ export const CheckUnconfirmedSpeciesDialog = ({ open, onClose }: Props) => {
               been approved by curators.
             </Typography>
             <Typography variant="body2" sx={{ mt: 1 }}>
-              The raw data will be saved to <b>raw-full-species-list/</b> inside your backup folder, and an{' '}
+              The raw data will be saved to <b>full-region-species-list/</b> inside your backup folder, and an{' '}
               <b>unconfirmed-species.json</b> file will be generated with the results. Each request is throttled to one
               per second.
             </Typography>

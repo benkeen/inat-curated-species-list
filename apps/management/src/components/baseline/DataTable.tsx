@@ -82,7 +82,7 @@ type DataRowProps = {
 };
 
 const DataRow = memo(({ row, rowNum, isSelected, onToggle, onOpenNotes }: DataRowProps) => (
-  <tr>
+  <tr style={{ backgroundColor: rowNum % 2 === 0 ? 'white' : '#efefef' }}>
     <td className={classes.rowNum}>{rowNum + 1}</td>
     <td>{row.id}</td>
     <td>
@@ -101,7 +101,7 @@ const DataRow = memo(({ row, rowNum, isSelected, onToggle, onOpenNotes }: DataRo
       <Chip label={formatNumber(row.curatorReviewCount ?? 0)} size="small" color="default" />
     </td>
     <td width={30}>
-      <IconButton size="small" onClick={() => onOpenNotes(row)} sx={{ p: 0.25 }}>
+      <IconButton size="small" tabIndex={-1} onClick={() => onOpenNotes(row)} sx={{ p: 0.25 }}>
         <NotesIcon
           sx={{ fontSize: 16, color: row.publicNotes || row.privateNotes ? 'primary.main' : 'action.disabled' }}
         />

@@ -5,7 +5,6 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import Typography from '@mui/material/Typography';
 import { Link as RouterLink } from 'react-router-dom';
 import { Spinner } from '../loading/spinner';
 import { getNewAdditionsData, getNewAdditionsSettings, updateNewAdditionsSettings } from '../../api/api';

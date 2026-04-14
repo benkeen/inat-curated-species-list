@@ -14,15 +14,22 @@ export type BaselineDataFileContent = {
   data: BaselineSpeciesInatData[];
   validationDate: string;
 };
-
 export type MainSettings = {
   readonly curators: string;
   readonly taxonId?: number | null;
   readonly placeId?: number | null;
   readonly omitObservationsByUsers?: string;
   readonly baselineCompletionDate?: string;
-  readonly newAdditions?: {
-    readonly enabled: boolean;
+};
+
+export type ProjectSettings = {
+  main: MainSettings;
+  taxonChanges: {
+    enabled: boolean;
+    omitTaxonChangeIds: number[];
+  };
+  newAdditions: {
+    enabled: boolean;
   };
 };
 

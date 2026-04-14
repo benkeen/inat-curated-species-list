@@ -14,7 +14,7 @@ import { UpdateInatData } from './components/update-inat-data/UpdateInatData';
 import { FileSettings } from './components/settings/FileSettings';
 import { MainSettingsPage } from './components/settings/MainSettings';
 import { PublishSettings } from './components/settings/PublishSettings';
-import { CuratedChecklist } from './components/checklist/CuratedChecklist';
+import { Checklist } from './components/checklist/Checklist';
 import { NewAdditionsPage } from './components/new-additions/NewAdditionsPage';
 import { UnconfirmedSpecies } from './components/unconfirmed-species/UnconfirmedSpecies';
 import { TaxonChangesPage } from './components/taxon-changes/TaxonChangesPage';
@@ -65,7 +65,6 @@ function App() {
                 <Grid size="grow" style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%' }}>
                   <Routes>
                     <Route index path="/" element={<div>(router - login or redirect to curated checklist page)</div>} />
-                    <Route path="curated-checklist" element={<CuratedChecklist />} />
                     <Route path="baseline-species" element={<BaselineSpecies />} />
                     <Route path="update-inat-data" element={<UpdateInatData />} />
                     <Route path="new-additions" element={<NewAdditionsPage />} />
@@ -74,6 +73,7 @@ function App() {
                     <Route path="settings/main" element={<MainSettingsPage />} />
                     <Route path="settings/files" element={<FileSettings />} />
                     <Route path="settings/publish" element={<PublishSettings />} />
+                    <Route path="curated-checklist" element={<Checklist />} />
                   </Routes>
                 </Grid>
               </Grid>

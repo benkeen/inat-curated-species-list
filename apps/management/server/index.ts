@@ -16,6 +16,7 @@ import { log } from './inat-download-logger.js';
 import { getDownloadState, setDownloadState, subscribeToDownload } from './inat-download-state.js';
 import { generateCuratorSummary, getCuratorReviewCount } from './curator-summary.js';
 import { generateChecklistFiles, getIsGenerating } from './generate-checklist.js';
+import { getQueuedChanges } from './queued-changes.js';
 import {
   startUnconfirmedSpeciesCheck,
   getUnconfirmedSpecies,
@@ -109,7 +110,7 @@ app.post('/start-inat-download', (req: Request, res: Response) => {
   startInatDataDownload((progress) => setDownloadState({ status: 'running', progress }), { maxPackets })
     .then((result) => {
       setDownloadState({ status: 'done', result, progress: null });
-      // Regenerate the curator review summary from the freshly-downloaded raw-inat-data
+      // Regenerate the curator review summary from the freshly-downloaded temp/inat-curated-observation-data
       if (!maxPackets) {
         let curatorPatch: { taxaCount: number; totalIdents: number } | { error: string };
         try {
@@ -164,6 +165,13 @@ app.post('/generate-checklist', async (_req: Request, res: Response) => {
   }
 });
 
+// GET /queued-changes — returns the pre-generated queued-changes.json from the backup temp folder.
+app.get('/queued-changes', (_req: Request, res: Response) => {
+  const data = getQueuedChanges();
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(data));
+});
+
 // GET /curator-review-count/:taxonId — returns the number of current curator identifications for a taxon.
 // Returns { count: null } if the summary file hasn't been generated yet.
 app.get('/curator-review-count/:taxonId', (req: Request, res: Response) => {
@@ -171,7 +179,7 @@ app.get('/curator-review-count/:taxonId', (req: Request, res: Response) => {
   res.json({ count });
 });
 
-// POST /generate-curator-summary — builds the curator-review-summary.json from raw-inat-data/.
+// POST /generate-curator-summary — builds the curator-review-summary.json from temp/inat-curated-observation-data/.
 // This is called automatically after each full iNat download, and can also be triggered manually.
 app.post('/generate-curator-summary', (_req: Request, res: Response) => {
   try {
