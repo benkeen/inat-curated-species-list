@@ -18,6 +18,10 @@ export const Navigation = () => {
       path: '/update-inat-data',
     },
     {
+      label: 'Curated Species',
+      path: '/curated-species',
+    },
+    {
       label: 'Baseline species',
       path: '/baseline-species',
     },

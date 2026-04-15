@@ -17,6 +17,7 @@ import { getDownloadState, setDownloadState, subscribeToDownload } from './inat-
 import { generateCuratorSummary, getCuratorReviewCount } from './curator-summary.js';
 import { generateChecklistFiles, getIsGenerating } from './generate-checklist.js';
 import { getQueuedChanges } from './queued-changes.js';
+import { generateCuratedSpecies, getCuratedSpecies } from './curated-species.js';
 import {
   startUnconfirmedSpeciesCheck,
   getUnconfirmedSpecies,
@@ -168,6 +169,23 @@ app.post('/generate-checklist', async (_req: Request, res: Response) => {
 // GET /queued-changes — returns the pre-generated queued-changes.json from the backup temp folder.
 app.get('/queued-changes', (_req: Request, res: Response) => {
   const data = getQueuedChanges();
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(data));
+});
+
+// POST /generate-curated-species — generates curated-species.json from the raw iNat observation data.
+app.post('/generate-curated-species', (_req: Request, res: Response) => {
+  try {
+    const result = generateCuratedSpecies();
+    res.json({ success: true, count: result.data.length });
+  } catch (e) {
+    res.json({ success: false, error: (e as Error).message });
+  }
+});
+
+// GET /curated-species — returns the pre-generated curated-species.json from the backup folder.
+app.get('/curated-species', (_req: Request, res: Response) => {
+  const data = getCuratedSpecies();
   res.setHeader('Content-Type', 'application/json');
   res.end(JSON.stringify(data));
 });

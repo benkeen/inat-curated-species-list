@@ -24,13 +24,10 @@ import { IconButton } from '@mui/material';
 import { formatNumber } from '../../utils';
 import { SortCol, SortDir } from './BaselineData.types';
 import { NotesDialog } from './NotesDialog';
+import { useDataTable } from './hooks/useDataTable';
 
 type DataTableProps = {
-  data: BaselineSpeciesInatData[];
-  sortCol: SortCol;
-  sortDir: SortDir;
-  onSort: (sortCol: SortCol, sortDir: SortDir) => void;
-  onDeleteRows: (taxonIds: number[]) => void;
+  filterText: string;
 };
 
 type SortButtonProps = {
@@ -113,7 +110,8 @@ const DataRow = memo(({ row, rowNum, isSelected, onToggle, onOpenNotes }: DataRo
   </tr>
 ));
 
-export const DataTable = ({ data, onDeleteRows, sortCol, sortDir, onSort }: DataTableProps) => {
+export const DataTable = ({ filterText }: DataTableProps) => {
+  const { data, onDeleteRows, sortCol, sortDir, onSort } = useDataTable(filterText);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [notesRow, setNotesRow] = useState<BaselineSpeciesInatData | null>(null);

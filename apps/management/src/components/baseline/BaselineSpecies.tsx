@@ -10,7 +10,7 @@ import TextField from '@mui/material/TextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import { IconButton } from '@mui/material';
 import { Spinner } from '../loading/spinner';
-import DataTable from './DataTable.container';
+import { DataTable } from './DataTable';
 import { AddSpeciesDialog } from './AddSpeciesDialog';
 import { CheckBaselineSpeciesDialog } from './CheckBaselineSpeciesDialog';
 import { useBaselineSpecies } from './hooks/useBaselineSpecies';

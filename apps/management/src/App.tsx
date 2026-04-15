@@ -18,6 +18,7 @@ import { Checklist } from './components/checklist/Checklist';
 import { NewAdditionsPage } from './components/new-additions/NewAdditionsPage';
 import { UnconfirmedSpecies } from './components/unconfirmed-species/UnconfirmedSpecies';
 import { TaxonChangesPage } from './components/taxon-changes/TaxonChangesPage';
+import { CuratedSpecies } from './components/curated-species/CuratedSpecies';
 import store, { persistor } from './store';
 
 const checkState = async (store: any) => {
@@ -67,6 +68,7 @@ function App() {
                     <Route index path="/" element={<div>(router - login or redirect to curated checklist page)</div>} />
                     <Route path="baseline-species" element={<BaselineSpecies />} />
                     <Route path="update-inat-data" element={<UpdateInatData />} />
+                    <Route path="curated-species" element={<CuratedSpecies />} />
                     <Route path="new-additions" element={<NewAdditionsPage />} />
                     <Route path="unconfirmed-species" element={<UnconfirmedSpecies />} />
                     <Route path="taxon-changes" element={<TaxonChangesPage />} />

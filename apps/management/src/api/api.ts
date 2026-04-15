@@ -115,3 +115,11 @@ export const updateTaxonChangesSettings = (content: { enabled: boolean }) => {
     body: JSON.stringify(content),
   });
 };
+
+export const generateCuratedSpecies = () => {
+  return fetch(getApiUrl('generate-curated-species'), { method: 'POST' });
+};
+
+export const getCuratedSpeciesData = () => {
+  return fetch(getApiUrl('curated-species'));
+};
