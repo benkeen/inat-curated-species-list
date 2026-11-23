@@ -11,6 +11,7 @@ import {
   CuratedSpeciesData,
   CuratedSpeciesDataMinified,
   Taxon,
+  RootTaxon,
 } from '@ecophilia/inat-curated-species-list-common';
 
 export interface SpeciesTabProps {
@@ -41,6 +42,7 @@ export const SpeciesTab: FC<SpeciesTabProps> = ({
   const [debouncedFilter, setDebouncedFilter] = useState(filter);
   const [data, setData] = useState<CuratedSpeciesData | undefined>();
   const [taxons, setTaxons] = useState<Taxon[]>();
+  const [rootTaxon, setRootTaxon] = useState<RootTaxon>();
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedFilter(filter), 200);
     return () => clearTimeout(timer);
@@ -50,6 +52,7 @@ export const SpeciesTab: FC<SpeciesTabProps> = ({
     if (initialData) {
       onLoad(initialData);
       setTaxons(initialData.taxons);
+      setRootTaxon(initialData.rootTaxon);
       setData(unminifySpeciesData(initialData));
       setLoaded(true);
       return;
@@ -68,6 +71,7 @@ export const SpeciesTab: FC<SpeciesTabProps> = ({
       .then((minifiedData: CuratedSpeciesDataMinified) => {
         onLoad(minifiedData);
         setTaxons(minifiedData.taxons);
+        setRootTaxon(minifiedData.rootTaxon);
         setData(unminifySpeciesData(minifiedData));
         setLoaded(true);
       })
@@ -139,7 +143,7 @@ export const SpeciesTab: FC<SpeciesTabProps> = ({
           exclusive
           value={view}
           aria-label="Checklist view"
-          sx={{ '& .MuiToggleButton-root': { px: 2 } }}
+          sx={{ '& .MuiToggleButton-root': { px: 2, py: 0.25 } }}
           onChange={(_event, nextView: 'table' | 'tree' | null) => {
             if (nextView !== null) update((current) => ({ ...current, view: nextView }));
           }}
@@ -164,6 +168,7 @@ export const SpeciesTab: FC<SpeciesTabProps> = ({
       )}
       <div style={{ display: view === 'tree' ? 'block' : 'none' }}>
         <TaxonomyTree
+          rootTaxon={rootTaxon}
           data={filteredData!}
           filter={filterError ? '' : debouncedFilter}
           taxons={taxons!}

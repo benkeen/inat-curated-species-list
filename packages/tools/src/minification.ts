@@ -20,7 +20,9 @@ const taxonsToMinify: TaxonsToMinifyMap = {
   family: true,
   subfamily: true,
   tribe: true,
+  subtribe: true,
   genus: true,
+  subgenus: true,
   section: true,
 };
 
@@ -35,6 +37,17 @@ export const minifySpeciesData = (data: CuratedSpeciesData, targetTaxons: Taxon[
 
   Object.keys(data).forEach((taxonId) => {
     const entry = data[taxonId]!;
+    if (entry.rootTaxon) {
+      if (
+        minifiedData.rootTaxon &&
+        (minifiedData.rootTaxon.id !== entry.rootTaxon.id ||
+          minifiedData.rootTaxon.name !== entry.rootTaxon.name ||
+          minifiedData.rootTaxon.rank !== entry.rootTaxon.rank)
+      ) {
+        throw new Error('Conflicting root taxon metadata in checklist data.');
+      }
+      minifiedData.rootTaxon = entry.rootTaxon;
+    }
     // keyed by rank
     const rowData: Partial<Record<Taxon, string>> = {};
 
@@ -54,6 +67,16 @@ export const minifySpeciesData = (data: CuratedSpeciesData, targetTaxons: Taxon[
         }
       } else {
         rowData[taxonRank] = taxonName;
+      }
+      const id = entry.taxonIds?.[taxonRank];
+      const code = minifiedData.taxonMap[taxonName];
+      if (taxonsToMinify[taxonRank] && code && id != null) {
+        minifiedData.taxonIds ??= {};
+        const previous = minifiedData.taxonIds[code];
+        if (previous != null && previous !== id) {
+          throw new Error(`Conflicting iNaturalist IDs for taxon "${taxonName}": ${previous} and ${id}.`);
+        }
+        minifiedData.taxonIds[code] = id;
       }
     });
 

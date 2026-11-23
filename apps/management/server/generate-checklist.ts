@@ -104,22 +104,23 @@ export const generateChecklistFiles = (): GenerateChecklistResult => {
   const startTime = Date.now();
 
   try {
-    const speciesData = extractSpeciesList(config, rawDataFolder, numPacketFiles);
+    const additionalSpecies: Record<string, SpeciesDataValue> = {};
 
     const baselineSpeciesFile = path.join(backupFolder, 'baseline-species.json');
     if (fs.existsSync(baselineSpeciesFile)) {
       const baseline = JSON.parse(fs.readFileSync(baselineSpeciesFile, 'utf-8')) as BaselineSpeciesFile;
       for (const entry of baseline.data) {
         const taxonId = String(entry.id);
-        if (speciesData[taxonId] || !entry.taxonomy || !entry.taxonomy['species']) {
+        if (!entry.taxonomy || !entry.taxonomy['species']) {
           continue;
         }
-        speciesData[taxonId] = {
+        additionalSpecies[taxonId] = {
           data: entry.taxonomy as SpeciesDataValue['data'],
           count: entry.curatorReviewCount ?? 0,
         };
       }
     }
+    const speciesData = extractSpeciesList(config, rawDataFolder, numPacketFiles, additionalSpecies);
 
     const fullSpeciesDataFile = path.join(backupFolder, 'species-data-full.json');
     fs.writeFileSync(fullSpeciesDataFile, JSON.stringify(speciesData, null, '\t'), 'utf-8');

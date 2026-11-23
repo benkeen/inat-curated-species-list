@@ -18,7 +18,6 @@
     "@ecophilia/inat-curated-species-list-tools": "workspace:*",
     "@ecophilia/inat-curated-species-list-common": "workspace:*",
     "@mui/material": "^6.4.8",
-    "@nivo/tree": "^0.99.0",
     "date-fns": "^4.1.0",
     "debounce": "^2.2.0",
     "react-spinners": "^0.15.0",

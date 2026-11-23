@@ -1,4 +1,4 @@
-import { CuratedSpeciesData, Taxon } from '@ecophilia/inat-curated-species-list-common';
+import { CuratedSpeciesData, RootTaxon, Taxon } from '@ecophilia/inat-curated-species-list-common';
 
 export type TaxonomyTreeNode = {
   id: string;
@@ -6,12 +6,26 @@ export type TaxonomyTreeNode = {
   rank: Taxon | null;
   speciesCount: number;
   taxonId?: string;
+  inatTaxonId?: number;
   reviewCount?: number;
+  isUnclassified?: boolean;
   children: TaxonomyTreeNode[];
 };
 
-export const buildTaxonomyTree = (data: CuratedSpeciesData, taxons: Taxon[]): TaxonomyTreeNode => {
-  const root: TaxonomyTreeNode = { id: 'root', name: 'All species', rank: null, speciesCount: 0, children: [] };
+export const buildTaxonomyTree = (
+  data: CuratedSpeciesData,
+  taxons: Taxon[],
+  rootTaxon?: RootTaxon,
+): TaxonomyTreeNode => {
+  const metadata = rootTaxon ?? Object.values(data).find((species) => species.rootTaxon)?.rootTaxon;
+  const root: TaxonomyTreeNode = {
+    id: 'root',
+    name: metadata?.name ?? 'All species',
+    rank: null,
+    inatTaxonId: metadata?.id,
+    speciesCount: 0,
+    children: [],
+  };
   const ranks = taxons.filter((rank) => rank !== 'species');
   const childrenByNode = new WeakMap<TaxonomyTreeNode, Map<string, TaxonomyTreeNode>>();
 
@@ -19,7 +33,7 @@ export const buildTaxonomyTree = (data: CuratedSpeciesData, taxons: Taxon[]): Ta
     let node = root;
     node.speciesCount++;
     for (const rank of ranks) {
-      const name = species.data[rank] || `Unclassified ${rank}`;
+      const name = species.data[rank] || '\u2014';
       const key = JSON.stringify([rank, species.data[rank] || null]);
       let children = childrenByNode.get(node);
       if (!children) {
@@ -29,10 +43,19 @@ export const buildTaxonomyTree = (data: CuratedSpeciesData, taxons: Taxon[]): Ta
       let child = children.get(key);
       if (!child) {
         const id = `${node.id}/${encodeURIComponent(key).replace(/\./g, '%2E')}`;
-        child = { id, name, rank, speciesCount: 0, children: [] };
+        child = {
+          id,
+          name,
+          rank,
+          speciesCount: 0,
+          inatTaxonId: species.taxonIds?.[rank],
+          isUnclassified: !species.data[rank],
+          children: [],
+        };
         children.set(key, child);
         node.children.push(child);
       }
+      if (species.taxonIds?.[rank] != null) child.inatTaxonId = species.taxonIds[rank];
       child.speciesCount++;
       node = child;
     }
@@ -62,7 +85,7 @@ export const getVisibleTaxonomyTree = (
           const selected = isolated.find((id) => id.slice(0, id.lastIndexOf('/')) === node.id);
           return !selected || child.id === selected;
         })
-        .sort((a, b) => b.name.localeCompare(a.name))
+        .sort((a, b) => a.name.localeCompare(b.name))
         .map((child) => getVisibleTaxonomyTree(child, expanded, isolated))
     : [],
 });
@@ -81,6 +104,39 @@ export const getTreeDimensions = (root: TaxonomyTreeNode): { leaves: number; dep
   return {
     leaves: children.reduce((sum, child) => sum + child.leaves, 0),
     depth: 1 + Math.max(...children.map((child) => child.depth)),
+  };
+};
+
+export type PositionedTaxonomyNode = { data: TaxonomyTreeNode; x: number; y: number };
+
+export const layoutTaxonomyTree = (root: TaxonomyTreeNode) => {
+  const nodes: PositionedTaxonomyNode[] = [];
+  const links: { source: PositionedTaxonomyNode; target: PositionedTaxonomyNode }[] = [];
+  const columns: { x: number; rank: Taxon | null }[] = [];
+  let nextRow = 0;
+  let maxDepth = 0;
+  const visit = (data: TaxonomyTreeNode, depth: number, parent?: PositionedTaxonomyNode) => {
+    const firstRow = nextRow;
+    const node = { data, x: depth * 280 + 120, y: 0 };
+    columns[depth] ??= { x: node.x, rank: data.rank };
+    nodes.push(node);
+    if (parent) links.push({ source: parent, target: node });
+    maxDepth = Math.max(maxDepth, depth);
+    if (data.children.length) {
+      data.children.forEach((child) => visit(child, depth + 1, node));
+    } else {
+      nextRow++;
+    }
+    // Expanded nodes occupy their descendants' rows; collapsed nodes occupy just one.
+    node.y = ((firstRow + nextRow - 1) / 2) * 32 + 34;
+  };
+  visit(root, 0);
+  return {
+    nodes,
+    links,
+    columns,
+    width: maxDepth * 280 + 260,
+    height: nextRow * 32 + 40,
   };
 };
 

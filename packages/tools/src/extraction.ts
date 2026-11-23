@@ -1,17 +1,42 @@
 import { GeneratorConfig, GetDataPacketResponse } from '../types/generator.types';
-import { CuratedSpeciesData, Taxon } from '@ecophilia/inat-curated-species-list-common';
+import { CuratedSpeciesData, RootTaxon, Taxon } from '@ecophilia/inat-curated-species-list-common';
 import { getTaxonomy } from './helpers';
 import { DEFAULT_TAXONS } from './constants';
 import path from 'path';
 import fs from 'fs';
 
-export const extractSpeciesList = (config: GeneratorConfig, tempFolder: string, numRequests: number) => {
+export const extractSpeciesList = (
+  config: GeneratorConfig,
+  tempFolder: string,
+  numRequests: number,
+  additionalSpecies: CuratedSpeciesData = {},
+) => {
   const curatedSpeciesData: CuratedSpeciesData = {};
+  const ancestorIds = new Map<string, Set<number>>();
+  let rootTaxon: RootTaxon | undefined;
 
   for (let packetNum = 1; packetNum <= numRequests; packetNum++) {
     const rawData: GetDataPacketResponse = JSON.parse(
       fs.readFileSync(path.resolve(tempFolder, `packet-${packetNum}.json`), 'utf-8'),
     );
+    for (const observation of rawData.results) {
+      for (const identification of observation.identifications) {
+        if (!identification.current) continue;
+        if (identification.taxon.id === config.taxonId) {
+          rootTaxon = { id: identification.taxon.id, name: identification.taxon.name, rank: identification.taxon.rank };
+        }
+        for (const ancestor of identification.taxon.ancestors) {
+          if (ancestor.is_active === false) continue;
+          const key = JSON.stringify([ancestor.rank, ancestor.name]);
+          const ids = ancestorIds.get(key) ?? new Set<number>();
+          ids.add(ancestor.id);
+          ancestorIds.set(key, ids);
+          if (ancestor.id === config.taxonId) {
+            rootTaxon = { id: ancestor.id, name: ancestor.name, rank: ancestor.rank };
+          }
+        }
+      }
+    }
     appendSpeciesFromPacket(
       rawData,
       config.curators,
@@ -21,6 +46,21 @@ export const extractSpeciesList = (config: GeneratorConfig, tempFolder: string, 
     );
   }
 
+  for (const [id, species] of Object.entries(additionalSpecies)) {
+    curatedSpeciesData[id] ??= species;
+  }
+  for (const species of Object.values(curatedSpeciesData)) {
+    species.taxonIds = {};
+    for (const rank of config.taxons ?? DEFAULT_TAXONS) {
+      if (rank === 'species' || !species.data[rank]) continue;
+      const ids = ancestorIds.get(JSON.stringify([rank, species.data[rank]]));
+      if (ids && ids.size > 1) {
+        throw new Error(`Conflicting iNaturalist IDs for ${rank} "${species.data[rank]}": ${[...ids].join(', ')}.`);
+      }
+      if (ids?.size === 1) species.taxonIds[rank] = [...ids][0]!;
+    }
+    if (rootTaxon) species.rootTaxon = rootTaxon;
+  }
   return curatedSpeciesData;
 };
 

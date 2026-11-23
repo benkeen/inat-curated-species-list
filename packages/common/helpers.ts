@@ -36,6 +36,15 @@ export const unminifySpeciesData = (data: CuratedSpeciesDataMinified): CuratedSp
       data: expandedTaxonData,
       count: rowData[rowData.length - 1] as unknown as number,
     };
+    if (data.taxonIds) {
+      fullData[taxonId]!.taxonIds = Object.fromEntries(
+        taxons.flatMap((rank, index) => {
+          const id = data.taxonIds?.[rowData[index]!];
+          return rank !== 'species' && id != null ? [[rank, id]] : [];
+        }),
+      );
+    }
+    if (data.rootTaxon) fullData[taxonId]!.rootTaxon = data.rootTaxon;
   });
 
   return fullData;

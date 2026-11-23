@@ -1,5 +1,5 @@
 import { Logger } from 'winston';
-import { Taxon } from '@ecophilia/inat-curated-species-list-types';
+import { Taxon } from '@ecophilia/inat-curated-species-list-common';
 
 export type INatApiObsRequestParams = {
   readonly place_id: number;
@@ -23,6 +23,7 @@ export type DownloadDataPacketArgs = {
 
 // not exhaustive. Just contains a couple of things we use from their data model
 export type INatTaxonAncestor = {
+  readonly id?: number;
   readonly rank: Taxon;
   readonly name: string;
 };
@@ -136,6 +137,7 @@ export type NewAddition = {
 
 export type TaxonAncestor = {
   readonly id: number;
+  readonly is_active?: boolean;
   readonly rank: Taxon;
   readonly name: string;
 };
