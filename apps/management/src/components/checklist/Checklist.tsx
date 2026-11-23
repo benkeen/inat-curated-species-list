@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
-import { CuratedSpeciesTable } from '@ecophilia/inat-curated-species-list-ui';
+import { CuratedSpeciesTable, useChecklistLocation } from '@ecophilia/inat-curated-species-list-ui';
 import { Spinner } from '../loading/spinner';
 import { Styles } from './Styles';
 import { useGenerateChecklist } from './hooks/useGenerateChecklist';
@@ -19,7 +19,9 @@ import { useQueuedChanges } from './hooks/useQueuedChanges';
 export const Checklist = () => {
   const { isLoading, error, speciesData, newAdditionsData, taxonChangesData, settings, newAdditionsEnabled, loadData } =
     useChecklistData();
-  const [modalOpen, setModalOpen] = useState(false);
+  const { state: checklistLocation, update: updateChecklistLocation, error: bookmarkError } = useChecklistLocation();
+  const modalOpen = checklistLocation.open;
+  const setModalOpen = (open: boolean) => updateChecklistLocation((current) => ({ ...current, open }));
   const { data: queuedChanges, loadData: loadQueuedChanges } = useQueuedChanges();
   const {
     status: generateStatus,
@@ -64,6 +66,7 @@ export const Checklist = () => {
         <code>species-data.json</code>, <code>new-additions-data.json</code>, <code>taxon-changes-data.json</code>).
         These are written directly into the backup folder.
       </p>
+      {bookmarkError && !modalOpen && <Alert severity="error">{bookmarkError}</Alert>}
 
       {generateStatus !== 'running' && (
         <Button variant="outlined" size="small" onClick={() => generateChecklist()}>

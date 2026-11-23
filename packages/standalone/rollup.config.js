@@ -12,7 +12,7 @@ export default {
     format: 'iife',
   },
   plugins: [
-    resolve(),
+    resolve({ dedupe: ['react', 'react-dom'] }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),

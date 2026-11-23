@@ -5,6 +5,8 @@ import { TaxonChangesTab } from './TaxonChangesTab';
 import { formatDate } from '../utils/helpers';
 import { CuratedSpeciesDataMinified } from '@ecophilia/inat-curated-species-list-common';
 import { NewAddition, TaxonChangeData } from '@ecophilia/inat-curated-species-list-tools';
+import Alert from '@mui/material/Alert';
+import { useChecklistLocation } from './hooks/useChecklistLocation';
 
 export interface CuratedSpeciesTableProps {
   readonly speciesDataUrl?: string;
@@ -44,10 +46,12 @@ export const CuratedSpeciesTable: FC<CuratedSpeciesTableProps> = ({
   initialTaxonChangesData,
   tabText = {},
 }) => {
-  const [tabIndex, setTabIndex] = useState(0);
+  const { state, update, error: bookmarkError } = useChecklistLocation();
+  const setTabIndex = (tab: number) => update((current) => ({ ...current, tab }));
   const [lastGenerated, setLastGeneratedDate] = useState('');
   const hasNewAdditions = showNewAdditions && (newAdditionsDataUrl || initialNewAdditionsData);
   const hasTaxonChanges = showTaxonChanges && (taxonChangesDataUrl || initialTaxonChangesData);
+  const tabIndex = (state.tab === 1 && !hasNewAdditions) || (state.tab === 2 && !hasTaxonChanges) ? 0 : state.tab;
 
   const onLoadSpeciesData = useCallback((data: CuratedSpeciesDataMinified) => {
     setLastGeneratedDate(formatDate(data.dateGenerated));
@@ -91,6 +95,7 @@ export const CuratedSpeciesTable: FC<CuratedSpeciesTableProps> = ({
 
   return (
     <>
+      {bookmarkError && <Alert severity="error">{bookmarkError}</Alert>}
       {getTabs()}
 
       <div style={{ display: tabIndex === 0 ? 'block' : 'none' }}>

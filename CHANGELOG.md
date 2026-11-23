@@ -1,6 +1,6 @@
 ## Changelog
 
-**2.0.0**: Mar 2026, in development.
+**2.0.0**: Nov 2026, in development.
 
 - Rewriting in TS, Turborepo.
 - Separate the script into two published packages:

@@ -6,10 +6,13 @@
 2. Bootstrap the monorepo
    `pnpm install`
 
-3. Run the local dev server demoing the components.
+3. Run the management app.
    `pnpm dev`
 
-   Note: this doesn't current auto-open the browser. Open `http://localhost:3000` in your browser.
+   Open the Vite URL printed in the terminal. The management API uses port 3000.
+
+   To run the component demo instead, use `pnpm --filter inat-curated-list-dev-ui dev`.
+   It also uses port 3000 by default, so stop the management app first.
 
 ---
 
