@@ -98,6 +98,11 @@ export const findTaxonomyNode = (root: TaxonomyTreeNode, id: string): TaxonomyTr
   return undefined;
 };
 
+export const getExpandableTaxonomyIds = (node: TaxonomyTreeNode): string[] => {
+  if (node.rank === 'species' || !node.children.length) return [];
+  return [node.id, ...node.children.flatMap(getExpandableTaxonomyIds)];
+};
+
 export const getTreeDimensions = (root: TaxonomyTreeNode): { leaves: number; depth: number } => {
   if (!root.children.length) return { leaves: 1, depth: 0 };
   const children = root.children.map(getTreeDimensions);

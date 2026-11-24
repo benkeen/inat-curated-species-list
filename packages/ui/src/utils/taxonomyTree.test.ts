@@ -3,6 +3,7 @@ import { CuratedSpeciesData, TaxonomyMap } from '@ecophilia/inat-curated-species
 import {
   buildTaxonomyTree,
   findTaxonomyNode,
+  getExpandableTaxonomyIds,
   getTaxonomySearchState,
   getTreeDimensions,
   getVisibleTaxonomyTree,
@@ -29,6 +30,28 @@ const taxonomy = (values: Partial<TaxonomyMap>): TaxonomyMap => ({
 });
 
 describe('buildTaxonomyTree', () => {
+  test('collects only expandable groups from the complete selected subtree', () => {
+    const tree = buildTaxonomyTree(
+      {
+        '1': { data: taxonomy({ family: 'A', genus: 'X', species: 'X alpha' }), count: 1 },
+        '2': { data: taxonomy({ family: 'A', genus: 'Y', species: 'Y beta' }), count: 1 },
+        '3': { data: taxonomy({ family: 'B', genus: 'Z', species: 'Z gamma' }), count: 1 },
+      },
+      ['family', 'genus', 'species'],
+    );
+    const family = tree.children[0]!;
+    const [x, y] = family.children;
+    expect(getExpandableTaxonomyIds(family)).toEqual([family.id, x!.id, y!.id]);
+    expect(getExpandableTaxonomyIds(x!.children[0]!)).toEqual([]);
+    expect(getExpandableTaxonomyIds(tree)).toHaveLength(6);
+    const expanded = new Set([tree.id, ...getExpandableTaxonomyIds(family)]);
+    const visible = getVisibleTaxonomyTree(tree, expanded, [x!.id]);
+    expect(visible.children.find((child) => child.id === family.id)!.children.map((child) => child.id)).toEqual([
+      x!.id,
+    ]);
+    expect(visible.children.find((child) => child.id === family.id)!.children[0]!.children[0]!.rank).toBe('species');
+    expect(visible.children.find((child) => child.name === 'B')!.children).toEqual([]);
+  });
   test('uses root metadata and rank IDs without treating groups as species', () => {
     const data = {
       '1': { data: taxonomy({ family: 'A', species: 'A alpha' }), count: 1, taxonIds: { family: 42 } },

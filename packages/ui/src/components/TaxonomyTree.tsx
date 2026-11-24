@@ -12,6 +12,7 @@ import { constants, CuratedSpeciesData, RootTaxon, Taxon } from '@ecophilia/inat
 import {
   buildTaxonomyTree,
   findTaxonomyNode,
+  getExpandableTaxonomyIds,
   getTaxonomySearchState,
   layoutTaxonomyTree,
   getVisibleTaxonomyTree,
@@ -177,6 +178,20 @@ export const TaxonomyTree = ({
         ...(filter ? { search: { filter, expanded: [...next] } } : { expanded: [...next] }),
       },
     }));
+  };
+
+  const expandDescendants = (id: string) => {
+    const node = findTaxonomyNode(root, id);
+    if (!node) throw new Error('Cannot expand a taxon that is no longer in the tree.');
+    const next = new Set([...activeExpanded, ...getExpandableTaxonomyIds(node)]);
+    update((current) => ({
+      ...current,
+      tree: {
+        ...current.tree,
+        ...(filter ? { search: { filter, expanded: [...next] } } : { expanded: [...next] }),
+      },
+    }));
+    setMenuOpen(false);
   };
 
   const pin = (id: string | null) => {
@@ -370,6 +385,9 @@ export const TaxonomyTree = ({
         </div>
       )}
       <Menu anchorEl={menu?.anchor} open={menuOpen} onClose={() => setMenuOpen(false)}>
+        {menu && menu.node.rank !== 'species' && (
+          <MenuItem onClick={() => expandDescendants(menu.node.id)}>Expand all descendants</MenuItem>
+        )}
         {menu?.node.id !== 'root' && (
           <MenuItem onClick={() => menu && pin(tree.pinned === menu.node.id ? null : menu.node.id)}>
             {tree.pinned === menu?.node.id ? 'Unpin taxon' : 'Pin taxon'}

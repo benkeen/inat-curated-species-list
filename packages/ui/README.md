@@ -41,6 +41,10 @@ Each taxon's options menu offers **Pin taxon** (make it the visible root) and
 without an extra controls row shifting the tree. Recovery actions also appear in
 warnings when a selected taxon is absent from the results. Pinning opens the
 selected group without changing the open/closed state of its descendants.
+Non-species menus, including the root, also offer **Expand all descendants** to
+open every group in that branch through to species. Hidden siblings remain hidden;
+the expansion is bookmarkable and, during filtering, applies to the filtered
+results without changing the unfiltered expansion state.
 
 The shared checklist stores its filter, Table/Tree selection, selected tab, open
 branches (including search-time expansion), pinned taxon, and hidden siblings in the
